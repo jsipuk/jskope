@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome | Netskope</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --netskope-turquoise: #00A7CE;
+            --netskope-orange: #FF8300;
+            --netskope-navy: #002B49;
+            --background-primary: #fafbfc;
+            --text-primary: #1a1d23;
+            --text-secondary: #6b7280;
+            --border-subtle: rgba(0, 167, 206, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 167, 206, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 167, 206, 0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: grid-shift 20s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes grid-shift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(60px, 60px); }
+        }
+
+        /* Floating geometric shapes */
+        .bg-shape {
+            position: fixed;
+            z-index: 1;
+            opacity: 0.03;
+        }
+
+        .bg-shape.circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--netskope-turquoise), var(--netskope-orange));
+            top: 20%;
+            right: 10%;
+            animation: float-1 25s ease-in-out infinite;
+        }
+
+        .bg-shape.square {
+            width: 80px;
+            height: 80px;
+            background: var(--netskope-navy);
+            bottom: 30%;
+            left: 15%;
+            transform: rotate(45deg);
+            animation: float-2 20s ease-in-out infinite;
+        }
+
+        .bg-shape.triangle {
+            width: 0;
+            height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-bottom: 70px solid var(--netskope-orange);
+            top: 60%;
+            right: 20%;
+            animation: float-3 30s ease-in-out infinite;
+        }
+
+        @keyframes float-1 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-30px, -20px) rotate(180deg); }
+        }
+
+        @keyframes float-2 {
+            0%, 100% { transform: rotate(45deg) translate(0, 0); }
+            50% { transform: rotate(225deg) translate(20px, -30px); }
+        }
+
+        @keyframes float-3 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(15px, -25px) rotate(120deg); }
+            66% { transform: translate(-20px, 10px) rotate(240deg); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .logo-container {
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .logo-container::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            background: radial-gradient(circle at center, rgba(0, 167, 206, 0.05), transparent 70%);
+            border-radius: 20px;
+            animation: glow-pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.05); }
+        }
+
+        .logo {
+            max-width: min(600px, 90vw);
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 10px 40px rgba(0, 167, 206, 0.15));
+            animation: logo-entrance 1.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        @keyframes logo-entrance {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-text {
+            max-width: 600px;
+            margin-bottom: 2rem;
+            animation: text-entrance 1.8s ease-out 0.3s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes text-entrance {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-text h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--netskope-navy) 0%, var(--netskope-turquoise) 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+        }
+
+        .welcome-text p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(0, 167, 206, 0.05);
+            border: 1px solid var(--border-subtle);
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--netskope-turquoise);
+            font-weight: 500;
+            animation: status-entrance 2s ease-out 0.6s forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        @keyframes status-entrance {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--netskope-turquoise);
+            border-radius: 50%;
+            animation: pulse-pending 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-pending {
+            0%, 100% { opacity: 0.4; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            opacity: 0;
+            animation: footer-entrance 2.2s ease-out 1s forwards;
+        }
+
+        @keyframes footer-entrance {
+            to { opacity: 0.6; }
+        }
+
+        /* SVG Animation keyframes */
+        @keyframes floatY {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-12px); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.45; }
+            50%       { opacity: 0.85; }
+        }
+        @keyframes pulseNodeA {
+            0%, 100% { opacity: 0.75; }
+            50%       { opacity: 1; }
+        }
+        @keyframes pulseNodeB {
+            0%, 100% { opacity: 0.65; }
+            50%       { opacity: 0.95; }
+        }
+        @keyframes pulseOrange {
+            0%, 100% { opacity: 0.85; }
+            50%       { opacity: 1; }
+        }
+        @keyframes driftA {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+            40%       { transform: translate(4px, -6px) scale(1.1); opacity: 0.8; }
+        }
+        @keyframes driftB {
+            0%, 100% { transform: translate(0, 0); opacity: 0.4; }
+            50%       { transform: translate(-3px, 5px); opacity: 0.65; }
+        }
+        @keyframes scanLine {
+            0%   { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -80; }
+        }
+
+        .float-group      { animation: floatY 7s ease-in-out infinite; transform-origin: 280px 275px; }
+        .core-glow        { animation: pulseGlow 4s ease-in-out infinite; }
+        .node-a           { animation: pulseNodeA 3.2s ease-in-out infinite; }
+        .node-b           { animation: pulseNodeB 4s ease-in-out infinite; }
+        .node-orange      { animation: pulseOrange 2.6s ease-in-out infinite; }
+        .particle-a       { animation: driftA 8s ease-in-out infinite; }
+        .particle-b       { animation: driftB 6.5s ease-in-out infinite; }
+        .particle-c       { animation: driftA 11s ease-in-out infinite 2s; }
+        .scan-ring        { animation: scanLine 6s linear infinite; }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .welcome-text h1 {
+                font-size: 2.5rem;
+            }
+            
+            .welcome-text p {
+                font-size: 1.1rem;
+            }
+            
+            .status-indicator {
+                padding: 0.8rem 1.2rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Subtle hover effects */
+        .logo-container:hover .logo {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+
+        .status-indicator:hover {
+            background: rgba(0, 167, 206, 0.08);
+            border-color: rgba(0, 167, 206, 0.15);
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-shape circle"></div>
+    <div class="bg-shape square"></div>
+    <div class="bg-shape triangle"></div>
+
+    <div class="container">
+        <div class="logo-container">
+            <svg viewBox="0 0 560 560" width="560" height="560" xmlns="http://www.w3.org/2000/svg" overflow="visible" class="logo">
+<defs>
+
+  <!-- Atmosphere: deep navy centre → transparent -->
+  <radialGradient id="atmos" cx="50%" cy="48%" r="50%">
+    <stop offset="0%"   stop-color="#001C30" stop-opacity="0.94"/>
+    <stop offset="52%"  stop-color="#001525" stop-opacity="0.60"/>
+    <stop offset="78%"  stop-color="#000E1A" stop-opacity="0.20"/>
+    <stop offset="100%" stop-color="#000810" stop-opacity="0"/>
+  </radialGradient>
+
+  <!-- Core sphere shading -->
+  <radialGradient id="sphereGrad" cx="36%" cy="30%" r="70%">
+    <stop offset="0%"   stop-color="#1C6080" stop-opacity="1"/>
+    <stop offset="38%"  stop-color="#092838" stop-opacity="1"/>
+    <stop offset="100%" stop-color="#000E1C" stop-opacity="1"/>
+  </radialGradient>
+
+  <!-- Inner energy glow -->
+  <radialGradient id="innerGlow" cx="50%" cy="50%" r="50%">
+    <stop offset="0%"   stop-color="#00C8FF" stop-opacity="0.65"/>
+    <stop offset="45%"  stop-color="#0080B0" stop-opacity="0.22"/>
+    <stop offset="100%" stop-color="#002040" stop-opacity="0"/>
+  </radialGradient>
+
+  <!-- Platform disc -->
+  <radialGradient id="platGrad" cx="45%" cy="28%" r="70%">
+    <stop offset="0%"   stop-color="#30B8E8" stop-opacity="0.20"/>
+    <stop offset="55%"  stop-color="#0078A0" stop-opacity="0.08"/>
+    <stop offset="100%" stop-color="#001E38" stop-opacity="0.30"/>
+  </radialGradient>
+
+  <!-- Glow bloom filter -->
+  <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+    <feGaussianBlur stdDeviation="6" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+
+  <!-- Medium soft blur -->
+  <filter id="mblur" x="-80%" y="-80%" width="260%" height="260%">
+    <feGaussianBlur stdDeviation="9"/>
+  </filter>
+
+  <!-- Large ambient blur -->
+  <filter id="lblur" x="-150%" y="-150%" width="400%" height="400%">
+    <feGaussianBlur stdDeviation="18"/>
+  </filter>
+
+  <!-- Page-lift drop shadow -->
+  <filter id="shadow" x="-25%" y="-15%" width="150%" height="175%">
+    <feDropShadow dx="0" dy="14" stdDeviation="24" flood-color="#000E20" flood-opacity="0.38"/>
+  </filter>
+
+</defs>
+
+<!-- ═══ FLOATING GROUP ═══ -->
+<g class="float-group">
+
+  <!-- Ground shadow -->
+  <ellipse cx="280" cy="502" rx="148" ry="18" fill="#000E1C" opacity="0.13" filter="url(#lblur)"/>
+
+  <!-- Atmosphere disc (the "dark aura") -->
+  <circle cx="280" cy="275" r="262" fill="url(#atmos)" filter="url(#shadow)"/>
+
+  <!-- Very faint outer boundary ring -->
+  <circle cx="280" cy="275" r="254" fill="none" stroke="#00A7CE" stroke-width="0.5" opacity="0.12"/>
+
+  <!-- ─── Ambient bloom layers ─── -->
+  <circle cx="280" cy="275" r="195" fill="#0070A0" opacity="0.04" filter="url(#lblur)"/>
+  <circle cx="280" cy="275" r="120" fill="#00A7CE" opacity="0.05" filter="url(#mblur)" class="core-glow"/>
+
+  <!-- ─────────── ORBITAL RINGS ─────────── -->
+
+  <!-- RING 1 · Main equatorial · tilt −15° -->
+  <g transform="rotate(-15, 280, 275)">
+    <!-- Glow halo -->
+    <ellipse cx="280" cy="275" rx="215" ry="57" fill="none" stroke="#00A7CE"
+             stroke-width="10" opacity="0.06" filter="url(#mblur)"/>
+    <!-- Full ring -->
+    <ellipse cx="280" cy="275" rx="215" ry="57" fill="none" stroke="#00A7CE"
+             stroke-width="1.2" opacity="0.62"/>
+    <!-- Bright front half (sweeps bottom) -->
+    <path d="M 495 275 A 215 57 0 0 1 65 275"
+          fill="none" stroke="#00D8FF" stroke-width="1.6" opacity="0.42"/>
+  </g>
+
+  <!-- RING 2 · Secondary · tilt +62° -->
+  <g transform="rotate(62, 280, 275)">
+    <ellipse cx="280" cy="275" rx="178" ry="49" fill="none" stroke="#004E6A"
+             stroke-width="0.9" opacity="0.55"/>
+    <ellipse cx="280" cy="275" rx="178" ry="49" fill="none" stroke="#0098C0"
+             stroke-width="5" opacity="0.08" filter="url(#mblur)"/>
+    <!-- Bright front half -->
+    <path d="M 458 275 A 178 49 0 0 1 102 275"
+          fill="none" stroke="#0098C0" stroke-width="1.2" opacity="0.35"/>
+  </g>
+
+  <!-- RING 3 · Dashed hint · tilt −56° -->
+  <g transform="rotate(-56, 280, 275)">
+    <ellipse cx="280" cy="275" rx="148" ry="39" fill="none" stroke="#003254"
+             stroke-width="0.8" opacity="0.50" stroke-dasharray="5,4"/>
+  </g>
+
+  <!-- ─────────── PLATFORM DISC ─────────── -->
+  <!-- Soft shadow beneath -->
+  <ellipse cx="280" cy="392" rx="152" ry="18" fill="#001020" opacity="0.22" filter="url(#mblur)"/>
+  <!-- Disc body -->
+  <ellipse cx="280" cy="357" rx="153" ry="32" fill="url(#platGrad)"/>
+  <ellipse cx="280" cy="357" rx="153" ry="32" fill="none" stroke="#00A7CE" stroke-width="0.9" opacity="0.32"/>
+  <!-- Specular highlight -->
+  <ellipse cx="262" cy="350" rx="76" ry="10" fill="white" opacity="0.05"/>
+
+  <!-- ─────────── ENERGY SPHERE LAYERS ─────────── -->
+  <!-- Outer glow mantle -->
+  <circle cx="280" cy="275" r="138" fill="url(#innerGlow)" class="core-glow"/>
+
+  <!-- Mid guide ring -->
+  <circle cx="280" cy="275" r="114" fill="none" stroke="#004062" stroke-width="0.6" opacity="0.38"/>
+
+  <!-- Inner guide ring with pulse halo -->
+  <circle cx="280" cy="275" r="84"  fill="none" stroke="#00A7CE" stroke-width="1.2" opacity="0.52"/>
+  <circle cx="280" cy="275" r="84"  fill="none" stroke="#00C8FF" stroke-width="6"   opacity="0.10" filter="url(#mblur)"/>
+
+  <!-- ─────────── CORE SPHERE ─────────── -->
+  <circle cx="280" cy="275" r="60" fill="url(#sphereGrad)"/>
+  <!-- Rim glow -->
+  <circle cx="280" cy="275" r="60" fill="none" stroke="#00DDFF" stroke-width="1.4" opacity="0.78"/>
+  <circle cx="280" cy="275" r="60" fill="none" stroke="#00EEFF" stroke-width="6"   opacity="0.16" filter="url(#glow)"/>
+  <!-- Glass highlight -->
+  <ellipse cx="265" cy="260" rx="18" ry="13" fill="white" opacity="0.10"/>
+  <!-- Subtle scan ring inside core -->
+  <circle cx="280" cy="275" r="36" fill="none" stroke="#00C8FF" stroke-width="0.8"
+          opacity="0.40" stroke-dasharray="40,80" class="scan-ring"/>
+  <!-- Core hot point -->
+  <circle cx="280" cy="275" r="8" fill="#00EEFF" opacity="0.28"/>
+
+  <!-- ─────────── J LETTERFORM ─────────── -->
+  <!-- Top crossbar -->
+  <line x1="272" y1="255" x2="293" y2="255" stroke="#00EEFF"
+        stroke-width="2.6" stroke-linecap="round" opacity="0.93"/>
+  <!-- Vertical stem -->
+  <line x1="287" y1="255" x2="287" y2="285" stroke="#00EEFF"
+        stroke-width="2.6" stroke-linecap="round" opacity="0.93"/>
+  <!-- Hook curve -->
+  <path d="M 287 285 Q 287 299 276 299 Q 265 299 265 289"
+        fill="none" stroke="#00EEFF" stroke-width="2.6"
+        stroke-linecap="round" opacity="0.93"/>
+
+  <!-- ─────────── ORBITAL NODES ─────────── -->
+
+  <!-- Node A · Upper right · on Ring 1 -->
+  <!-- approx position on ring1 (rx=215 ry=57, rot=-15) at t≈-35° -->
+  <g class="node-a">
+    <circle cx="475" cy="240" r="18" fill="#00A7CE" opacity="0.07" filter="url(#mblur)"/>
+    <circle cx="475" cy="240" r="11" fill="#001525" stroke="#00A7CE" stroke-width="1.8"/>
+    <circle cx="475" cy="240" r="5"  fill="#00D4FF" opacity="0.95"/>
+    <circle cx="475" cy="240" r="16" fill="none"    stroke="#00A7CE" stroke-width="0.9" opacity="0.30"/>
+  </g>
+
+  <!-- Node B · Lower left · on Ring 1 opposite -->
+  <circle cx="87"  cy="312" r="8"  fill="#001525" stroke="#005070" stroke-width="1.2" class="node-b"/>
+  <circle cx="87"  cy="312" r="4"  fill="#0088A8" opacity="0.78"/>
+
+  <!-- Node C · Upper left · on Ring 2 -->
+  <g class="node-b" style="animation-delay:0.8s">
+    <circle cx="196" cy="138" r="14" fill="#00A7CE" opacity="0.06" filter="url(#mblur)"/>
+    <circle cx="196" cy="138" r="9"  fill="#001525" stroke="#006880" stroke-width="1.4"/>
+    <circle cx="196" cy="138" r="4.5" fill="#0099BB" opacity="0.82"/>
+    <circle cx="196" cy="138" r="14" fill="none" stroke="#005A72" stroke-width="0.8" opacity="0.28"/>
+  </g>
+
+  <!-- Node D · Lower right · on Ring 2 -->
+  <circle cx="364" cy="406" r="7"  fill="#001525" stroke="#004A5E" stroke-width="1"/>
+  <circle cx="364" cy="406" r="3.5" fill="#007090" opacity="0.68"/>
+
+  <!-- Node E · Far left middle -->
+  <circle cx="110" cy="358" r="5"  fill="#001525" stroke="#003652" stroke-width="0.9" opacity="0.75"/>
+  <circle cx="110" cy="358" r="2.5" fill="#005572" opacity="0.58"/>
+
+  <!-- ─────────── ORANGE ACCENT NODE ─────────── -->
+  <!-- Premium warm accent, upper-right zone -->
+  <circle cx="412" cy="148" r="22" fill="#FF8300" opacity="0.08" filter="url(#mblur)"/>
+  <g class="node-orange">
+    <circle cx="412" cy="148" r="12" fill="#001525" stroke="#FF8300" stroke-width="2.2" filter="url(#glow)"/>
+    <circle cx="412" cy="148" r="5.5" fill="#FF8300" opacity="0.97"/>
+    <circle cx="412" cy="148" r="18" fill="none" stroke="#FF8300" stroke-width="1" opacity="0.28"/>
+  </g>
+
+  <!-- ─────────── DATA FLOW LINES ─────────── -->
+  <!-- Orange node → core -->
+  <path d="M 405 156 Q 370 196 326 230" fill="none" stroke="#FF8300"
+        stroke-width="0.9" opacity="0.24" stroke-dasharray="4,5"/>
+
+  <!-- Node A → core -->
+  <path d="M 468 247 Q 428 254 340 264" fill="none" stroke="#00A7CE"
+        stroke-width="0.7" opacity="0.26" stroke-dasharray="3,5"/>
+
+  <!-- Node C → core -->
+  <path d="M 202 146 Q 228 192 245 235" fill="none" stroke="#00A7CE"
+        stroke-width="0.7" opacity="0.22" stroke-dasharray="3,5"/>
+
+  <!-- Node D → Node A arc -->
+  <path d="M 364 406 Q 440 350 475 240" fill="none" stroke="#004A60"
+        stroke-width="0.6" opacity="0.18" stroke-dasharray="3,7"/>
+
+  <!-- ─────────── FLOATING PARTICLES ─────────── -->
+  <g class="particle-a">
+    <circle cx="204" cy="160" r="2.2" fill="#00A7CE" opacity="0.55"/>
+  </g>
+  <g class="particle-b">
+    <circle cx="374" cy="118" r="1.8" fill="#00C8FF" opacity="0.48"/>
+  </g>
+  <g class="particle-c">
+    <circle cx="452" cy="368" r="2"   fill="#009AB8" opacity="0.42"/>
+  </g>
+  <circle cx="148" cy="210" r="1.5" fill="#004462" opacity="0.50"/>
+  <circle cx="438" cy="434" r="1.8" fill="#003C58" opacity="0.34"/>
+  <circle cx="318" cy="470" r="1.6" fill="#004868" opacity="0.30"/>
+  <circle cx="104" cy="322" r="1.2" fill="#003450" opacity="0.40"/>
+  <circle cx="484" cy="190" r="1.5" fill="#005070" opacity="0.42"/>
+  <circle cx="245" cy="452" r="1.4" fill="#004060" opacity="0.30"/>
+
+</g>
+<!-- ═══ END FLOAT GROUP ═══ -->
+</svg>
+        </div>
+        
+        <div class="welcome-text">
+            <h1>Welcome to Jskope</h1>
+            <p>Building in progress</p>
+            
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>SYSTEM PENDING</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2026 Netskope, Inc. All rights reserved.
+    </div>
+</body>
+</html>
