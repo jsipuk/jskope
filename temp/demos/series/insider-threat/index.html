@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Series 01: The Insider Threat | Jskope Demo Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --turquoise: #00A7CE;
+            --orange: #FF8300;
+            --navy: #002B49;
+            --bg: #fafbfc;
+            --text: #1a1d23;
+            --muted: #6b7280;
+            --border: rgba(0,167,206,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,167,206,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,167,206,0.025) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: grid-shift 20s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes grid-shift { to { background-position: 60px 60px; } }
+
+        header {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(250,251,252,0.88);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            max-width: 1060px; margin: 0 auto; padding: 0 2rem;
+            height: 62px; display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .logo { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; }
+        .logo-mark { width: 30px; height: 30px; }
+        .logo-text { font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; font-weight: 500; color: var(--navy); text-decoration: none; letter-spacing: -0.5px; }
+        .logo-text em { color: var(--turquoise); font-style: normal; }
+
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+        .back-link { font-size: 0.82rem; color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 0.3rem; }
+        .back-link:hover { color: var(--turquoise); }
+        .series-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; background: var(--navy); color: #fff; padding: 0.22rem 0.7rem; border-radius: 50px; }
+
+        main { max-width: 1060px; margin: 0 auto; padding: 2.5rem 2rem 5rem; position: relative; z-index: 10; }
+
+        @keyframes fade-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+        .hero { margin-bottom: 2.5rem; animation: fade-up 0.5s ease both; }
+        .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; letter-spacing: 0.12em; color: var(--orange); text-transform: uppercase; margin-bottom: 0.65rem; }
+        .hero h1 { font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 700; color: var(--navy); line-height: 1.15; margin-bottom: 0.8rem; }
+        .hero-meta { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .meta-chip { font-size: 0.78rem; color: var(--muted); display: flex; align-items: center; gap: 0.35rem; }
+        .hero-desc { font-size: 1rem; color: var(--muted); line-height: 1.65; max-width: 680px; }
+
+        /* Industry banner */
+        .industry-banner {
+            background: linear-gradient(135deg, rgba(0,43,73,0.04) 0%, rgba(0,167,206,0.06) 100%);
+            border: 1px solid rgba(0,167,206,0.2);
+            border-radius: 10px;
+            padding: 0.9rem 1.25rem;
+            margin-bottom: 2.5rem;
+            display: flex; align-items: center; gap: 0.75rem;
+            animation: fade-up 0.5s 0.1s ease both;
+        }
+        .industry-banner.hidden { display: none; }
+        .industry-banner .ib-label { font-size: 0.8rem; color: var(--muted); }
+        .industry-banner .ib-name { font-weight: 600; color: var(--navy); }
+        .industry-banner .ib-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; background: rgba(0,167,206,0.1); color: var(--turquoise); padding: 0.18rem 0.6rem; border-radius: 50px; margin-left: auto; }
+
+        /* Progress tracker */
+        .progress-bar {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2.5rem;
+            animation: fade-up 0.5s 0.15s ease both;
+        }
+        .progress-label { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; }
+        .progress-steps { display: flex; gap: 0; }
+        .progress-step { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; position: relative; }
+        .progress-step:not(:last-child)::after {
+            content: ''; position: absolute; top: 14px; left: 50%; width: 100%;
+            height: 2px; background: var(--border);
+        }
+        .progress-step.done::after { background: var(--turquoise); }
+        .ps-dot { width: 28px; height: 28px; border-radius: 50%; background: var(--border); border: 2px solid transparent; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: var(--muted); z-index: 1; transition: all 0.3s; }
+        .progress-step.active .ps-dot { background: var(--turquoise); border-color: var(--turquoise); color: #fff; box-shadow: 0 0 0 4px rgba(0,167,206,0.15); }
+        .progress-step.done .ps-dot { background: var(--navy); border-color: var(--navy); color: #fff; }
+        .ps-label { font-size: 0.7rem; color: var(--muted); text-align: center; max-width: 80px; line-height: 1.3; }
+        .progress-step.active .ps-label { color: var(--turquoise); font-weight: 600; }
+
+        /* Steps */
+        .step-section { margin-bottom: 2rem; animation: fade-up 0.5s 0.2s ease both; }
+
+        .step-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2rem;
+            margin-bottom: 1.25rem;
+            transition: box-shadow 0.2s;
+            scroll-margin-top: 80px;
+        }
+        .step-card:hover { box-shadow: 0 4px 20px rgba(0,167,206,0.07); }
+        .step-card.active-step { border-color: rgba(0,167,206,0.35); box-shadow: 0 0 0 3px rgba(0,167,206,0.08); }
+        .step-card.completed { border-color: rgba(0,43,73,0.2); opacity: 0.7; }
+
+        .step-header { display: flex; align-items: flex-start; gap: 1.1rem; margin-bottom: 1.25rem; }
+        .step-num { width: 36px; height: 36px; min-width: 36px; border-radius: 10px; background: var(--navy); color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 700; }
+        .step-card.active-step .step-num { background: var(--turquoise); }
+        .step-card.completed .step-num { background: #10B981; }
+        .step-info { flex: 1; }
+        .step-info h3 { font-size: 1.05rem; font-weight: 700; color: var(--navy); margin-bottom: 0.3rem; }
+        .step-info p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+        .step-status { font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; padding: 0.22rem 0.65rem; border-radius: 50px; white-space: nowrap; }
+        .status-active { background: rgba(0,167,206,0.1); color: var(--turquoise); border: 1px solid rgba(0,167,206,0.25); }
+        .status-waiting { background: rgba(107,114,128,0.08); color: var(--muted); border: 1px solid rgba(107,114,128,0.15); }
+        .status-done { background: rgba(16,185,129,0.08); color: #10B981; border: 1px solid rgba(16,185,129,0.2); }
+
+        .step-narrative {
+            background: rgba(0,43,73,0.03);
+            border-left: 3px solid var(--navy);
+            border-radius: 0 6px 6px 0;
+            padding: 0.9rem 1.1rem;
+            margin-bottom: 1.25rem;
+            font-size: 0.88rem;
+            color: var(--text);
+            line-height: 1.65;
+            font-style: italic;
+        }
+        .step-narrative .industry-swap { font-weight: 600; color: var(--navy); font-style: normal; }
+
+        .step-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-bottom: 1.25rem; }
+
+        .action-link {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: var(--turquoise); color: #fff;
+            text-decoration: none; font-size: 0.88rem; font-weight: 600;
+            padding: 0.6rem 1.2rem; border-radius: 8px;
+            transition: background 0.18s;
+        }
+        .action-link:hover { background: #0095b8; }
+        .action-link.secondary { background: transparent; color: var(--navy); border: 1.5px solid rgba(0,43,73,0.2); }
+        .action-link.secondary:hover { border-color: var(--turquoise); color: var(--turquoise); }
+        .action-link.warn { background: var(--orange); }
+        .action-link.warn:hover { background: #e67500; }
+
+        .mark-done-btn {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: transparent; color: var(--muted);
+            border: 1.5px dashed rgba(107,114,128,0.3);
+            font-size: 0.82rem; font-family: inherit;
+            padding: 0.5rem 1rem; border-radius: 8px;
+            cursor: pointer; transition: all 0.18s;
+            margin-left: auto;
+        }
+        .mark-done-btn:hover { border-color: #10B981; color: #10B981; }
+        .mark-done-btn.done { background: rgba(16,185,129,0.08); border-color: #10B981; color: #10B981; border-style: solid; }
+
+        .step-outcome {
+            border-radius: 8px;
+            padding: 0.9rem 1.1rem;
+            font-size: 0.85rem;
+        }
+        .outcome-block { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2); }
+        .outcome-log   { background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2); }
+        .outcome-coach { background: rgba(255,131,0,0.06); border: 1px solid rgba(255,131,0,0.2); }
+        .outcome-dlp   { background: rgba(0,43,73,0.05); border: 1px solid rgba(0,43,73,0.15); }
+        .outcome-label { font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; }
+        .outcome-block .outcome-label { color: #EF4444; }
+        .outcome-log   .outcome-label { color: #10B981; }
+        .outcome-coach .outcome-label { color: var(--orange); }
+        .outcome-dlp   .outcome-label { color: var(--navy); }
+        .outcome-desc { color: var(--muted); line-height: 1.55; }
+
+        /* Summary card */
+        .summary-card {
+            background: linear-gradient(135deg, var(--navy) 0%, #003d6b 100%);
+            color: #fff;
+            border-radius: 14px;
+            padding: 2rem;
+            margin-top: 2.5rem;
+            animation: fade-up 0.5s 0.35s ease both;
+        }
+        .summary-card h2 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+        .summary-card p { font-size: 0.9rem; opacity: 0.8; line-height: 1.65; margin-bottom: 1.5rem; }
+        .summary-links { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+        .summary-links a { font-size: 0.85rem; font-weight: 600; padding: 0.55rem 1.1rem; border-radius: 8px; text-decoration: none; transition: all 0.18s; }
+        .summary-links .sl-primary { background: var(--turquoise); color: #fff; }
+        .summary-links .sl-primary:hover { background: #0095b8; }
+        .summary-links .sl-secondary { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.15); }
+        .summary-links .sl-secondary:hover { background: rgba(255,255,255,0.18); }
+
+        /* Highlight boxes */
+        .note-box { background: rgba(255,131,0,0.05); border: 1px solid rgba(255,131,0,0.2); border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.82rem; color: var(--text); line-height: 1.55; margin-bottom: 1rem; }
+        .note-box strong { color: var(--orange); }
+
+        footer { position: relative; z-index: 10; border-top: 1px solid var(--border); padding: 2rem; text-align: center; }
+        footer p { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--muted); opacity: 0.55; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-inner">
+        <a href="/" class="logo">
+            <svg class="logo-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="16" cy="16" r="14" fill="#002B49"/>
+                <ellipse cx="16" cy="16" rx="12" ry="4.2" fill="none" stroke="#00A7CE" stroke-width="0.9" opacity="0.75" transform="rotate(-20 16 16)"/>
+                <ellipse cx="16" cy="16" rx="9"  ry="3.2" fill="none" stroke="#00A7CE" stroke-width="0.65" opacity="0.4"  transform="rotate(55 16 16)"/>
+                <circle cx="16" cy="16" r="4.5" fill="#001525" stroke="#00DDFF" stroke-width="0.9"/>
+                <circle cx="16" cy="16" r="1.6"  fill="#00EEFF" opacity="0.92"/>
+                <line x1="14.2" y1="13.4" x2="18" y2="13.4" stroke="#00EEFF" stroke-width="1.1" stroke-linecap="round" opacity="0.9"/>
+                <line x1="17"   y1="13.4" x2="17" y2="17.6" stroke="#00EEFF" stroke-width="1.1" stroke-linecap="round" opacity="0.9"/>
+                <path d="M17 17.6 Q17 19.6 15.4 19.6 Q13.8 19.6 13.8 18" fill="none" stroke="#00EEFF" stroke-width="1.1" stroke-linecap="round" opacity="0.9"/>
+            </svg>
+            <span class="logo-text">j<em>skope</em></span>
+        </a>
+        <div class="header-right">
+            <a href="/temp/" class="back-link">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M10.5 6.5h-8M5 4 2.5 6.5 5 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Demo Portal
+            </a>
+            <span class="series-badge">SERIES 01</span>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <div class="hero">
+        <div class="eyebrow">Demo Series 01</div>
+        <h1>The Insider Threat</h1>
+        <div class="hero-meta">
+            <span class="meta-chip">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#6b7280" stroke-width="1.2"/><path d="M7 4.5v3l1.5 1.5" stroke="#6b7280" stroke-width="1.2" stroke-linecap="round"/></svg>
+                ~8 minutes
+            </span>
+            <span class="meta-chip">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="4" width="10" height="7.5" rx="1.5" stroke="#6b7280" stroke-width="1.2"/><path d="M5 4V3a2 2 0 0 1 4 0v1" stroke="#6b7280" stroke-width="1.2"/></svg>
+                4 Steps
+            </span>
+            <span class="meta-chip">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2v10" stroke="#6b7280" stroke-width="1.2" stroke-linecap="round"/></svg>
+                DLP · CASB · SWG
+            </span>
+        </div>
+        <p class="hero-desc">Walk through how an employee might attempt to exfiltrate sensitive data — and how Netskope catches it at every step. Each step fires a real Netskope policy control when the client is active.</p>
+    </div>
+
+    <!-- Industry banner -->
+    <div class="industry-banner hidden" id="industry-banner">
+        <div>
+            <div class="ib-label">Scenario tailored for</div>
+            <div class="ib-name" id="ib-name"></div>
+        </div>
+        <span class="ib-tag" id="ib-tag"></span>
+    </div>
+
+    <!-- Progress tracker -->
+    <div class="progress-bar">
+        <div class="progress-label">Your progress</div>
+        <div class="progress-steps" id="progress-steps">
+            <div class="progress-step active" id="ps-1">
+                <div class="ps-dot">1</div>
+                <div class="ps-label">Access Personal Cloud</div>
+            </div>
+            <div class="progress-step" id="ps-2">
+                <div class="ps-dot">2</div>
+                <div class="ps-label">Upload Sensitive File</div>
+            </div>
+            <div class="progress-step" id="ps-3">
+                <div class="ps-dot">3</div>
+                <div class="ps-label">Email Data Out</div>
+            </div>
+            <div class="progress-step" id="ps-4">
+                <div class="ps-dot">4</div>
+                <div class="ps-label">Observe Audit Trail</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step-section">
+        <div class="step-card active-step" id="step-1">
+            <div class="step-header">
+                <div class="step-num">1</div>
+                <div class="step-info">
+                    <h3>Access a Personal Cloud Storage Site</h3>
+                    <p>The employee navigates to personal file-sharing services not sanctioned by the organisation.</p>
+                </div>
+                <span class="step-status status-active">ACTIVE</span>
+            </div>
+            <div class="step-narrative">
+                <span class="industry-swap" id="s1-narrative-lead">A user</span> opens a browser and navigates to a personal Dropbox or WeTransfer account — services not covered by IT policy. <span id="s1-narrative-context">The intent is to move files outside corporate controls.</span>
+            </div>
+            <div class="note-box"><strong>Prerequisite:</strong> Netskope Client must be active. If not, these sites open normally without any controls firing.</div>
+            <div class="step-actions">
+                <a href="https://www.dropbox.com" target="_blank" rel="noopener" class="action-link">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 4V1M7 1L5 3M7 1L9 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><rect x="2" y="6" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
+                    Open Dropbox (Personal)
+                </a>
+                <a href="https://wetransfer.com" target="_blank" rel="noopener" class="action-link secondary">
+                    Open WeTransfer
+                </a>
+                <a href="https://mega.nz" target="_blank" rel="noopener" class="action-link secondary">
+                    Open MEGA
+                </a>
+                <button class="mark-done-btn" onclick="markDone(1, this)">
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3 3 6-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Mark step done
+                </button>
+            </div>
+            <div class="step-outcome outcome-block">
+                <div class="outcome-label">Expected Netskope Response</div>
+                <div class="outcome-desc">If unsanctioned cloud storage is blocked by policy: you'll see a Netskope block page with the policy name and category. If coaching is configured: a real-time in-browser notification appears explaining why personal cloud storage violates acceptable use. If only logged: the access event appears in the Netskope console under CASB activity.</div>
+            </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step-card" id="step-2">
+            <div class="step-header">
+                <div class="step-num">2</div>
+                <div class="step-info">
+                    <h3>Download a Synthetic Sensitive File</h3>
+                    <p>Download a synthetic data file that contains PII, credit card numbers, or employee records.</p>
+                </div>
+                <span class="step-status status-waiting" id="status-2">WAITING</span>
+            </div>
+            <div class="step-narrative">
+                <span class="industry-swap" id="s2-narrative-lead">The user</span> downloads <span id="s2-file-type">an employee records file</span> from a shared drive — the kind of data that should never leave the corporate perimeter unscanned.
+            </div>
+            <div class="step-actions">
+                <a href="/temp/assets/demo-data/employee-records-synthetic.txt" download class="action-link warn">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v7M7 9L4.5 6.5M7 9L9.5 6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                    Download Employee Records (PII)
+                </a>
+                <a href="/temp/assets/demo-data/payment-data-synthetic.csv" download class="action-link secondary">
+                    Download Payment Data (PCI)
+                </a>
+                <a href="/temp/demos/dlp/" class="action-link secondary">
+                    More DLP scenarios →
+                </a>
+                <button class="mark-done-btn" onclick="markDone(2, this)">
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3 3 6-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Mark step done
+                </button>
+            </div>
+            <div class="step-outcome outcome-dlp">
+                <div class="outcome-label">Expected Netskope Response — DLP</div>
+                <div class="outcome-desc">Netskope performs inline content inspection of the downloaded file. If a DLP profile matches PII patterns (SSNs, names, addresses), the download is blocked or quarantined and an incident is raised. The file contains clearly labelled synthetic test data — safe to use in demos.</div>
+            </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step-card" id="step-3">
+            <div class="step-header">
+                <div class="step-num">3</div>
+                <div class="step-info">
+                    <h3>Attempt to Email Sensitive Data Externally</h3>
+                    <p>Try sending the file or pasting the sensitive content via a personal webmail account.</p>
+                </div>
+                <span class="step-status status-waiting" id="status-3">WAITING</span>
+            </div>
+            <div class="step-narrative">
+                <span class="industry-swap" id="s3-narrative-lead">The employee</span> opens Gmail or Outlook.com and attempts to compose an email attaching the file or pasting the <span id="s3-data-type">employee record data</span> directly into the message body.
+            </div>
+            <div class="step-actions">
+                <a href="https://mail.google.com" target="_blank" rel="noopener" class="action-link">
+                    Open Gmail (Personal)
+                </a>
+                <a href="https://outlook.live.com" target="_blank" rel="noopener" class="action-link secondary">
+                    Open Outlook.com
+                </a>
+                <a href="https://proton.me/mail" target="_blank" rel="noopener" class="action-link secondary">
+                    Open ProtonMail
+                </a>
+                <button class="mark-done-btn" onclick="markDone(3, this)">
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3 3 6-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Mark step done
+                </button>
+            </div>
+            <div class="step-outcome outcome-block">
+                <div class="outcome-label">Expected Netskope Response</div>
+                <div class="outcome-desc">If personal webmail is blocked by SWG policy: a block page appears when navigating to Gmail or Outlook.com. If coaching is configured: the user receives an in-browser notification about acceptable use. If webmail is allowed but DLP is active: attaching the sensitive file or typing PII into the compose window triggers an inline DLP alert and the upload is blocked before submission.</div>
+            </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="step-card" id="step-4">
+            <div class="step-header">
+                <div class="step-num">4</div>
+                <div class="step-info">
+                    <h3>Review the Netskope Audit Trail</h3>
+                    <p>In the Netskope console, navigate to the events log to see every action captured throughout this series.</p>
+                </div>
+                <span class="step-status status-waiting" id="status-4">WAITING</span>
+            </div>
+            <div class="step-narrative">
+                Now switch to the Netskope tenant console. Every step above — the CASB access event, the DLP file download alert, the blocked webmail upload — appears in the audit log with full metadata: user identity, device, timestamp, policy matched, and action taken.
+            </div>
+            <div class="step-actions">
+                <a href="https://[YOUR-TENANT].goskope.com" target="_blank" rel="noopener" class="action-link secondary" onclick="alert('Replace [YOUR-TENANT] with your actual Netskope tenant hostname before using this link.'); return false;">
+                    Open Netskope Console
+                </a>
+                <button class="mark-done-btn" onclick="markDone(4, this)">
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3 3 6-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Mark complete
+                </button>
+            </div>
+            <div class="step-outcome outcome-log">
+                <div class="outcome-label">What to Look For in the Console</div>
+                <div class="outcome-desc">Navigate to Skope IT → Events. Filter by your username and the past 15 minutes. You should see: (1) CASB access events for Dropbox/WeTransfer with the app's CCI score, (2) DLP incidents for the downloaded PII file, (3) SWG block/coaching events for personal webmail. Every event links to full session detail and the matched policy rule.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Series Summary -->
+    <div class="summary-card" id="summary-card">
+        <h2>Series Complete — Key Takeaways</h2>
+        <p>You've demonstrated the full insider threat kill chain: an employee accesses unsanctioned cloud storage, downloads sensitive data, and attempts to exfiltrate via personal email. Netskope intercepts at every stage — CASB identifies shadow IT usage, DLP blocks sensitive file movement, SWG controls personal webmail — and creates a full audit trail without requiring any endpoint agents beyond the Netskope Client.</p>
+        <div class="summary-links">
+            <a href="/temp/demos/series/ai-risk/" class="sl-primary">Next: AI Risk in the Enterprise →</a>
+            <a href="/temp/demos/dlp/" class="sl-secondary">Full DLP Demo</a>
+            <a href="/temp/demos/shadow-it/" class="sl-secondary">Shadow IT / CASB Demo</a>
+            <a href="/temp/" class="sl-secondary">Back to Portal</a>
+        </div>
+    </div>
+
+</main>
+
+<footer>
+    <p>© 2026 Netskope, Inc. — Demo Environment — jskope.com/temp</p>
+</footer>
+
+<script>
+const INDUSTRIES = {
+    general:   { label: 'General',            lead1: 'A user',         lead2: 'The user',       lead3: 'The employee',   fileType: 'an employee records file',        dataType: 'sensitive record data',        context: 'The intent is to move files outside corporate controls.' },
+    lawfirm:   { label: 'Law Firm',           lead1: 'A paralegal',    lead2: 'The paralegal',  lead3: 'The paralegal',  fileType: 'a client matter file with PII',   dataType: 'client PII and matter details', context: 'The goal is to work on case files from a personal device, outside the firm\'s document management system.' },
+    finance:   { label: 'Financial Services', lead1: 'A trader',       lead2: 'The analyst',    lead3: 'The analyst',    fileType: 'a payment records CSV',           dataType: 'customer financial records',   context: 'The employee wants to work on deal data from home, bypassing the firm\'s data governance controls.' },
+    insurance: { label: 'Insurance',          lead1: 'An underwriter', lead2: 'The underwriter', lead3: 'The underwriter', fileType: 'a policyholder data export',      dataType: 'policyholder PII and premiums', context: 'The underwriter is attempting to access policy data on a personal storage account for remote analysis.' },
+    healthcare:{ label: 'Healthcare',         lead1: 'A clinician',    lead2: 'The clinician',  lead3: 'The clinician',  fileType: 'a patient records file (PHI)',     dataType: 'patient health information',   context: 'The clinician wants to share patient records via a personal account, creating a potential HIPAA violation.' },
+    defence:   { label: 'Defence & Gov',      lead1: 'A contractor',   lead2: 'The contractor', lead3: 'The contractor', fileType: 'a classified project summary',     dataType: 'sensitive project data',       context: 'The contractor is attempting to move sensitive project files to a personal cloud service, bypassing data handling policies.' }
+};
+
+function applyIndustry(key) {
+    const ind = INDUSTRIES[key] || INDUSTRIES.general;
+    const el = (id) => document.getElementById(id);
+    if (el('s1-narrative-lead'))    el('s1-narrative-lead').textContent    = ind.lead1;
+    if (el('s1-narrative-context')) el('s1-narrative-context').textContent = ind.context;
+    if (el('s2-narrative-lead'))    el('s2-narrative-lead').textContent    = ind.lead2;
+    if (el('s2-file-type'))         el('s2-file-type').textContent         = ind.fileType;
+    if (el('s3-narrative-lead'))    el('s3-narrative-lead').textContent    = ind.lead3;
+    if (el('s3-data-type'))         el('s3-data-type').textContent         = ind.dataType;
+
+    const banner = el('industry-banner');
+    if (key !== 'general') {
+        el('ib-name').textContent = ind.label;
+        el('ib-tag').textContent  = 'TAILORED';
+        banner.classList.remove('hidden');
+    } else {
+        banner.classList.add('hidden');
+    }
+}
+
+// Progress tracking
+const STEPS = 4;
+const progress = Array(STEPS + 1).fill(false);
+
+function markDone(stepNum, btn) {
+    progress[stepNum] = !progress[stepNum];
+    if (progress[stepNum]) {
+        btn.classList.add('done');
+        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3 3 6-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Done`;
+        document.getElementById('step-' + stepNum).classList.add('completed');
+        document.getElementById('step-' + stepNum).classList.remove('active-step');
+        if (stepNum < STEPS) {
+            document.getElementById('step-' + (stepNum + 1)).classList.add('active-step');
+            document.getElementById('status-' + (stepNum + 1)).textContent = 'ACTIVE';
+            document.getElementById('status-' + (stepNum + 1)).className = 'step-status status-active';
+        }
+    } else {
+        btn.classList.remove('done');
+        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3 3 6-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Mark step done`;
+        document.getElementById('step-' + stepNum).classList.remove('completed');
+    }
+    updateProgressBar();
+}
+
+function updateProgressBar() {
+    for (let i = 1; i <= STEPS; i++) {
+        const ps = document.getElementById('ps-' + i);
+        if (!ps) continue;
+        ps.classList.remove('done', 'active');
+        if (progress[i]) {
+            ps.classList.add('done');
+        } else if (i === getNextStep()) {
+            ps.classList.add('active');
+        }
+    }
+}
+
+function getNextStep() {
+    for (let i = 1; i <= STEPS; i++) {
+        if (!progress[i]) return i;
+    }
+    return STEPS + 1;
+}
+
+function init() {
+    const key = localStorage.getItem('jskope-industry') || 'general';
+    applyIndustry(key);
+}
+
+init();
+</script>
+</body>
+</html>

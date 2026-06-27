@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Series 02: AI Risk in the Enterprise | Jskope Demo Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --turquoise: #00A7CE;
+            --orange: #FF8300;
+            --navy: #002B49;
+            --bg: #fafbfc;
+            --text: #1a1d23;
+            --muted: #6b7280;
+            --border: rgba(0,167,206,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image:
+                linear-gradient(rgba(0,167,206,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,167,206,0.025) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: grid-shift 20s linear infinite; z-index: 0;
+        }
+        @keyframes grid-shift { to { background-position: 60px 60px; } }
+
+        header {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(250,251,252,0.88); backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+        }
+        .header-inner {
+            max-width: 1060px; margin: 0 auto; padding: 0 2rem;
+            height: 62px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; }
+        .logo-mark { width: 30px; height: 30px; }
+        .logo-text { font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; font-weight: 500; color: var(--navy); letter-spacing: -0.5px; }
+        .logo-text em { color: var(--turquoise); font-style: normal; }
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+        .back-link { font-size: 0.82rem; color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 0.3rem; }
+        .back-link:hover { color: var(--turquoise); }
+        .series-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; background: var(--turquoise); color: #fff; padding: 0.22rem 0.7rem; border-radius: 50px; }
+
+        main { max-width: 1060px; margin: 0 auto; padding: 2.5rem 2rem 5rem; position: relative; z-index: 10; }
+
+        @keyframes fade-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+        .hero { margin-bottom: 2.5rem; animation: fade-up 0.5s ease both; }
+        .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; letter-spacing: 0.12em; color: var(--turquoise); text-transform: uppercase; margin-bottom: 0.65rem; }
+        .hero h1 { font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 700; color: var(--navy); line-height: 1.15; margin-bottom: 0.8rem; }
+        .hero-meta { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .meta-chip { font-size: 0.78rem; color: var(--muted); display: flex; align-items: center; gap: 0.35rem; }
+        .hero-desc { font-size: 1rem; color: var(--muted); line-height: 1.65; max-width: 680px; }
+
+        .industry-banner {
+            background: linear-gradient(135deg, rgba(0,167,206,0.04) 0%, rgba(0,43,73,0.06) 100%);
+            border: 1px solid rgba(0,167,206,0.2); border-radius: 10px;
+            padding: 0.9rem 1.25rem; margin-bottom: 2.5rem;
+            display: flex; align-items: center; gap: 0.75rem;
+            animation: fade-up 0.5s 0.1s ease both;
+        }
+        .industry-banner.hidden { display: none; }
+        .ib-label { font-size: 0.8rem; color: var(--muted); }
+        .ib-name { font-weight: 600; color: var(--navy); }
+        .ib-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; background: rgba(0,167,206,0.1); color: var(--turquoise); padding: 0.18rem 0.6rem; border-radius: 50px; margin-left: auto; }
+
+        .progress-bar {
+            background: #fff; border: 1px solid var(--border); border-radius: 12px;
+            padding: 1.25rem 1.5rem; margin-bottom: 2.5rem;
+            animation: fade-up 0.5s 0.15s ease both;
+        }
+        .progress-label { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; }
+        .progress-steps { display: flex; gap: 0; }
+        .progress-step { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; position: relative; }
+        .progress-step:not(:last-child)::after { content: ''; position: absolute; top: 14px; left: 50%; width: 100%; height: 2px; background: var(--border); }
+        .progress-step.done::after { background: var(--turquoise); }
+        .ps-dot { width: 28px; height: 28px; border-radius: 50%; background: var(--border); border: 2px solid transparent; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: var(--muted); z-index: 1; transition: all 0.3s; }
+        .progress-step.active .ps-dot { background: var(--turquoise); border-color: var(--turquoise); color: #fff; box-shadow: 0 0 0 4px rgba(0,167,206,0.15); }
+        .progress-step.done .ps-dot { background: var(--navy); border-color: var(--navy); color: #fff; }
+        .ps-label { font-size: 0.7rem; color: var(--muted); text-align: center; max-width: 90px; line-height: 1.3; }
+        .progress-step.active .ps-label { color: var(--turquoise); font-weight: 600; }
+
+        .step-section { margin-bottom: 2rem; animation: fade-up 0.5s 0.2s ease both; }
+        .step-card {
+            background: #fff; border: 1px solid var(--border); border-radius: 14px;
+            padding: 2rem; margin-bottom: 1.25rem; transition: box-shadow 0.2s;
+            scroll-margin-top: 80px;
+        }
+        .step-card:hover { box-shadow: 0 4px 20px rgba(0,167,206,0.07); }
+        .step-card.active-step { border-color: rgba(0,167,206,0.35); box-shadow: 0 0 0 3px rgba(0,167,206,0.08); }
+        .step-card.completed { border-color: rgba(0,43,73,0.2); opacity: 0.7; }
+
+        .step-header { display: flex; align-items: flex-start; gap: 1.1rem; margin-bottom: 1.25rem; }
+        .step-num { width: 36px; height: 36px; min-width: 36px; border-radius: 10px; background: var(--navy); color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 700; }
+        .step-card.active-step .step-num { background: var(--turquoise); }
+        .step-card.completed .step-num { background: #10B981; }
+        .step-info { flex: 1; }
+        .step-info h3 { font-size: 1.05rem; font-weight: 700; color: var(--navy); margin-bottom: 0.3rem; }
+        .step-info p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+        .step-status { font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; padding: 0.22rem 0.65rem; border-radius: 50px; white-space: nowrap; }
+        .status-active  { background: rgba(0,167,206,0.1); color: var(--turquoise); border: 1px solid rgba(0,167,206,0.25); }
+        .status-waiting { background: rgba(107,114,128,0.08); color: var(--muted); border: 1px solid rgba(107,114,128,0.15); }
+        .status-done    { background: rgba(16,185,129,0.08); color: #10B981; border: 1px solid rgba(16,185,129,0.2); }
+
+        .step-narrative {
+            background: rgba(0,43,73,0.03); border-left: 3px solid var(--turquoise);
+            border-radius: 0 6px 6px 0; padding: 0.9rem 1.1rem; margin-bottom: 1.25rem;
+            font-size: 0.88rem; color: var(--text); line-height: 1.65; font-style: italic;
+        }
+        .step-narrative .bold { font-weight: 700; font-style: normal; color: var(--navy); }
+
+        /* Prompt block */
+        .prompt-block {
+            background: var(--navy); border-radius: 10px; padding: 1.1rem 1.25rem;
+            margin-bottom: 1.25rem; position: relative;
+        }
+        .prompt-label { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem; }
+        .prompt-text { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: rgba(255,255,255,0.88); line-height: 1.65; white-space: pre-wrap; word-break: break-word; }
+        .prompt-copy { position: absolute; top: 0.75rem; right: 0.9rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); font-size: 0.72rem; font-family: inherit; padding: 0.25rem 0.65rem; border-radius: 6px; cursor: pointer; transition: all 0.18s; }
+        .prompt-copy:hover { background: rgba(255,255,255,0.18); color: #fff; }
+        .prompt-copy.copied { background: rgba(16,185,129,0.25); border-color: rgba(16,185,129,0.4); color: #10B981; }
+
+        .step-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-bottom: 1.25rem; }
+        .action-link { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--turquoise); color: #fff; text-decoration: none; font-size: 0.88rem; font-weight: 600; padding: 0.6rem 1.2rem; border-radius: 8px; transition: background 0.18s; }
+        .action-link:hover { background: #0095b8; }
+        .action-link.secondary { background: transparent; color: var(--navy); border: 1.5px solid rgba(0,43,73,0.2); }
+        .action-link.secondary:hover { border-color: var(--turquoise); color: var(--turquoise); }
+
+        .mark-done-btn { display: inline-flex; align-items: center; gap: 0.4rem; background: transparent; color: var(--muted); border: 1.5px dashed rgba(107,114,128,0.3); font-size: 0.82rem; font-family: inherit; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; transition: all 0.18s; margin-left: auto; }
+        .mark-done-btn:hover { border-color: #10B981; color: #10B981; }
+        .mark-done-btn.done { background: rgba(16,185,129,0.08); border-color: #10B981; color: #10B981; border-style: solid; }
+
+        .step-outcome { border-radius: 8px; padding: 0.9rem 1.1rem; font-size: 0.85rem; }
+        .outcome-block { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2); }
+        .outcome-log   { background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2); }
+        .outcome-coach { background: rgba(255,131,0,0.06); border: 1px solid rgba(255,131,0,0.2); }
+        .outcome-label { font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; }
+        .outcome-block .outcome-label { color: #EF4444; }
+        .outcome-log   .outcome-label { color: #10B981; }
+        .outcome-coach .outcome-label { color: var(--orange); }
+        .outcome-desc { color: var(--muted); line-height: 1.55; }
+
+        .safe-notice { background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2); border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.82rem; color: #059669; margin-bottom: 1rem; display: flex; align-items: flex-start; gap: 0.5rem; }
+
+        .summary-card { background: linear-gradient(135deg, var(--navy) 0%, #003d6b 100%); color: #fff; border-radius: 14px; padding: 2rem; margin-top: 2.5rem; animation: fade-up 0.5s 0.35s ease both; }
+        .summary-card h2 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+        .summary-card p { font-size: 0.9rem; opacity: 0.8; line-height: 1.65; margin-bottom: 1.5rem; }
+        .summary-links { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+        .summary-links a { font-size: 0.85rem; font-weight: 600; padding: 0.55rem 1.1rem; border-radius: 8px; text-decoration: none; transition: all 0.18s; }
+        .sl-primary { background: var(--turquoise); color: #fff; }
+        .sl-primary:hover { background: #0095b8; }
+        .sl-secondary { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.15); }
+        .sl-secondary:hover { background: rgba(255,255,255,0.18); }
+
+        footer { position: relative; z-index: 10; border-top: 1px solid var(--border); padding: 2rem; text-align: center; }
+        footer p { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--muted); opacity: 0.55; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-inner">
+        <a href="/" class="logo">
+            <svg class="logo-mark" viewBox="0 0 32 32" fill="none">
+                <circle cx="16" cy="16" r="14" fill="#002B49"/>
+                <ellipse cx="16" cy="16" rx="12" ry="4.2" fill="none" stroke="#00A7CE" stroke-width="0.9" opacity="0.75" transform="rotate(-20 16 16)"/>
+                <ellipse cx="16" cy="16" rx="9"  ry="3.2" fill="none" stroke="#00A7CE" stroke-width="0.65" opacity="0.4"  transform="rotate(55 16 16)"/>
+                <circle cx="16" cy="16" r="4.5" fill="#001525" stroke="#00DDFF" stroke-width="0.9"/>
+                <circle cx="16" cy="16" r="1.6"  fill="#00EEFF" opacity="0.92"/>
+                <line x1="14.2" y1="13.4" x2="18" y2="13.4" stroke="#00EEFF" stroke-width="1.1" stroke-linecap="round" opacity="0.9"/>
+                <line x1="17"   y1="13.4" x2="17" y2="17.6" stroke="#00EEFF" stroke-width="1.1" stroke-linecap="round" opacity="0.9"/>
+                <path d="M17 17.6 Q17 19.6 15.4 19.6 Q13.8 19.6 13.8 18" fill="none" stroke="#00EEFF" stroke-width="1.1" stroke-linecap="round" opacity="0.9"/>
+            </svg>
+            <span class="logo-text">j<em>skope</em></span>
+        </a>
+        <div class="header-right">
+            <a href="/temp/" class="back-link">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M10.5 6.5h-8M5 4 2.5 6.5 5 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Demo Portal
+            </a>
+            <span class="series-badge">SERIES 02</span>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <div class="hero">
+        <div class="eyebrow">Demo Series 02</div>
+        <h1>AI Risk in the Enterprise</h1>
+        <div class="hero-meta">
+            <span class="meta-chip">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#6b7280" stroke-width="1.2"/><path d="M7 4.5v3l1.5 1.5" stroke="#6b7280" stroke-width="1.2" stroke-linecap="round"/></svg>
+                ~10 minutes
+            </span>
+            <span class="meta-chip">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="4" width="10" height="7.5" rx="1.5" stroke="#6b7280" stroke-width="1.2"/><path d="M5 4V3a2 2 0 0 1 4 0v1" stroke="#6b7280" stroke-width="1.2"/></svg>
+                3 Steps
+            </span>
+            <span class="meta-chip">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="2" width="10" height="10" rx="2" stroke="#6b7280" stroke-width="1.2"/><path d="M4 7h6M4 5h4" stroke="#6b7280" stroke-width="1.1" stroke-linecap="round"/></svg>
+                AI Guardrails · DLP
+            </span>
+        </div>
+        <p class="hero-desc">Demonstrate the data risk posed by ungoverned AI tool usage, then show how Netskope's AI guardrails protect the organisation. Each step pastes real sensitive content into a live AI tool — Netskope intercepts it inline before the data reaches the model.</p>
+    </div>
+
+    <!-- Industry banner -->
+    <div class="industry-banner hidden" id="industry-banner">
+        <div>
+            <div class="ib-label">Scenario tailored for</div>
+            <div class="ib-name" id="ib-name"></div>
+        </div>
+        <span class="ib-tag">TAILORED PROMPTS ACTIVE</span>
+    </div>
+
+    <div class="safe-notice">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5L13 4v4.5C13 11.8 10.5 14.2 7.5 14.5 4.5 14.2 2 11.8 2 8.5V4Z" stroke="#059669" stroke-width="1.3"/><path d="M5 7.5l2 2 3-3" stroke="#059669" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>All prompts use synthetic data only. No real personal, financial, or health information is used. Safe to copy and paste for demo purposes.</span>
+    </div>
+
+    <!-- Progress tracker -->
+    <div class="progress-bar">
+        <div class="progress-label">Your progress</div>
+        <div class="progress-steps">
+            <div class="progress-step active" id="ps-1">
+                <div class="ps-dot">1</div>
+                <div class="ps-label">PII into ChatGPT</div>
+            </div>
+            <div class="progress-step" id="ps-2">
+                <div class="ps-dot">2</div>
+                <div class="ps-label">Source Code to Copilot</div>
+            </div>
+            <div class="progress-step" id="ps-3">
+                <div class="ps-dot">3</div>
+                <div class="ps-label">Observe Policy Response</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step-section">
+        <div class="step-card active-step" id="step-1">
+            <div class="step-header">
+                <div class="step-num">1</div>
+                <div class="step-info">
+                    <h3>Paste Synthetic PII into a ChatGPT Prompt</h3>
+                    <p>Copy the prompt below and paste it into ChatGPT. This simulates a user unknowingly sending personal data to a public AI model.</p>
+                </div>
+                <span class="step-status status-active">ACTIVE</span>
+            </div>
+            <div class="step-narrative">
+                <span id="s1-intro" class="bold">A user</span> opens ChatGPT and starts typing a request. Without thinking, they paste in <span id="s1-data-type">customer contact records</span> as context — sending real personal data directly to a third-party AI provider.
+            </div>
+
+            <div class="prompt-block">
+                <div class="prompt-label">Prompt to copy → paste into ChatGPT</div>
+                <pre class="prompt-text" id="prompt-1">Help me draft a follow-up email for these customers:
+
+Name: Sarah Mitchell, Email: s.mitchell@email.com, DOB: 12/03/1985, SSN: 078-05-1120
+Name: James Thornton, Email: j.thornton@email.com, DOB: 07/11/1979, Account: 4111111111111111
+
+Draft a personalised message for each person referencing their account details.</pre>
+                <button class="prompt-copy" onclick="copyPrompt('prompt-1', this)">Copy</button>
+            </div>
+
+            <div class="step-actions">
+                <a href="https://chat.openai.com" target="_blank" rel="noopener" class="action-link">
+                    Open ChatGPT →
+                </a>
+                <a href="https://gemini.google.com" target="_blank" rel="noopener" class="action-link secondary">
+                    Try on Gemini
+                </a>
+                <a href="https://claude.ai" target="_blank" rel="noopener" class="action-link secondary">
+                    Try on Claude
+                </a>
+                <button class="mark-done-btn" onclick="markDone(1, this)">
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3 3 6-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Mark step done
+                </button>
+            </div>
+
+            <div class="step-outcome outcome-block">
+                <div class="outcome-label">Expected Netskope Response — AI Guardrails</div>
+                <div class="outcome-desc">Netskope performs inline inspection of the prompt text before it reaches ChatGPT's API. If an AI guardrail policy matches PII patterns (SSN, email, name combinations), the prompt is blocked — ChatGPT receives no data. The user sees a block notification explaining the policy. If coaching is configured, a real-time in-browser advisory appears instead.</div>
+            </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step-card" id="step-2">
+            <div class="step-header">
+                <div class="step-num">2</div>
+                <div class="step-info">
+                    <h3>Upload Synthetic Source Code to Microsoft Copilot</h3>
+                    <p>Paste the prompt below into Copilot. This simulates a developer sharing proprietary code containing embedded credentials with an AI assistant.</p>
+                </div>
+                <span class="step-status status-waiting" id="status-2">WAITING</span>
+            </div>
+            <div class="step-narrative">
+                <span id="s2-intro" class="bold">A developer</span> asks Copilot to help refactor <span id="s2-code-context">application code</span>. They paste the full file into the prompt — not realising it contains hardcoded API credentials and internal hostname references.
+            </div>
+
+            <div class="prompt-block">
+                <div class="prompt-label">Prompt to copy → paste into Microsoft Copilot</div>
+                <pre class="prompt-text" id="prompt-2">Can you refactor this Python code to be cleaner and more efficient?
+
+import requests
+
+API_KEY = "AKIAIOSFODNN7EXAMPLE"
+DB_URL  = "postgresql://admin:P@ssw0rd123@internal-db.corp.local:5432/production"
+
+def get_user_data(user_id):
+    headers = {"Authorization": f"Bearer {API_KEY}"}
+    resp = requests.get(f"{DB_URL}/users/{user_id}", headers=headers)
+    return resp.json()
+
+Please clean up the function signatures and add type hints.</pre>
+                <button class="prompt-copy" onclick="copyPrompt('prompt-2', this)">Copy</button>
+            </div>
+
+            <div class="step-actions">
+                <a href="https://copilot.microsoft.com" target="_blank" rel="noopener" class="action-link">
+                    Open Microsoft Copilot →
+                </a>
+                <a href="https://chat.openai.com" target="_blank" rel="noopener" class="action-link secondary">
+                    Try on ChatGPT
+                </a>
+                <button class="mark-done-btn" onclick="markDone(2, this)">
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3 3 6-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Mark step done
+                </button>
+            </div>
+
+            <div class="step-outcome outcome-block">
+                <div class="outcome-label">Expected Netskope Response — AI Guardrails + DLP</div>
+                <div class="outcome-desc">Netskope inspects the Copilot prompt inline. If the DLP or AI guardrail policy matches source code patterns, credential formats, or internal hostname patterns, the upload is blocked before Copilot processes it. An incident is raised in the Netskope console with the matched rule, the user's identity, and the content snippet that triggered the alert.</div>
+            </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step-card" id="step-3">
+            <div class="step-header">
+                <div class="step-num">3</div>
+                <div class="step-info">
+                    <h3>Review the Policy Response in the Netskope Console</h3>
+                    <p>Switch to the Netskope admin console to see the real-time AI guardrail events and DLP incidents generated by the previous steps.</p>
+                </div>
+                <span class="step-status status-waiting" id="status-3">WAITING</span>
+            </div>
+            <div class="step-narrative">
+                Both prompt attempts above are now logged in the Netskope console as AI-related DLP incidents. The console shows the blocked content, the matched policy, the AI tool involved, and the user's identity — giving security teams full visibility without blocking legitimate AI usage.
+            </div>
+            <div class="step-actions">
+                <a href="https://[YOUR-TENANT].goskope.com" target="_blank" rel="noopener" class="action-link secondary" onclick="alert('Replace [YOUR-TENANT] with your actual Netskope tenant hostname before using this link.'); return false;">
+                    Open Netskope Console
+                </a>
+                <a href="/temp/demos/ai-security/" class="action-link secondary">
+                    More AI Scenarios →
+                </a>
+                <button class="mark-done-btn" onclick="markDone(3, this)">
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3 3 6-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Mark complete
+                </button>
+            </div>
+            <div class="step-outcome outcome-log">
+                <div class="outcome-label">What to Look For</div>
+                <div class="outcome-desc">Navigate to Skope IT → Events → filter by Application = "ChatGPT" or "Microsoft Copilot". You'll see the blocked prompt events, the matched DLP profile (PII / Credentials), and the action taken (Block / Alert). Navigate to Policy → DLP Incidents for the full incident report with the sensitive content snippet and remediation options.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-card">
+        <h2>Series Complete — Key Takeaways</h2>
+        <p>You've demonstrated the AI data exfiltration risk: employees casually paste PII and credentials into public AI tools without realising the data is being sent to third-party servers. Netskope's AI guardrails sit inline between the user and the AI tool — inspecting prompts in real-time, blocking sensitive content, and creating an audit trail. Zero changes to the user's workflow are needed; protection is transparent and immediate.</p>
+        <div class="summary-links">
+            <a href="/temp/demos/series/shadow-it-audit/" class="sl-primary">Next: Shadow IT Audit →</a>
+            <a href="/temp/demos/ai-security/" class="sl-secondary">Full AI Security Demo</a>
+            <a href="/temp/demos/dlp/" class="sl-secondary">DLP Demo</a>
+            <a href="/temp/" class="sl-secondary">Back to Portal</a>
+        </div>
+    </div>
+
+</main>
+
+<footer>
+    <p>© 2026 Netskope, Inc. — Demo Environment — jskope.com/temp</p>
+</footer>
+
+<script>
+const INDUSTRIES = {
+    general:    { label: 'General',            s1intro: 'A user',          s1data: 'customer contact records',           s2intro: 'A developer',      s2code: 'application code' },
+    lawfirm:    { label: 'Law Firm',            s1intro: 'A paralegal',     s1data: 'client matter notes with PII',       s2intro: 'A developer',      s2code: 'legal automation script' },
+    finance:    { label: 'Financial Services',  s1intro: 'An analyst',      s1data: 'customer account records',           s2intro: 'A quant developer', s2code: 'trading algorithm with API keys' },
+    insurance:  { label: 'Insurance',           s1intro: 'An underwriter',  s1data: 'policyholder details and premiums',  s2intro: 'A developer',      s2code: 'claims processing code' },
+    healthcare: { label: 'Healthcare',          s1intro: 'A clinician',     s1data: 'patient health records (PHI)',       s2intro: 'A developer',      s2code: 'EHR integration code' },
+    defence:    { label: 'Defence & Gov',       s1intro: 'A contractor',    s1data: 'sensitive project personnel data',   s2intro: 'An engineer',      s2code: 'infrastructure automation script' }
+};
+
+const PROMPTS_INDUSTRY = {
+    general:    { p1: null, p2: null },
+    lawfirm: {
+        p1: `Help me summarise these client matter notes for a court filing:
+
+Client: Victoria Spencer, DOB: 22/04/1971, Matter: Spencer v. Holdings Ltd
+Opposing counsel: Robert Hayes, Ref: HC-2025-04821
+Notes: Client attended on 14 June. Disclosed medical history relevant to damages claim. SSN: 219-09-9999
+
+Draft a 3-paragraph summary suitable for court submission.`,
+        p2: `Refactor this Python legal document automation script:
+
+API_KEY = "AKIAIOSFODNN7EXAMPLE"
+COURT_PORTAL = "https://portal.courts.internal/api/v2"
+CLIENT_DB    = "postgresql://admin:P@ssw0rd123@legaldb.corp.local:5432/cases"
+
+def file_document(case_ref, doc_type):
+    headers = {"X-API-Key": API_KEY}
+    # ... upload logic
+    pass
+
+Please improve error handling and add type hints.`
+    },
+    finance: {
+        p1: `Draft a client portfolio review letter for these accounts:
+
+Client: Michael O'Brien, Account: 4111111111111111, AUM: £4.2M, Risk: Moderate
+Client: Helen Yates, Account: 5500005555555556, AUM: £1.8M, DOB: 03/07/1962
+
+Write a formal portfolio review letter for each client referencing their account and risk profile.`,
+        p2: null
+    },
+    insurance: {
+        p1: `Help me draft renewal notices for these policyholders:
+
+Name: David Chen, Policy: HH-20251034, Premium: £1,240/yr, DOB: 15/09/1978, Postcode: SW1A 2AA
+Name: Emma Rodriguez, Policy: AU-20254421, Premium: £890/yr, SSN: 457-55-5462
+
+Write a personalised renewal reminder for each policyholder.`,
+        p2: null
+    },
+    healthcare: {
+        p1: `Help me draft patient discharge summary letters:
+
+Patient: Thomas Hardy, DOB: 03/11/1952, NHS: 943-476-2819
+Diagnosis: Type 2 Diabetes (ICD-10: E11.9), HbA1c: 8.2%
+Medications: Metformin 500mg BD, Empagliflozin 10mg OD
+
+Admitted: 14 Jun 2026, Discharged: 16 Jun 2026
+Please draft a discharge summary letter suitable for the GP.`,
+        p2: `Refactor this Python EHR integration code:
+
+HL7_API_KEY = "AKIAIOSFODNN7EXAMPLE"
+EHR_HOST    = "https://ehr.internal.nhs.local/api/v3"
+DB_URL      = "postgresql://admin:P@ssw0rd123@clinical-db.corp.local:5432/patients"
+
+def fetch_patient(nhs_number):
+    headers = {"Authorization": f"Bearer {HL7_API_KEY}"}
+    resp = requests.get(f"{EHR_HOST}/patients/{nhs_number}", headers=headers)
+    return resp.json()
+
+Please improve error handling and add type annotations.`
+    },
+    defence: {
+        p1: `Summarise the following project personnel for a briefing document:
+
+Name: Col. R. Watkins, Clearance: SC, Role: Project Lead, Contact: r.watkins@mod.gov.uk
+Name: Dr. S. Okafor, Clearance: DV, Role: Technical Authority, DOB: 18/02/1977
+
+Draft a personnel summary suitable for a project kick-off briefing.`,
+        p2: null
+    }
+};
+
+function applyIndustry(key) {
+    const ind = INDUSTRIES[key] || INDUSTRIES.general;
+    const el = (id) => document.getElementById(id);
+    if (el('s1-intro')) el('s1-intro').textContent = ind.s1intro;
+    if (el('s1-data-type')) el('s1-data-type').textContent = ind.s1data;
+    if (el('s2-intro')) el('s2-intro').textContent = ind.s2intro;
+    if (el('s2-code-context')) el('s2-code-context').textContent = ind.s2code;
+
+    const prompts = PROMPTS_INDUSTRY[key] || {};
+    if (prompts.p1 && el('prompt-1')) el('prompt-1').textContent = prompts.p1;
+    if (prompts.p2 && el('prompt-2')) el('prompt-2').textContent = prompts.p2;
+
+    const banner = el('industry-banner');
+    if (banner) {
+        if (key !== 'general') {
+            el('ib-name').textContent = ind.label;
+            banner.classList.remove('hidden');
+        } else {
+            banner.classList.add('hidden');
+        }
+    }
+}
+
+function copyPrompt(id, btn) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2200);
+    }).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = el.textContent.trim();
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2200);
+    });
+}
+
+const STEPS = 3;
+const progress = Array(STEPS + 1).fill(false);
+
+function markDone(stepNum, btn) {
+    progress[stepNum] = !progress[stepNum];
+    if (progress[stepNum]) {
+        btn.classList.add('done');
+        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3 3 6-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Done`;
+        document.getElementById('step-' + stepNum).classList.add('completed');
+        document.getElementById('step-' + stepNum).classList.remove('active-step');
+        if (stepNum < STEPS) {
+            document.getElementById('step-' + (stepNum + 1)).classList.add('active-step');
+            const st = document.getElementById('status-' + (stepNum + 1));
+            if (st) { st.textContent = 'ACTIVE'; st.className = 'step-status status-active'; }
+        }
+    } else {
+        btn.classList.remove('done');
+        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3 3 6-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Mark step done`;
+        document.getElementById('step-' + stepNum).classList.remove('completed');
+    }
+    for (let i = 1; i <= STEPS; i++) {
+        const ps = document.getElementById('ps-' + i);
+        if (!ps) continue;
+        ps.classList.remove('done', 'active');
+        if (progress[i]) ps.classList.add('done');
+        else if (!progress.slice(1, i).includes(false) && !progress[i]) ps.classList.add('active');
+    }
+}
+
+function init() {
+    const key = localStorage.getItem('jskope-industry') || 'general';
+    applyIndustry(key);
+    document.getElementById('ps-1').classList.add('active');
+}
+
+init();
+</script>
+</body>
+</html>
