@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Portal | Jskope</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --turquoise: #00A7CE;
+            --orange: #FF8300;
+            --navy: #002B49;
+            --bg: #fafbfc;
+            --text: #1a1d23;
+            --muted: #6b7280;
+            --border: rgba(0,167,206,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,167,206,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,167,206,0.025) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: grid-shift 20s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes grid-shift {
+            to { background-position: 60px 60px; }
+        }
+
+        /* ── HEADER ── */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(250,251,252,0.88);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            height: 62px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            text-decoration: none;
+        }
+
+        .logo-mark {
+            width: 30px;
+            height: 30px;
+        }
+
+        .logo-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: var(--navy);
+        }
+
+        .logo-text em {
+            font-style: normal;
+            color: var(--turquoise);
+        }
+
+        .portal-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            color: var(--turquoise);
+            background: rgba(0,167,206,0.07);
+            border: 1px solid rgba(0,167,206,0.18);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            letter-spacing: 0.06em;
+        }
+
+        /* ── MAIN ── */
+        main {
+            position: relative;
+            z-index: 10;
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 4.5rem 2rem 6rem;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fade-up 0.6s ease both;
+        }
+
+        .eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--turquoise);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 4vw, 3.25rem);
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--turquoise) 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--muted);
+            font-weight: 300;
+            max-width: 540px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* ── PREREQ BANNER ── */
+        .prereq {
+            background: rgba(0,43,73,0.03);
+            border: 1px solid rgba(0,43,73,0.09);
+            border-left: 3px solid var(--turquoise);
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 3.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.9rem;
+            animation: fade-up 0.6s 0.1s ease both;
+        }
+
+        .prereq svg { flex-shrink: 0; margin-top: 1px; }
+
+        .prereq p {
+            font-size: 0.875rem;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .prereq strong { color: var(--text); }
+
+        .prereq a { color: var(--turquoise); text-decoration: none; }
+        .prereq a:hover { text-decoration: underline; }
+
+        /* ── SECTION LABELS ── */
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-label h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            white-space: nowrap;
+        }
+
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ── DEMO GRID ── */
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.1rem;
+            margin-bottom: 4rem;
+            animation: fade-up 0.6s 0.2s ease both;
+        }
+
+        @media (max-width: 860px) { .demo-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 540px) { .demo-grid { grid-template-columns: 1fr; } }
+
+        .card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.6rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: var(--c-accent, var(--turquoise));
+            transform: scaleX(0);
+            transition: transform 0.22s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 36px rgba(0,43,73,0.08);
+            border-color: rgba(0,167,206,0.22);
+        }
+
+        .card:hover::after { transform: scaleX(1); }
+
+        .card.soon {
+            opacity: 0.55;
+            pointer-events: none;
+            cursor: default;
+        }
+
+        .card-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .card-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            background: var(--c-icon-bg, rgba(0,167,206,0.08));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .badges { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+
+        .badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.62rem;
+            font-weight: 500;
+            padding: 0.2rem 0.55rem;
+            border-radius: 50px;
+            border: 1px solid;
+        }
+
+        .badge-tq  { background: rgba(0,167,206,0.07); color: var(--turquoise); border-color: rgba(0,167,206,0.18); }
+        .badge-or  { background: rgba(255,131,0,0.07); color: var(--orange);    border-color: rgba(255,131,0,0.18); }
+        .badge-nv  { background: rgba(0,43,73,0.07);   color: var(--navy);      border-color: rgba(0,43,73,0.18); }
+        .badge-rd  { background: rgba(239,68,68,0.07); color: #EF4444;          border-color: rgba(239,68,68,0.18); }
+        .badge-gn  { background: rgba(16,185,129,0.07);color: #10B981;          border-color: rgba(16,185,129,0.18); }
+        .badge-new { background: rgba(255,131,0,0.08); color: var(--orange);    border-color: rgba(255,131,0,0.2); }
+        .badge-soon{ background: rgba(107,114,128,0.07);color: var(--muted);   border-color: rgba(107,114,128,0.18); }
+
+        .card-title { font-size: 1.05rem; font-weight: 600; }
+
+        .card-desc {
+            font-size: 0.875rem;
+            color: var(--muted);
+            line-height: 1.65;
+            flex: 1;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            padding: 0.18rem 0.55rem;
+            border-radius: 4px;
+            background: rgba(0,43,73,0.04);
+            color: var(--muted);
+        }
+
+        .card-cta {
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--c-accent, var(--turquoise));
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        /* ── SERIES ── */
+        .series-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.1rem;
+            animation: fade-up 0.6s 0.3s ease both;
+        }
+
+        @media (max-width: 860px) { .series-grid { grid-template-columns: 1fr; } }
+
+        .series-card {
+            background: var(--navy);
+            border-radius: 14px;
+            padding: 2rem 1.75rem;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.22s ease, box-shadow 0.22s ease;
+        }
+
+        .series-card::before {
+            content: '';
+            position: absolute;
+            bottom: -50px; right: -50px;
+            width: 130px; height: 130px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.03);
+        }
+
+        .series-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 48px rgba(0,43,73,0.22);
+        }
+
+        .series-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            color: var(--turquoise);
+            opacity: 0.85;
+        }
+
+        .series-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .series-desc {
+            font-size: 0.84rem;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.65;
+            flex: 1;
+        }
+
+        .series-steps { display: flex; flex-direction: column; gap: 0.35rem; }
+
+        .series-step {
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.45);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .series-step::before {
+            content: '';
+            width: 14px;
+            height: 1px;
+            background: var(--turquoise);
+            opacity: 0.45;
+            flex-shrink: 0;
+        }
+
+        .series-cta {
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--turquoise);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            position: relative;
+            z-index: 10;
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        footer p {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--muted);
+            opacity: 0.55;
+        }
+
+        /* ── INDUSTRY PICKER ── */
+        .industry-picker {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 3rem;
+            animation: fade-up 0.6s 0.15s ease both;
+        }
+
+        .picker-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .picker-label {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .picker-sub {
+            font-size: 0.82rem;
+            color: var(--muted);
+        }
+
+        .picker-active {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            color: var(--orange);
+            background: rgba(255,131,0,0.07);
+            border: 1px solid rgba(255,131,0,0.18);
+            padding: 0.22rem 0.65rem;
+            border-radius: 50px;
+            display: none;
+        }
+
+        .picker-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .picker-btn {
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 0.5rem 1.1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.18s ease;
+            font-family: inherit;
+        }
+
+        .picker-btn:hover {
+            border-color: rgba(0,167,206,0.25);
+            color: var(--text);
+        }
+
+        .picker-btn.active {
+            background: var(--navy);
+            color: #fff;
+            border-color: var(--navy);
+        }
+
+        .picker-note {
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-top: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        @keyframes fade-up {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-inner">
+        <a href="/" class="logo">
+            <svg class="logo-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="16" cy="16" r="14" fill="#002B49"/>
+                <ellipse cx="16" cy="16" rx="12" ry="4.2" fill="none" stroke="#00A7CE" stroke-width="0.9" opacity="0.75" transform="rotate(-20 16 16)"/>
+                <ellipse cx="16" cy="16" rx="9"  ry="3.2" fill="none" stroke="#00A7CE" stroke-width="0.65" opacity="0.4"  transform="rotate(55 16 16)"/>
+                <circle cx="16" cy="16" r="4.5" fill="#001525" stroke="#00DDFF" stroke-width="0.9"/>
+                <circle cx="16" cy="16" r="1.6"  fill="#00EEFF" opacity="0.92"/>
+                <line x1="14.2" y1="13.4" x2="18" y2="13.4" stroke="#00EEFF" stroke-width="1.1" stroke-linecap="round" opacity="0.9"/>
+                <line x1="17"   y1="13.4" x2="17" y2="17.6" stroke="#00EEFF" stroke-width="1.1" stroke-linecap="round" opacity="0.9"/>
+                <path d="M17 17.6 Q17 19.6 15.4 19.6 Q13.8 19.6 13.8 18" fill="none" stroke="#00EEFF" stroke-width="1.1" stroke-linecap="round" opacity="0.9"/>
+            </svg>
+            <span class="logo-text">j<em>skope</em></span>
+        </a>
+        <span class="portal-badge">DEMO PORTAL</span>
+    </div>
+</header>
+
+<main>
+    <div class="hero">
+        <p class="eyebrow">Netskope Security Platform</p>
+        <h1>Interactive Demo Portal</h1>
+        <p>Real security controls, real policy enforcement. Each demo triggers genuine Netskope responses — click a link, see the platform react.</p>
+    </div>
+
+    <div class="prereq">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <circle cx="9" cy="9" r="7.5" stroke="#00A7CE" stroke-width="1.4"/>
+            <line x1="9" y1="8" x2="9" y2="13" stroke="#00A7CE" stroke-width="1.4" stroke-linecap="round"/>
+            <circle cx="9" cy="5.8" r="0.7" fill="#00A7CE"/>
+        </svg>
+        <p>
+            <strong>Prerequisite:</strong> These demos require the <strong>Netskope Client</strong> to be active on your device, or your traffic to be steered through a Netskope tenant. Without this, links open normally without security controls firing.
+            &nbsp;<a href="https://docs.netskope.com" target="_blank" rel="noopener">Client setup guide →</a>
+        </p>
+    </div>
+
+    <!-- Industry Picker -->
+    <div class="industry-picker">
+        <div class="picker-top">
+            <div>
+                <div class="picker-label">Who are you demoing to?</div>
+                <div class="picker-sub">Select an industry to tailor all demo content, sample data, and AI prompts to your audience.</div>
+            </div>
+            <span class="picker-active" id="picker-active-badge"></span>
+        </div>
+        <div class="picker-options">
+            <button class="picker-btn active" data-industry="general"     onclick="setIndustry('general',     this)">General</button>
+            <button class="picker-btn"        data-industry="lawfirm"     onclick="setIndustry('lawfirm',     this)">Law Firm</button>
+            <button class="picker-btn"        data-industry="finance"     onclick="setIndustry('finance',     this)">Financial Services</button>
+            <button class="picker-btn"        data-industry="insurance"   onclick="setIndustry('insurance',   this)">Insurance</button>
+            <button class="picker-btn"        data-industry="healthcare"  onclick="setIndustry('healthcare',  this)">Healthcare</button>
+            <button class="picker-btn"        data-industry="defence"     onclick="setIndustry('defence',     this)">Defence & Gov</button>
+        </div>
+        <div class="picker-note">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.1"/><path d="M6 5.5v3" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><circle cx="6" cy="4" r="0.5" fill="currentColor"/></svg>
+            Your selection is saved for this session. Demo pages will show industry-specific sample data and AI prompt scenarios.
+        </div>
+    </div>
+
+    <!-- Demo Categories -->
+    <div class="section-label">
+        <h2>Demo Categories</h2>
+    </div>
+
+    <div class="demo-grid">
+
+        <!-- Web Blocking -->
+        <a href="/temp/demos/web-blocking/" class="card" style="--c-accent:#00A7CE; --c-icon-bg:rgba(0,167,206,0.08);">
+            <div class="card-head">
+                <div class="card-icon">
+                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none">
+                        <path d="M10.5 2L18.5 6.2V11C18.5 15.2 15 18.8 10.5 20C6 18.8 2.5 15.2 2.5 11V6.2Z" stroke="#00A7CE" stroke-width="1.4"/>
+                        <line x1="7.5" y1="7.5" x2="13.5" y2="13.5" stroke="#00A7CE" stroke-width="1.4" stroke-linecap="round"/>
+                        <line x1="13.5" y1="7.5" x2="7.5"  y2="13.5" stroke="#00A7CE" stroke-width="1.4" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="badges">
+                    <span class="badge badge-tq">SWG</span>
+                </div>
+            </div>
+            <div class="card-title">Web Blocking</div>
+            <div class="card-desc">Trigger real-time URL and category-based blocks. See the Netskope block page fire across different site categories.</div>
+            <div class="card-tags">
+                <span class="tag">URL Filtering</span>
+                <span class="tag">Category Block</span>
+                <span class="tag">Real-time Policy</span>
+            </div>
+            <div class="card-cta">Launch Demo <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5h8M8 4l2.5 2.5L8 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </a>
+
+        <!-- User Coaching -->
+        <a href="/temp/demos/coaching/" class="card" style="--c-accent:#FF8300; --c-icon-bg:rgba(255,131,0,0.08);">
+            <div class="card-head">
+                <div class="card-icon">
+                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none">
+                        <path d="M17 4H4C3 4 2 5 2 6V14C2 15 3 16 4 16H7.5L10.5 19.5L13.5 16H17C18 16 19 15 19 14V6C19 5 18 4 17 4Z" stroke="#FF8300" stroke-width="1.4"/>
+                        <line x1="10.5" y1="7.5" x2="10.5" y2="11.5" stroke="#FF8300" stroke-width="1.4" stroke-linecap="round"/>
+                        <circle cx="10.5" cy="13" r="0.75" fill="#FF8300"/>
+                    </svg>
+                </div>
+                <div class="badges">
+                    <span class="badge badge-or">SWG</span>
+                </div>
+            </div>
+            <div class="card-title">User Coaching</div>
+            <div class="card-desc">Experience real-time coaching notifications. Instead of a hard block, users receive in-browser guidance on acceptable policy.</div>
+            <div class="card-tags">
+                <span class="tag">Soft Alerts</span>
+                <span class="tag">User Awareness</span>
+                <span class="tag">Justification Flow</span>
+            </div>
+            <div class="card-cta" style="color:#FF8300">Launch Demo <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5h8M8 4l2.5 2.5L8 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </a>
+
+        <!-- DLP -->
+        <a href="/temp/demos/dlp/" class="card" style="--c-accent:#002B49; --c-icon-bg:rgba(0,43,73,0.07);">
+            <div class="card-head">
+                <div class="card-icon">
+                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none">
+                        <rect x="3" y="8.5" width="15" height="10" rx="2" stroke="#002B49" stroke-width="1.4"/>
+                        <path d="M7.5 8.5V6.5C7.5 4.3 9 2.5 10.5 2.5C12 2.5 13.5 4.3 13.5 6.5V8.5" stroke="#002B49" stroke-width="1.4"/>
+                        <circle cx="10.5" cy="13.5" r="1.75" stroke="#002B49" stroke-width="1.3"/>
+                    </svg>
+                </div>
+                <div class="badges">
+                    <span class="badge badge-nv">DLP</span>
+                </div>
+            </div>
+            <div class="card-title">Data Protection</div>
+            <div class="card-desc">Upload or download files containing synthetic PII, credit card data, and API credentials to trigger Netskope DLP controls.</div>
+            <div class="card-tags">
+                <span class="tag">PII Detection</span>
+                <span class="tag">File Upload</span>
+                <span class="tag">Download Scan</span>
+            </div>
+            <div class="card-cta" style="color:#002B49">Launch Demo <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5h8M8 4l2.5 2.5L8 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </a>
+
+        <!-- AI Security -->
+        <a href="/temp/demos/ai-security/" class="card" style="--c-accent:#00A7CE; --c-icon-bg:rgba(0,167,206,0.08);">
+            <div class="card-head">
+                <div class="card-icon">
+                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none">
+                        <rect x="2.5" y="2.5" width="16" height="16" rx="3" stroke="#00A7CE" stroke-width="1.4"/>
+                        <line x1="6" y1="10.5" x2="15" y2="10.5" stroke="#00A7CE" stroke-width="1.3" stroke-linecap="round"/>
+                        <line x1="6" y1="7.5"  x2="11" y2="7.5"  stroke="#00A7CE" stroke-width="1.3" stroke-linecap="round"/>
+                        <line x1="6" y1="13.5" x2="9"  y2="13.5" stroke="#00A7CE" stroke-width="1.3" stroke-linecap="round"/>
+                        <line x1="16.5" y1="6" x2="14.5" y2="15" stroke="#FF8300" stroke-width="1.3" stroke-linecap="round" opacity="0.7"/>
+                    </svg>
+                </div>
+                <div class="badges">
+                    <span class="badge badge-new">NEW</span>
+                    <span class="badge badge-tq">AI GUARDRAILS</span>
+                </div>
+            </div>
+            <div class="card-title">AI Security</div>
+            <div class="card-desc">Test Netskope's AI guardrails on ChatGPT, Copilot, and Gemini. See sensitive data blocked from entering AI prompts in real-time.</div>
+            <div class="card-tags">
+                <span class="tag">Prompt Inspection</span>
+                <span class="tag">GenAI Control</span>
+                <span class="tag">Data Exfil Prevention</span>
+            </div>
+            <div class="card-cta">Launch Demo <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5h8M8 4l2.5 2.5L8 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </a>
+
+        <!-- Threat Protection (coming soon) -->
+        <div class="card soon" style="--c-accent:#EF4444; --c-icon-bg:rgba(239,68,68,0.08);">
+            <div class="card-head">
+                <div class="card-icon">
+                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none">
+                        <circle cx="10.5" cy="12" r="6" stroke="#EF4444" stroke-width="1.4"/>
+                        <line x1="10.5" y1="9"  x2="10.5" y2="13"   stroke="#EF4444" stroke-width="1.4" stroke-linecap="round"/>
+                        <circle cx="10.5" cy="14.5" r="0.7" fill="#EF4444"/>
+                        <path d="M7 5C7 5 6.2 3 8 3C9.8 3 8.8 5 10.5 5C12.2 5 11.2 3 13 3C14.8 3 14 5 14 5" stroke="#EF4444" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="badges">
+                    <span class="badge badge-soon">COMING SOON</span>
+                    <span class="badge badge-rd">THREAT</span>
+                </div>
+            </div>
+            <div class="card-title">Threat Protection</div>
+            <div class="card-desc">Trigger malware detection and phishing controls using industry-standard test files and safe simulation URLs.</div>
+            <div class="card-tags">
+                <span class="tag">Malware Detection</span>
+                <span class="tag">Phishing</span>
+                <span class="tag">EICAR Test</span>
+            </div>
+            <div class="card-cta" style="color:#EF4444; opacity:0.4">Coming Soon</div>
+        </div>
+
+        <!-- Shadow IT (coming soon) -->
+        <div class="card soon" style="--c-accent:#10B981; --c-icon-bg:rgba(16,185,129,0.08);">
+            <div class="card-head">
+                <div class="card-icon">
+                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none">
+                        <path d="M4 12.5C4 12.5 3.5 8.5 7.5 7.5C7.5 5 9.2 3 12 3C14.8 3 17 5 17 7.5C19 8 20 9.5 20 11.5C20 13.5 18.5 14.5 17 14.5H5.5C3.5 14.5 2.5 13.5 4 12.5Z" stroke="#10B981" stroke-width="1.4"/>
+                        <line x1="10.5" y1="11.5" x2="10.5" y2="18" stroke="#10B981" stroke-width="1.4" stroke-linecap="round"/>
+                        <circle cx="10.5" cy="18.5" r="0.9" fill="#10B981"/>
+                    </svg>
+                </div>
+                <div class="badges">
+                    <span class="badge badge-soon">COMING SOON</span>
+                    <span class="badge badge-gn">CASB</span>
+                </div>
+            </div>
+            <div class="card-title">Shadow IT Discovery</div>
+            <div class="card-desc">Access unsanctioned cloud applications and observe how Netskope CASB identifies, logs, and controls shadow IT in real time.</div>
+            <div class="card-tags">
+                <span class="tag">App Discovery</span>
+                <span class="tag">Unsanctioned Apps</span>
+                <span class="tag">CASB Control</span>
+            </div>
+            <div class="card-cta" style="color:#10B981; opacity:0.4">Coming Soon</div>
+        </div>
+
+    </div>
+
+    <!-- Demo Series -->
+    <div class="section-label" style="animation: fade-up 0.6s 0.3s ease both; opacity: 0;">
+        <h2>Demo Series</h2>
+    </div>
+
+    <div class="series-grid">
+
+        <a href="/temp/demos/dlp/" class="series-card">
+            <div class="series-num">SERIES 01</div>
+            <div class="series-title">The Insider Threat</div>
+            <div class="series-desc">Walk through how an employee might attempt to exfiltrate sensitive data — and how Netskope catches it at every step.</div>
+            <div class="series-steps">
+                <div class="series-step">Access a personal cloud storage site</div>
+                <div class="series-step">Upload a file with synthetic PII</div>
+                <div class="series-step">Attempt to email sensitive data externally</div>
+                <div class="series-step">Observe DLP block and audit log</div>
+            </div>
+            <div class="series-cta">Start Series <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5h8M8 4l2.5 2.5L8 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </a>
+
+        <a href="/temp/demos/ai-security/" class="series-card">
+            <div class="series-num">SERIES 02</div>
+            <div class="series-title">AI Risk in the Enterprise</div>
+            <div class="series-desc">Demonstrate the data risk posed by ungoverned AI tool usage, then show how Netskope's guardrails protect the organisation.</div>
+            <div class="series-steps">
+                <div class="series-step">Paste synthetic PII into a ChatGPT prompt</div>
+                <div class="series-step">Attempt to upload source code to Copilot</div>
+                <div class="series-step">See policy-controlled block or coaching</div>
+            </div>
+            <div class="series-cta">Start Series <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5h8M8 4l2.5 2.5L8 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </a>
+
+        <a href="/temp/demos/web-blocking/" class="series-card">
+            <div class="series-num">SERIES 03</div>
+            <div class="series-title">Shadow IT Audit</div>
+            <div class="series-desc">Explore how employees use unsanctioned applications and observe CASB discovery and DLP policy firing across cloud apps.</div>
+            <div class="series-steps">
+                <div class="series-step">Visit an unsanctioned file-sharing site</div>
+                <div class="series-step">Download a sensitive document</div>
+                <div class="series-step">Attempt re-upload via personal Dropbox</div>
+            </div>
+            <div class="series-cta">Start Series <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5h8M8 4l2.5 2.5L8 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </a>
+
+    </div>
+</main>
+
+<footer>
+    <p>© 2026 Netskope, Inc. — Demo Environment — jskope.com/temp</p>
+</footer>
+
+<script>
+const INDUSTRY_LABELS = {
+    general: 'General',
+    lawfirm: 'Law Firm',
+    finance: 'Financial Services',
+    insurance: 'Insurance',
+    healthcare: 'Healthcare',
+    defence: 'Defence & Gov'
+};
+
+function setIndustry(key, btn) {
+    localStorage.setItem('jskope-industry', key);
+    document.querySelectorAll('.picker-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const badge = document.getElementById('picker-active-badge');
+    if (key === 'general') {
+        badge.style.display = 'none';
+    } else {
+        badge.textContent = ('TAILORED: ' + INDUSTRY_LABELS[key]).toUpperCase();
+        badge.style.display = 'inline-block';
+    }
+}
+
+function initPicker() {
+    const saved = localStorage.getItem('jskope-industry') || 'general';
+    const btn = document.querySelector(`[data-industry="${saved}"]`);
+    if (btn) {
+        document.querySelectorAll('.picker-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+    const badge = document.getElementById('picker-active-badge');
+    if (saved !== 'general') {
+        badge.textContent = ('TAILORED: ' + INDUSTRY_LABELS[saved]).toUpperCase();
+        badge.style.display = 'inline-block';
+    }
+}
+
+initPicker();
+</script>
+</body>
+</html>

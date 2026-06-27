@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Security Demo | Jskope</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --turquoise: #00A7CE;
+            --orange: #FF8300;
+            --navy: #002B49;
+            --bg: #fafbfc;
+            --text: #1a1d23;
+            --muted: #6b7280;
+            --border: rgba(0,167,206,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,167,206,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,167,206,0.025) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: grid-shift 20s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes grid-shift { to { background-position: 60px 60px; } }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(250,251,252,0.88);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            height: 62px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .back:hover { color: var(--turquoise); }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .industry-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--orange);
+            background: rgba(255,131,0,0.07);
+            border: 1px solid rgba(255,131,0,0.18);
+            padding: 0.22rem 0.65rem;
+            border-radius: 50px;
+            display: none;
+        }
+
+        .page-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            color: var(--turquoise);
+            background: rgba(0,167,206,0.07);
+            border: 1px solid rgba(0,167,206,0.18);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+        }
+
+        main {
+            position: relative;
+            z-index: 10;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3.5rem 2rem 6rem;
+        }
+
+        .page-hero {
+            margin-bottom: 2.5rem;
+            animation: fade-up 0.5s ease both;
+        }
+
+        .hero-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .page-hero .eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--turquoise);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+
+        .page-hero h1 {
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            font-weight: 700;
+            line-height: 1.2;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--turquoise) 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.75rem;
+        }
+
+        .page-hero p {
+            font-size: 1rem;
+            color: var(--muted);
+            max-width: 600px;
+            line-height: 1.7;
+        }
+
+        .new-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            color: var(--orange);
+            background: rgba(255,131,0,0.08);
+            border: 1px solid rgba(255,131,0,0.2);
+            padding: 0.3rem 0.75rem;
+            border-radius: 50px;
+            white-space: nowrap;
+        }
+
+        /* Industry banner */
+        .industry-banner {
+            background: rgba(255,131,0,0.05);
+            border: 1px solid rgba(255,131,0,0.15);
+            border-radius: 10px;
+            padding: 0.85rem 1.25rem;
+            margin-bottom: 2.5rem;
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            animation: fade-up 0.4s ease both;
+        }
+
+        .industry-banner.show { display: flex; }
+
+        .industry-banner svg { flex-shrink: 0; }
+
+        .industry-banner p {
+            font-size: 0.84rem;
+            color: var(--muted);
+        }
+
+        .industry-banner strong { color: var(--text); }
+
+        .change-industry {
+            font-size: 0.78rem;
+            color: var(--turquoise);
+            text-decoration: none;
+            margin-left: auto;
+            white-space: nowrap;
+        }
+
+        .change-industry:hover { text-decoration: underline; }
+
+        /* AI tools */
+        .tools-section {
+            margin-bottom: 3rem;
+            animation: fade-up 0.5s 0.1s ease both;
+        }
+
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .section-label h2 { font-size: 1.05rem; font-weight: 600; }
+
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .section-desc {
+            font-size: 0.88rem;
+            color: var(--muted);
+            line-height: 1.65;
+            margin-bottom: 1.25rem;
+            max-width: 640px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.85rem;
+        }
+
+        @media (max-width: 700px) { .tools-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .tool-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .tool-card:hover {
+            border-color: rgba(0,167,206,0.25);
+            box-shadow: 0 4px 20px rgba(0,43,73,0.06);
+            transform: translateY(-2px);
+        }
+
+        .tool-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .tool-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .tool-risk {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+        }
+
+        .risk-high   { background: rgba(239,68,68,0.08); color: #DC2626; }
+        .risk-med    { background: rgba(255,131,0,0.08); color: #FF8300; }
+        .risk-watch  { background: rgba(0,167,206,0.08); color: var(--turquoise); }
+
+        .tool-open {
+            font-size: 0.75rem;
+            color: var(--turquoise);
+            font-weight: 500;
+        }
+
+        /* Prompt scenarios */
+        .prompts-section {
+            animation: fade-up 0.5s 0.18s ease both;
+        }
+
+        .prompt-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .prompt-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.5rem;
+        }
+
+        .prompt-card-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .prompt-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .prompt-subtitle {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        .prompt-badges {
+            display: flex;
+            gap: 0.4rem;
+            flex-shrink: 0;
+        }
+
+        .dlp-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            padding: 0.18rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .prompt-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.74rem;
+            color: var(--navy);
+            line-height: 1.7;
+            background: rgba(0,43,73,0.03);
+            border: 1px solid rgba(0,43,73,0.07);
+            border-radius: 8px;
+            padding: 1rem 1.1rem;
+            margin-bottom: 1rem;
+            white-space: pre-wrap;
+        }
+
+        .prompt-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .prompt-expected {
+            font-size: 0.78rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .expected-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #EF4444;
+            flex-shrink: 0;
+        }
+
+        .prompt-btn-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--turquoise);
+            background: rgba(0,167,206,0.07);
+            border: 1px solid rgba(0,167,206,0.18);
+            padding: 0.38rem 0.85rem;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .copy-btn:hover { background: var(--turquoise); color: #fff; border-color: var(--turquoise); }
+        .copy-btn.copied { background: rgba(16,185,129,0.1); color: #059669; border-color: rgba(16,185,129,0.25); }
+
+        .open-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--navy);
+            background: rgba(0,43,73,0.05);
+            border: 1px solid rgba(0,43,73,0.12);
+            padding: 0.38rem 0.85rem;
+            border-radius: 7px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .open-btn:hover { background: var(--navy); color: #fff; }
+
+        /* What NS does */
+        .ns-response {
+            background: var(--navy);
+            border-radius: 14px;
+            padding: 2rem;
+            margin-top: 3rem;
+            animation: fade-up 0.5s 0.25s ease both;
+        }
+
+        .ns-response h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--turquoise);
+            margin-bottom: 1.5rem;
+        }
+
+        .response-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+
+        @media (max-width: 640px) { .response-grid { grid-template-columns: 1fr; } }
+
+        .response-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .response-num {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(0,167,206,0.15);
+            color: var(--turquoise);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .response-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .response-desc {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.55;
+        }
+
+        footer {
+            position: relative;
+            z-index: 10;
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        footer p {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--muted);
+            opacity: 0.55;
+        }
+
+        @keyframes fade-up {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-inner">
+        <a href="/temp/" class="back">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M10 7H2.5M5 4l-2.5 3L5 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Demo Portal
+        </a>
+        <div class="header-right">
+            <span class="industry-pill" id="header-industry-pill"></span>
+            <span class="page-badge">AI GUARDRAILS</span>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <div class="page-hero">
+        <p class="eyebrow">Netskope AI Data Protection</p>
+        <div class="hero-top">
+            <h1>AI Security & Guardrails</h1>
+            <span class="new-label">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="#FF8300" stroke-width="1.2"/><path d="M5 3v3M5 7.2v.1" stroke="#FF8300" stroke-width="1.2" stroke-linecap="round"/></svg>
+                NEW CAPABILITY
+            </span>
+        </div>
+        <p>Netskope inspects prompts and responses in real time across all major AI tools. Copy the scenario prompts below, paste them into the linked tool, and watch Netskope's guardrails fire.</p>
+    </div>
+
+    <!-- Industry banner -->
+    <div class="industry-banner" id="industry-banner">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="6.5" stroke="#FF8300" stroke-width="1.3"/>
+            <path d="M5 8l2 2 4-4" stroke="#FF8300" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p>Prompts below are <strong>tailored for: <span id="industry-name"></span></strong> — showing data types and risk scenarios specific to your audience.</p>
+        <a href="/temp/" class="change-industry">Change industry →</a>
+    </div>
+
+    <!-- AI Tools -->
+    <div class="tools-section">
+        <div class="section-label"><h2>Monitored AI Tools</h2></div>
+        <p class="section-desc">Netskope provides inline inspection for all the major GenAI platforms. Click to open the tool, then paste one of the prompts below.</p>
+        <div class="tools-grid">
+            <a href="https://chat.openai.com" target="_blank" rel="noopener" class="tool-card">
+                <div class="tool-logo" style="background:#f0f0f0;">
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#222" stroke-width="1.4"/><path d="M7 11h8M11 7v8" stroke="#222" stroke-width="1.4" stroke-linecap="round"/></svg>
+                </div>
+                <div class="tool-name">ChatGPT</div>
+                <span class="tool-risk risk-high dlp-badge">HIGH RISK</span>
+                <span class="tool-open">Open →</span>
+            </a>
+            <a href="https://copilot.microsoft.com" target="_blank" rel="noopener" class="tool-card">
+                <div class="tool-logo" style="background:#e8f0fe;">
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="4" y="4" width="6" height="6" rx="1" fill="#4285F4"/><rect x="12" y="4" width="6" height="6" rx="1" fill="#34A853"/><rect x="4" y="12" width="6" height="6" rx="1" fill="#FBBC05"/><rect x="12" y="12" width="6" height="6" rx="1" fill="#EA4335"/></svg>
+                </div>
+                <div class="tool-name">Copilot</div>
+                <span class="tool-risk risk-high dlp-badge">HIGH RISK</span>
+                <span class="tool-open">Open →</span>
+            </a>
+            <a href="https://gemini.google.com" target="_blank" rel="noopener" class="tool-card">
+                <div class="tool-logo" style="background:#fef3e2;">
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 4C7.13 4 4 7.13 4 11s3.13 7 7 7 7-3.13 7-7" stroke="#FF8300" stroke-width="1.4"/><path d="M11 4l2 4-2 3-2-3z" fill="#FF8300"/></svg>
+                </div>
+                <div class="tool-name">Gemini</div>
+                <span class="tool-risk risk-med dlp-badge">MEDIUM</span>
+                <span class="tool-open">Open →</span>
+            </a>
+            <a href="https://claude.ai" target="_blank" rel="noopener" class="tool-card">
+                <div class="tool-logo" style="background:#fdf6f0;">
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 4l7 12H4z" stroke="#CC785C" stroke-width="1.4" fill="none"/><path d="M8 13l3-5 3 5" stroke="#CC785C" stroke-width="1.2" fill="none"/></svg>
+                </div>
+                <div class="tool-name">Claude</div>
+                <span class="tool-risk risk-watch dlp-badge">MONITORED</span>
+                <span class="tool-open">Open →</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Prompt Scenarios -->
+    <div class="prompts-section">
+        <div class="section-label"><h2>Trigger Scenarios</h2></div>
+        <p class="section-desc">Each scenario simulates a real risk: an employee pasting sensitive data into an AI prompt. Copy → paste into any tool above → observe Netskope's response.</p>
+
+        <div class="prompt-cards" id="prompt-cards">
+            <!-- Populated by JS -->
+        </div>
+    </div>
+
+    <!-- What Netskope Does -->
+    <div class="ns-response">
+        <h3>How Netskope Responds</h3>
+        <div class="response-grid">
+            <div class="response-item">
+                <div class="response-num">1</div>
+                <div class="response-title">Inline Prompt Inspection</div>
+                <div class="response-desc">Netskope's SSL proxy intercepts the API call to the AI tool and scans the prompt body for DLP-matched patterns before it leaves the device.</div>
+            </div>
+            <div class="response-item">
+                <div class="response-num">2</div>
+                <div class="response-title">Block or Coach</div>
+                <div class="response-desc">Depending on policy: the prompt is blocked (user sees a Netskope notification), or the user receives a coaching alert and can justify proceeding.</div>
+            </div>
+            <div class="response-item">
+                <div class="response-num">3</div>
+                <div class="response-title">Full Audit Trail</div>
+                <div class="response-desc">Every AI interaction is logged — user identity, device, AI tool, prompt category, and policy outcome. Visible in the Netskope UI under Application Events.</div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<footer>
+    <p>© 2026 Netskope, Inc. — Demo Environment — jskope.com/temp</p>
+</footer>
+
+<script>
+const INDUSTRIES = {
+    general: {
+        label: 'General',
+        prompts: [
+            {
+                title: 'PII Exfiltration via Prompt',
+                subtitle: 'Employee pastes staff records into ChatGPT to "summarise"',
+                tags: ['SSN', 'PII', 'GDPR'],
+                tagColors: ['risk-high', 'risk-high', 'risk-med'],
+                expected: 'Block — SSN and PII pattern match',
+                tool: 'https://chat.openai.com',
+                toolName: 'ChatGPT',
+                text: `Can you summarise and reformat the following employee data for a report?
+
+Name: Jane Doe
+SSN: 078-05-1120
+DOB: 14 March 1989
+Salary: $94,500
+Bank Account: 123456789 (Routing: 021000021)
+Address: 742 Evergreen Terrace, Springfield, CA 94107`
+            },
+            {
+                title: 'Source Code & Credentials',
+                subtitle: 'Developer pastes API keys into Copilot to debug',
+                tags: ['Credentials', 'Source Code'],
+                tagColors: ['risk-high', 'risk-med'],
+                expected: 'Block — API key and token pattern match',
+                tool: 'https://copilot.microsoft.com',
+                toolName: 'Copilot',
+                text: `I'm getting an auth error. Here's the relevant config — can you help debug?
+
+AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+GITHUB_TOKEN=ghp_16C7e42F292c6912E7710c838347Ae5B21
+DATABASE_URL=postgresql://admin:SuperSecret123!@prod-db.corp.com:5432/customers`
+            },
+            {
+                title: 'Financial Data Disclosure',
+                subtitle: 'Finance employee asks AI to analyse card transaction data',
+                tags: ['PCI', 'Credit Cards', 'Financial'],
+                tagColors: ['risk-high', 'risk-high', 'risk-med'],
+                expected: 'Block — credit card PAN match',
+                tool: 'https://gemini.google.com',
+                toolName: 'Gemini',
+                text: `Please analyse these payment records for anomalies:
+
+Visa: 4111 1111 1111 1111 Exp: 12/26 CVV: 123 | Amount: £2,450.00
+MC:   5500 0055 5555 5556 Exp: 09/27 CVV: 456 | Amount: £890.50
+Amex: 3782 822463 10005  Exp: 06/28 CVV: 7890 | Amount: £12,200.00`
+            }
+        ]
+    },
+    lawfirm: {
+        label: 'Law Firm',
+        prompts: [
+            {
+                title: 'Privileged Legal Memorandum',
+                subtitle: 'Associate pastes privileged brief into ChatGPT to summarise',
+                tags: ['Legal Privilege', 'Client Confidential', 'PII'],
+                tagColors: ['risk-high', 'risk-high', 'risk-med'],
+                expected: 'Block — confidential legal document, client name, case reference',
+                tool: 'https://chat.openai.com',
+                toolName: 'ChatGPT',
+                text: `Please summarise the key arguments in this privileged memorandum for client review:
+
+PRIVILEGED & CONFIDENTIAL — ATTORNEY-CLIENT COMMUNICATION
+Re: Harrington v. Meridian Capital Partners Ltd [2024] Case No. HC-2024-99182
+Client: James Harrington (DOB: 14/03/1969, Passport: GB123456789)
+
+The plaintiff asserts breach of fiduciary duty arising from undisclosed conflicts of interest during the Series C financing round (£42M). Our liability exposure is estimated at £8.4M–£12.6M based on actuarial modelling. Settlement conference scheduled 18 Feb 2025.`
+            },
+            {
+                title: 'Client Due Diligence Pack',
+                subtitle: 'Paralegal uses AI to process KYC data for a new client',
+                tags: ['KYC / AML', 'PII', 'Client Data'],
+                tagColors: ['risk-high', 'risk-high', 'risk-med'],
+                expected: 'Block or Coach — PII, passport and financial profile',
+                tool: 'https://copilot.microsoft.com',
+                toolName: 'Copilot',
+                text: `Process this KYC pack and flag any AML risks for partner review:
+
+Client: Victoria Thornton-Hughes
+DOB: 22 July 1975 | Nationality: British
+Passport: GB987654321 | NI: NX 12 34 56 D
+Beneficial ownership: 82% Thornton Holdings Ltd (BVI reg. 2019)
+Source of funds: Property disposal £4.1M (Mayfair, SW1) Jan 2024
+PEP Status: Spouse of former MP — enhanced DD required`
+            },
+            {
+                title: 'Witness Statement Drafting',
+                subtitle: 'Litigation team uses AI to draft from confidential witness notes',
+                tags: ['Witness Data', 'Confidential', 'PII'],
+                tagColors: ['risk-med', 'risk-high', 'risk-med'],
+                expected: 'Coach — sensitive personal data and legal proceedings',
+                tool: 'https://gemini.google.com',
+                toolName: 'Gemini',
+                text: `Draft a formal witness statement from these interview notes. Proceedings: R v. Blackwell [2024] Crown Court Reading.
+
+Witness: Sarah Mitchell (DOB 08/11/1992, Address: 12 Orchard Close, Reading RG1 4XY)
+Interview conducted 14 Jan 2025 — STRICTLY CONFIDENTIAL
+
+Key points: Witness saw defendant (Marcus Blackwell, DOB 15/06/1984) at 22:40 on 3 Dec 2024 at junction of Mill Lane and Station Road. Vehicle reg: RE24 XWQ (blue Transit van). Witness is willing to testify but fears reprisals — special measures application to be filed.`
+            }
+        ]
+    },
+    finance: {
+        label: 'Financial Services',
+        prompts: [
+            {
+                title: 'Trading Book Analysis',
+                subtitle: 'Trader pastes live positions into ChatGPT for risk analysis',
+                tags: ['Market Sensitive', 'Material Non-Public', 'Trading'],
+                tagColors: ['risk-high', 'risk-high', 'risk-med'],
+                expected: 'Block — material non-public trading data',
+                tool: 'https://chat.openai.com',
+                toolName: 'ChatGPT',
+                text: `Analyse our Q4 derivatives book for concentration risk. Portfolio as at COB 14 Jan 2025:
+
+DESK: Equity Derivatives (Proprietary)
+AAPL   — 50,000 shares LONG  @ $185.20  | P&L: +$142,000
+TSLA   — 12,000 shares SHORT @ $248.90  | P&L: –$28,400
+NVDA   — 8,000 call options  @ strike $680 (exp Feb) | Delta: 0.72
+Total book exposure: $94.2M notional | VaR (95%, 1d): $1.84M
+Risk limit utilisation: 78% — approaching breach threshold`
+            },
+            {
+                title: 'Customer Account Data',
+                subtitle: 'Ops analyst pastes customer records to resolve a query',
+                tags: ['PCI', 'KYC / AML', 'Customer PII'],
+                tagColors: ['risk-high', 'risk-high', 'risk-med'],
+                expected: 'Block — account numbers, PII, and card data',
+                tool: 'https://copilot.microsoft.com',
+                toolName: 'Copilot',
+                text: `Can you help me identify why this customer's account flagged for AML review?
+
+Customer: Robert James Blackwood (DOB: 22/07/1966)
+Account: 80345671 | Sort Code: 20-12-55
+IBAN: GB29NWBK60161331926819
+Last 30 days transactions: 14 cash deposits £9,800–£9,950 (structuring pattern)
+Debit card: 4111 1111 1111 1111 Exp: 12/26
+Source of wealth declared: "Property investment" — unverified
+SAR reference: SAR-2025-0872 (pending)`
+            },
+            {
+                title: 'MNPI — M&A Deal Data',
+                subtitle: 'Corporate finance team uses AI to draft deal documentation',
+                tags: ['MNPI', 'Deal Confidential', 'Insider'],
+                tagColors: ['risk-high', 'risk-high', 'risk-high'],
+                expected: 'Block — MNPI and confidential deal data',
+                tool: 'https://gemini.google.com',
+                toolName: 'Gemini',
+                text: `Draft an executive summary for the following proposed transaction. STRICTLY CONFIDENTIAL — PROJECT FALCON.
+
+Target: Apex Financial Solutions Ltd (AIM: APXF)
+Acquirer: [Client — name under NDA]
+Indicative offer: 240p per share (£312M enterprise value, 28% premium to 30-day VWAP)
+Expected announcement: 6 March 2025 (pre-market)
+Financial advisers: [REDACTED] | Legal advisers: [REDACTED]
+
+Note: This information constitutes MNPI. Do not share outside the deal team.`
+            }
+        ]
+    },
+    insurance: {
+        label: 'Insurance',
+        prompts: [
+            {
+                title: 'Claims Data Analysis',
+                subtitle: 'Claims adjuster pastes policy data to get an AI assessment',
+                tags: ['PHI / PII', 'Claims', 'Policy Data'],
+                tagColors: ['risk-high', 'risk-high', 'risk-med'],
+                expected: 'Block — medical claims data and PII',
+                tool: 'https://chat.openai.com',
+                toolName: 'ChatGPT',
+                text: `Assess this health insurance claim for validity and flag any anomalies:
+
+Policyholder: Margaret A. Thompson (DOB: 19/05/1958)
+Policy No: BCB-X-123456789 | Group: CORP-PRE-2024
+Claim No: CLM-2025-043821
+Diagnosis: Type 2 Diabetes Mellitus (ICD-10: E11.9)
+Treating Physician: Dr. Andrew Patel (NPI: 1234567890, GMC: 4567890)
+Hospital: Royal London Hospital, Whitechapel — Admission: 08/01/2025 – 12/01/2025
+Claim amount: £28,450.00 | Pre-auth status: Approved (AUTH-2025-0129)`
+            },
+            {
+                title: 'Actuarial Reserve Data',
+                subtitle: 'Actuary pastes reserve calculations into AI for review',
+                tags: ['Commercially Sensitive', 'Financial', 'Regulatory'],
+                tagColors: ['risk-high', 'risk-med', 'risk-med'],
+                expected: 'Coach — sensitive financial reserve data',
+                tool: 'https://copilot.microsoft.com',
+                toolName: 'Copilot',
+                text: `Review the following actuarial reserve calculation and identify any methodology concerns before board presentation:
+
+LINE OF BUSINESS: Motor Third Party Liability (UK)
+Accident Year: 2023 | Valuation Date: 31 Dec 2024
+Gross IBNR Reserve: £42.8M | Net of RI: £31.2M
+Reserve shortfall vs prior estimate: –£6.4M (15.0%)
+Large loss development: 3 claims >£5M (Periodical Payment Orders)
+Combined ratio: 108.4% | Reserve confidence level: 65th percentile
+Solvency II SCR coverage: 142% (amber — watchlist)`
+            },
+            {
+                title: 'Underwriting Risk Assessment',
+                subtitle: 'Underwriter uses AI to assess a complex commercial risk',
+                tags: ['Client Confidential', 'Underwriting', 'Commercial'],
+                tagColors: ['risk-high', 'risk-med', 'risk-med'],
+                expected: 'Coach — client data and underwriting decision data',
+                tool: 'https://gemini.google.com',
+                toolName: 'Gemini',
+                text: `Help me assess this commercial property risk submission for our Energy Practice:
+
+Insured: Meridian Offshore Platforms Ltd (Company No: SC812345)
+Location: North Sea Block 22/17a — FPSO Vessel "Meridian Explorer"
+Sum Insured: £185M (hull & machinery + loss of production income)
+Prior claims: Hurricane event 2021 — £12.4M paid, BI claim £8.1M
+EML assessment: £92M (50% PML) | Probable Max Loss: £140M
+Exclusions requested: named windstorm sublimit £20M
+Lead underwriter: currently unplaced — seeking 40% line`
+            }
+        ]
+    },
+    defence: {
+        label: 'Defence & Government',
+        prompts: [
+            {
+                title: 'Technical Specification Review',
+                subtitle: 'Engineer uses AI to review a system specification — export controlled',
+                tags: ['Export Control', 'Sensitive Technical', 'Restricted'],
+                tagColors: ['risk-high', 'risk-high', 'risk-med'],
+                expected: 'Block — export-controlled technical specification data',
+                tool: 'https://chat.openai.com',
+                toolName: 'ChatGPT',
+                text: `Review the following technical specification for completeness and identify any gaps. PROJECT: NIGHTINGALE (UNCLASSIFIED // EXPORT CONTROLLED — EAR99 PENDING)
+
+System: Autonomous Maritime Surveillance Sensor Array v2.4
+Peak detection range: 340km at 94GHz (MMW radar)
+Target classification accuracy: >97.3% against RCS 0.1m²
+Power: 2.4kW SWaP-C envelope | Operating temp: –40°C to +70°C
+Export status: Awaiting ECJU licence (ref: SIEL/2025/0814)
+Programme Director: Commodore J. Whitfield, DE&S Corsham`
+            },
+            {
+                title: 'Personnel Security Vetting',
+                subtitle: 'HR pastes SC/DV vetting data into AI to process a form',
+                tags: ['Personnel Data', 'Security Clearance', 'PII'],
+                tagColors: ['risk-high', 'risk-high', 'risk-high'],
+                expected: 'Block — clearance level, PII, and sensitive personal data',
+                tool: 'https://copilot.microsoft.com',
+                toolName: 'Copilot',
+                text: `Help me review this SC vetting submission for completeness before sending to UKSV:
+
+Candidate: Flight Lieutenant Rebecca Holt (Serv No: 8028164)
+DOB: 30 September 1991 | NI: QQ 12 34 56 C | Passport: GB456789123
+Current clearance: SC (renewable Feb 2026) | Applying for: DV
+Declared foreign contacts: Sister — dual UK/Canadian citizen (Ottawa)
+Finances: CCJ issued 2021 (£4,200 — now satisfied)
+Any adverse: DUI caution 2019 — disclosed
+Sponsor unit: 32 (The Royal) Squadron, RAF Northolt`
+            },
+            {
+                title: 'Programme Cost & Schedule',
+                subtitle: 'PM uses AI to summarise a programme review for a brief',
+                tags: ['Commercial Sensitive', 'Programme Data', 'Restricted'],
+                tagColors: ['risk-med', 'risk-med', 'risk-med'],
+                expected: 'Coach — programme financial and schedule data',
+                tool: 'https://gemini.google.com',
+                toolName: 'Gemini',
+                text: `Summarise the following programme review data for a ministerial briefing. PROTECT — COMMERCIAL SENSITIVE.
+
+Programme: Next Generation Littoral Combat Vessel (NGLCV)
+DE&S Programme Manager: Col. D. Fairweather
+Approved budget: £2.84Bn (Main Gate approval Jan 2023)
+Forecast outturn: £3.41Bn (+£570M, +20.1% variance) — to be notified to Treasury
+Schedule: IOC slipped to Q3 FY28 (was Q1 FY27) — 6-quarter delay
+Risk: Shipyard industrial action (BAE Barrow) — contingency: £45M unallocated
+Current contractor: BAE Systems Maritime | Contract ref: DE&S-NGLCV-2023-001`
+            }
+        ]
+    },
+    healthcare: {
+        label: 'Healthcare',
+        prompts: [
+            {
+                title: 'Patient Clinical Note',
+                subtitle: 'Clinician pastes a clinical note into AI to generate a referral letter',
+                tags: ['PHI', 'HIPAA / GDPR', 'Patient Data'],
+                tagColors: ['risk-high', 'risk-high', 'risk-high'],
+                expected: 'Block — PHI, NHS/patient identifiers, clinical data',
+                tool: 'https://chat.openai.com',
+                toolName: 'ChatGPT',
+                text: `Please draft a referral letter to cardiology based on the following clinical note:
+
+Patient: Robert Johnson (DOB: 22/07/1966) | NHS No: 943 476 5919 | MRN: MR-2024-99887
+GP: Dr. Sarah Mitchell, Elm Park Surgery, Reading | Date: 14 Jan 2025
+Presenting: Exertional chest pain × 3 weeks, dyspnoea on mild exertion
+ECG: ST depression leads II, III, aVF
+HbA1c: 11.2% (uncontrolled T2DM) | BP: 158/94 | Cholesterol: 6.8 mmol/L
+Current meds: Metformin 1g BD, Lisinopril 10mg OD, Atorvastatin 40mg OD
+Concern: Possible NSTEMI — requesting urgent cardiology review`
+            },
+            {
+                title: 'Prescription & Medication Data',
+                subtitle: 'Pharmacy tech uses AI to check for drug interactions',
+                tags: ['PHI', 'Prescription Data', 'PII'],
+                tagColors: ['risk-high', 'risk-high', 'risk-med'],
+                expected: 'Block or Coach — PHI and prescription data',
+                tool: 'https://copilot.microsoft.com',
+                toolName: 'Copilot',
+                text: `Check the following prescription combination for potential drug interactions and flag any contraindications:
+
+Patient: Emily Clarke (DOB: 03/12/1948) | NHS No: 712 834 6201
+Prescriptions on record:
+- Warfarin 5mg OD (INR target 2.5–3.5, last INR: 3.1 — 09/01/2025)
+- Amoxicillin 500mg TDS × 7 days (new — GP prescribed 14/01/2025)
+- Omeprazole 20mg OD
+- Amlodipine 10mg OD
+- Paracetamol 500mg QDS PRN
+Allergies: Penicillin (anaphylaxis 1994) — note discrepancy with above prescription`
+            },
+            {
+                title: 'Mental Health Assessment',
+                subtitle: 'IAPT service uses AI to help write an assessment summary',
+                tags: ['Sensitive PHI', 'Mental Health', 'GDPR Special Category'],
+                tagColors: ['risk-high', 'risk-high', 'risk-high'],
+                expected: 'Block — special category mental health data',
+                tool: 'https://gemini.google.com',
+                toolName: 'Gemini',
+                text: `Summarise the following IAPT intake assessment for supervision:
+
+Patient: Thomas Ward (DOB: 18/04/1987) | Ref: IAPT-2025-4412
+Self-referral: 08 Jan 2025 | Therapist: Emma Hobson, CBT Practitioner
+Presenting: Moderate depression (PHQ-9: 14) + generalised anxiety (GAD-7: 12)
+Onset: Following redundancy (Oct 2024) and relationship breakdown
+Risk assessment: Low suicide risk — passive ideation, no plan or intent
+Prior history: One episode 2018 (medication only, no therapy)
+Medication: Sertraline 50mg OD (started 10 Jan 2025, Dr K. Osei)
+Next session: 21 Jan 2025 — CBT protocol Step 3`
+            }
+        ]
+    }
+};
+
+function renderPrompts(industryKey) {
+    const data = INDUSTRIES[industryKey] || INDUSTRIES.general;
+    const container = document.getElementById('prompt-cards');
+
+    container.innerHTML = data.prompts.map((p, i) => `
+        <div class="prompt-card">
+            <div class="prompt-card-head">
+                <div>
+                    <div class="prompt-title">${p.title}</div>
+                    <div class="prompt-subtitle">${p.subtitle}</div>
+                </div>
+                <div class="prompt-badges">
+                    ${p.tags.map((t, ti) => `<span class="dlp-badge ${p.tagColors[ti]}">${t}</span>`).join('')}
+                </div>
+            </div>
+            <div class="prompt-text" id="prompt-${i}">${escHtml(p.text)}</div>
+            <div class="prompt-actions">
+                <div class="prompt-expected">
+                    <div class="expected-dot"></div>
+                    Expected: ${p.expected}
+                </div>
+                <div class="prompt-btn-group">
+                    <button class="copy-btn" onclick="copyPrompt(${i}, this)">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2" stroke="currentColor" stroke-width="1.2"/><path d="M2 8.5H1.8a.8.8 0 01-.8-.8V1.8A.8.8 0 011.8 1h5.9a.8.8 0 01.8.8V2" stroke="currentColor" stroke-width="1.2"/></svg>
+                        Copy Prompt
+                    </button>
+                    <a href="${p.tool}" target="_blank" rel="noopener" class="open-btn">
+                        Open ${p.toolName} →
+                    </a>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function copyPrompt(idx, btn) {
+    const el = document.getElementById('prompt-' + idx);
+    navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+        btn.classList.add('copied');
+        btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l2.5 2.5 5.5-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg> Copied!';
+        setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2" stroke="currentColor" stroke-width="1.2"/><path d="M2 8.5H1.8a.8.8 0 01-.8-.8V1.8A.8.8 0 011.8 1h5.9a.8.8 0 01.8.8V2" stroke="currentColor" stroke-width="1.2"/></svg> Copy Prompt';
+        }, 2200);
+    });
+}
+
+function init() {
+    const industry = localStorage.getItem('jskope-industry') || 'general';
+    renderPrompts(industry);
+
+    if (industry !== 'general') {
+        const data = INDUSTRIES[industry];
+        document.getElementById('industry-banner').classList.add('show');
+        document.getElementById('industry-name').textContent = data.label;
+        const pill = document.getElementById('header-industry-pill');
+        pill.textContent = data.label.toUpperCase();
+        pill.style.display = 'block';
+    }
+}
+
+init();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Coaching Demo | Jskope</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --turquoise: #00A7CE;
+            --orange: #FF8300;
+            --navy: #002B49;
+            --bg: #fafbfc;
+            --text: #1a1d23;
+            --muted: #6b7280;
+            --border: rgba(0,167,206,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,167,206,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,167,206,0.025) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: grid-shift 20s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes grid-shift { to { background-position: 60px 60px; } }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(250,251,252,0.88);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            height: 62px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .back:hover { color: var(--orange); }
+
+        .page-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            color: var(--orange);
+            background: rgba(255,131,0,0.07);
+            border: 1px solid rgba(255,131,0,0.18);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+        }
+
+        main {
+            position: relative;
+            z-index: 10;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3.5rem 2rem 6rem;
+        }
+
+        .page-hero {
+            margin-bottom: 2.5rem;
+            animation: fade-up 0.5s ease both;
+        }
+
+        .page-hero .eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--orange);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+
+        .page-hero h1 {
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            font-weight: 700;
+            line-height: 1.2;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--orange) 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.75rem;
+        }
+
+        .page-hero p {
+            font-size: 1rem;
+            color: var(--muted);
+            max-width: 600px;
+            line-height: 1.7;
+        }
+
+        /* Coaching explanation */
+        .coaching-explainer {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 3rem;
+            animation: fade-up 0.5s 0.1s ease both;
+        }
+
+        @media (max-width: 640px) { .coaching-explainer { grid-template-columns: 1fr; } }
+
+        .explainer-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.4rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .explainer-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .explainer-title {
+            font-size: 0.92rem;
+            font-weight: 600;
+            margin-bottom: 0.35rem;
+        }
+
+        .explainer-desc {
+            font-size: 0.8rem;
+            color: var(--muted);
+            line-height: 1.55;
+        }
+
+        /* Section */
+        .cat-section {
+            margin-bottom: 3rem;
+            animation: fade-up 0.5s 0.15s ease both;
+        }
+
+        .cat-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .cat-label h2 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .policy-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.62rem;
+            padding: 0.18rem 0.55rem;
+            border-radius: 50px;
+            font-weight: 500;
+        }
+
+        .policy-coach { background: rgba(255,131,0,0.08); color: #FF8300; border: 1px solid rgba(255,131,0,0.2); }
+        .policy-justify { background: rgba(0,167,206,0.08); color: var(--turquoise); border: 1px solid rgba(0,167,206,0.2); }
+
+        .cat-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.85rem;
+        }
+
+        @media (max-width: 600px) { .links-grid { grid-template-columns: 1fr; } }
+
+        .demo-link {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .demo-link:hover {
+            border-color: rgba(255,131,0,0.25);
+            box-shadow: 0 4px 20px rgba(255,131,0,0.06);
+            transform: translateX(2px);
+        }
+
+        .demo-link:hover .launch-btn {
+            background: var(--orange);
+            color: #fff;
+            border-color: var(--orange);
+        }
+
+        .link-info { flex: 1; }
+
+        .link-name {
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .link-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .link-meta span {
+            background: rgba(0,43,73,0.05);
+            padding: 0.1rem 0.4rem;
+            border-radius: 3px;
+        }
+
+        .launch-btn {
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--orange);
+            background: rgba(255,131,0,0.07);
+            border: 1px solid rgba(255,131,0,0.18);
+            padding: 0.4rem 0.9rem;
+            border-radius: 6px;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        /* Mock coaching notification */
+        .mock-notification {
+            background: var(--navy);
+            border-radius: 14px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            animation: fade-up 0.5s 0.2s ease both;
+        }
+
+        .mock-notification h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--orange);
+            margin-bottom: 1.5rem;
+        }
+
+        .mock-banner {
+            background: rgba(255,131,0,0.08);
+            border: 1px solid rgba(255,131,0,0.25);
+            border-left: 3px solid var(--orange);
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .mock-banner-content { flex: 1; }
+
+        .mock-banner-title {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.4rem;
+        }
+
+        .mock-banner-desc {
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.55);
+            line-height: 1.55;
+            margin-bottom: 1rem;
+        }
+
+        .mock-actions {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .mock-btn-proceed {
+            font-size: 0.78rem;
+            font-weight: 500;
+            background: rgba(255,131,0,0.15);
+            color: var(--orange);
+            border: 1px solid rgba(255,131,0,0.3);
+            padding: 0.38rem 0.9rem;
+            border-radius: 6px;
+        }
+
+        .mock-btn-back {
+            font-size: 0.78rem;
+            font-weight: 500;
+            background: rgba(255,255,255,0.07);
+            color: rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 0.38rem 0.9rem;
+            border-radius: 6px;
+        }
+
+        footer {
+            position: relative;
+            z-index: 10;
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        footer p {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--muted);
+            opacity: 0.55;
+        }
+
+        @keyframes fade-up {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-inner">
+        <a href="/temp/" class="back">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M10 7H2.5M5 4l-2.5 3L5 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Demo Portal
+        </a>
+        <span class="page-badge">SWG · USER COACHING</span>
+    </div>
+</header>
+
+<main>
+
+    <div class="page-hero">
+        <p class="eyebrow">Netskope Real-time User Coaching</p>
+        <h1>User Coaching Demos</h1>
+        <p>Coaching is Netskope's alternative to hard blocks. Instead of a wall, users receive an in-browser notification explaining the risk — and may be given the option to justify and proceed. Great for balancing security with user experience.</p>
+    </div>
+
+    <!-- What is coaching -->
+    <div class="coaching-explainer">
+        <div class="explainer-card">
+            <div class="explainer-icon" style="background:rgba(255,131,0,0.08);">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M16 3H4C3 3 2 4 2 5V13C2 14 3 15 4 15H7L10 18.5L13 15H16C17 15 18 14 18 13V5C18 4 17 3 16 3Z" stroke="#FF8300" stroke-width="1.4"/>
+                    <line x1="10" y1="7" x2="10" y2="11" stroke="#FF8300" stroke-width="1.4" stroke-linecap="round"/>
+                    <circle cx="10" cy="12.5" r="0.7" fill="#FF8300"/>
+                </svg>
+            </div>
+            <div>
+                <div class="explainer-title">What is User Coaching?</div>
+                <div class="explainer-desc">A real-time, in-browser notification that intercepts access to a site or action, explains the risk, and optionally asks the user for a business justification before proceeding.</div>
+            </div>
+        </div>
+        <div class="explainer-card">
+            <div class="explainer-icon" style="background:rgba(0,167,206,0.08);">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="7.5" stroke="#00A7CE" stroke-width="1.4"/>
+                    <path d="M7 10l2 2 4-4" stroke="#00A7CE" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div>
+                <div class="explainer-title">Why Coaching over Blocking?</div>
+                <div class="explainer-desc">Coaching respects user autonomy while enforcing policy. It creates an audit trail of user intent, reduces help-desk tickets, and improves security awareness over time.</div>
+            </div>
+        </div>
+        <div class="explainer-card">
+            <div class="explainer-icon" style="background:rgba(0,43,73,0.07);">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <rect x="3" y="7" width="14" height="10" rx="2" stroke="#002B49" stroke-width="1.4"/>
+                    <path d="M7 7V5.5C7 3.6 8.3 2 10 2C11.7 2 13 3.6 13 5.5V7" stroke="#002B49" stroke-width="1.4"/>
+                </svg>
+            </div>
+            <div>
+                <div class="explainer-title">What's Logged?</div>
+                <div class="explainer-desc">Every coaching event is logged in the Netskope tenant — including whether the user proceeded, the justification entered, the user identity, device, and timestamp.</div>
+            </div>
+        </div>
+        <div class="explainer-card">
+            <div class="explainer-icon" style="background:rgba(16,185,129,0.07);">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M2 10h16M10 2v16" stroke="#10B981" stroke-width="1.4" stroke-linecap="round"/>
+                    <circle cx="10" cy="10" r="4" stroke="#10B981" stroke-width="1.4"/>
+                </svg>
+            </div>
+            <div>
+                <div class="explainer-title">Customisable per Policy</div>
+                <div class="explainer-desc">Admins choose which categories trigger coaching vs. block. Message text, logo, support link, and justification options are all customisable per policy.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview of a coaching notification -->
+    <div class="mock-notification">
+        <h3>Preview: What a Coaching Notification Looks Like</h3>
+        <div class="mock-banner">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;margin-top:2px;">
+                <circle cx="10" cy="10" r="8" stroke="#FF8300" stroke-width="1.4"/>
+                <line x1="10" y1="8" x2="10" y2="12" stroke="#FF8300" stroke-width="1.4" stroke-linecap="round"/>
+                <circle cx="10" cy="6" r="0.7" fill="#FF8300"/>
+            </svg>
+            <div class="mock-banner-content">
+                <div class="mock-banner-title">Netskope Security Notice</div>
+                <div class="mock-banner-desc">
+                    You are attempting to access <strong style="color:rgba(255,255,255,0.8)">dropbox.com</strong>, which is categorised as <strong style="color:rgba(255,255,255,0.8)">Personal Cloud Storage</strong>. Your organisation's policy flags this as a potential data loss risk. Please use your corporate OneDrive for file sharing. If you have a valid business reason to proceed, enter your justification below.
+                </div>
+                <div class="mock-actions">
+                    <span class="mock-btn-proceed">Proceed with justification</span>
+                    <span class="mock-btn-back">Take me back</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Personal Cloud -->
+    <div class="cat-section">
+        <div class="cat-label">
+            <h2>Personal Cloud Storage</h2>
+            <span class="policy-tag policy-coach">COACHING + JUSTIFICATION</span>
+        </div>
+        <div class="links-grid">
+            <a href="https://www.dropbox.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Dropbox Personal</div>
+                    <div class="link-meta"><span>Cloud Storage · Consumer</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://onedrive.live.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">OneDrive Personal</div>
+                    <div class="link-meta"><span>Cloud Storage · Consumer</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://drive.google.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Google Drive (Personal)</div>
+                    <div class="link-meta"><span>Cloud Storage · Consumer</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://www.box.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Box Personal</div>
+                    <div class="link-meta"><span>Cloud Storage · Mixed Use</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Personal Email -->
+    <div class="cat-section">
+        <div class="cat-label">
+            <h2>Personal Email</h2>
+            <span class="policy-tag policy-coach">COACHING</span>
+        </div>
+        <div class="links-grid">
+            <a href="https://mail.google.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Gmail (Personal)</div>
+                    <div class="link-meta"><span>Webmail · Consumer</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://outlook.live.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Outlook.com (Personal)</div>
+                    <div class="link-meta"><span>Webmail · Consumer</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://proton.me/mail" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">ProtonMail</div>
+                    <div class="link-meta"><span>Webmail · Encrypted</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://mail.yahoo.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Yahoo Mail</div>
+                    <div class="link-meta"><span>Webmail · Consumer</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Social / Productivity -->
+    <div class="cat-section">
+        <div class="cat-label">
+            <h2>Social & Professional Networks</h2>
+            <span class="policy-tag policy-justify">COACH / LOG</span>
+        </div>
+        <div class="links-grid">
+            <a href="https://www.linkedin.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">LinkedIn</div>
+                    <div class="link-meta"><span>Professional Networking</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://twitter.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">X (Twitter)</div>
+                    <div class="link-meta"><span>Social Networking</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://www.facebook.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Facebook</div>
+                    <div class="link-meta"><span>Social Networking</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://www.instagram.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Instagram</div>
+                    <div class="link-meta"><span>Social Networking · Media</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+        </div>
+    </div>
+
+</main>
+
+<footer>
+    <p>© 2026 Netskope, Inc. — Demo Environment — jskope.com/temp</p>
+</footer>
+
+</body>
+</html>
