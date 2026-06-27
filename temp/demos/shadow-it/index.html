@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow IT Demo | Jskope</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --turquoise: #00A7CE; --orange: #FF8300; --navy: #002B49; --green: #10B981; --bg: #fafbfc; --text: #1a1d23; --muted: #6b7280; --border: rgba(0,167,206,0.1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Outfit', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+        body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(0,167,206,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,167,206,0.025) 1px, transparent 1px); background-size: 60px 60px; animation: grid-shift 20s linear infinite; z-index: 0; }
+        @keyframes grid-shift { to { background-position: 60px 60px; } }
+
+        header { position: sticky; top: 0; z-index: 100; background: rgba(250,251,252,0.88); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+        .header-inner { max-width: 1000px; margin: 0 auto; padding: 0 2rem; height: 62px; display: flex; align-items: center; justify-content: space-between; }
+        .back { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+        .back:hover { color: var(--green); }
+        .page-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--green); background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.18); padding: 0.25rem 0.75rem; border-radius: 50px; }
+
+        main { position: relative; z-index: 10; max-width: 1000px; margin: 0 auto; padding: 3.5rem 2rem 6rem; }
+        .page-hero { margin-bottom: 2.5rem; animation: fade-up 0.5s ease both; }
+        .page-hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--green); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 0.75rem; }
+        .page-hero h1 { font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 700; line-height: 1.2; background: linear-gradient(135deg, var(--navy) 0%, var(--green) 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.75rem; }
+        .page-hero p { font-size: 1rem; color: var(--muted); max-width: 600px; line-height: 1.7; }
+
+        /* CCI Score display */
+        .cci-intro { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; margin-bottom: 2.5rem; animation: fade-up 0.5s 0.08s ease both; }
+        .cci-intro-top { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+        .cci-intro h3 { font-size: 0.95rem; font-weight: 600; }
+        .cci-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--turquoise); background: rgba(0,167,206,0.07); border: 1px solid rgba(0,167,206,0.18); padding: 0.2rem 0.6rem; border-radius: 50px; }
+        .cci-intro p { font-size: 0.84rem; color: var(--muted); line-height: 1.65; }
+        .cci-bands { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
+        .cci-band { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; padding: 0.22rem 0.6rem; border-radius: 4px; display: flex; align-items: center; gap: 0.35rem; }
+        .band-high   { background: rgba(16,185,129,0.08); color: #059669; }
+        .band-med    { background: rgba(234,179,8,0.1);  color: #92400E; }
+        .band-low    { background: rgba(255,131,0,0.08); color: #C2410C; }
+        .band-poor   { background: rgba(220,38,38,0.08); color: #DC2626; }
+
+        .section-label { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
+        .section-label h2 { font-size: 1.05rem; font-weight: 600; }
+        .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+        .apps-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.9rem; margin-bottom: 3rem; animation: fade-up 0.5s 0.12s ease both; }
+        @media (max-width: 640px) { .apps-grid { grid-template-columns: 1fr; } }
+
+        .app-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; display: flex; gap: 1rem; transition: all 0.2s; }
+        .app-card:hover { border-color: rgba(16,185,129,0.25); box-shadow: 0 4px 20px rgba(16,185,129,0.06); }
+
+        .cci-score-ring { position: relative; width: 52px; height: 52px; flex-shrink: 0; }
+        .cci-ring-bg { fill: none; stroke: rgba(0,43,73,0.08); stroke-width: 4; }
+        .cci-ring-fg { fill: none; stroke-width: 4; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dasharray 0.6s ease; }
+        .cci-ring-text { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; dominant-baseline: middle; }
+
+        .app-info { flex: 1; }
+        .app-name { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+        .app-category { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); margin-bottom: 0.4rem; }
+        .app-risks { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.7rem; }
+        .risk-chip { font-size: 0.68rem; padding: 0.15rem 0.45rem; border-radius: 4px; background: rgba(0,43,73,0.05); color: var(--muted); }
+        .app-cta { display: flex; gap: 0.5rem; align-items: center; }
+        .app-visit { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.78rem; font-weight: 500; color: var(--green); background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.2); padding: 0.32rem 0.75rem; border-radius: 6px; text-decoration: none; transition: all 0.2s; }
+        .app-visit:hover { background: var(--green); color: #fff; border-color: var(--green); }
+        .risk-label { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; padding: 0.18rem 0.5rem; border-radius: 50px; }
+        .rl-high { background: rgba(16,185,129,0.08); color: #059669; border: 1px solid rgba(16,185,129,0.2); }
+        .rl-med  { background: rgba(234,179,8,0.1);  color: #92400E; border: 1px solid rgba(234,179,8,0.25); }
+        .rl-low  { background: rgba(255,131,0,0.08); color: #C2410C; border: 1px solid rgba(255,131,0,0.2); }
+        .rl-poor { background: rgba(220,38,38,0.08); color: #DC2626; border: 1px solid rgba(220,38,38,0.2); }
+
+        /* Upload attempt section */
+        .upload-section { background: var(--navy); border-radius: 14px; padding: 2rem; margin-bottom: 3rem; animation: fade-up 0.5s 0.18s ease both; }
+        .upload-section h3 { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--green); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.25rem; }
+        .upload-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
+        @media (max-width: 640px) { .upload-steps { grid-template-columns: 1fr; } }
+        .upload-step { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 1.1rem; }
+        .step-num-label { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--green); margin-bottom: 0.6rem; }
+        .step-title { font-size: 0.88rem; font-weight: 600; color: #fff; margin-bottom: 0.4rem; }
+        .step-desc { font-size: 0.78rem; color: rgba(255,255,255,0.5); line-height: 1.55; margin-bottom: 0.85rem; }
+        .step-btn { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.78rem; font-weight: 500; color: var(--green); background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25); padding: 0.35rem 0.8rem; border-radius: 6px; text-decoration: none; transition: all 0.2s; }
+        .step-btn:hover { background: var(--green); color: #fff; border-color: var(--green); }
+
+        .discovery-note { background: rgba(0,167,206,0.05); border: 1px solid rgba(0,167,206,0.15); border-radius: 12px; padding: 1.4rem; animation: fade-up 0.5s 0.22s ease both; }
+        .discovery-note h3 { font-size: 0.92rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--navy); }
+        .discovery-note p { font-size: 0.84rem; color: var(--muted); line-height: 1.65; margin-bottom: 1rem; }
+        .discovery-note ul { padding-left: 1.25rem; }
+        .discovery-note li { font-size: 0.82rem; color: var(--muted); line-height: 1.7; }
+        .discovery-note li strong { color: var(--text); }
+
+        footer { position: relative; z-index: 10; border-top: 1px solid var(--border); padding: 2rem; text-align: center; }
+        footer p { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--muted); opacity: 0.55; }
+        @keyframes fade-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+<header>
+    <div class="header-inner">
+        <a href="/temp/" class="back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M10 7H2.5M5 4l-2.5 3L5 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Demo Portal</a>
+        <span class="page-badge">CASB · SHADOW IT</span>
+    </div>
+</header>
+<main>
+    <div class="page-hero">
+        <p class="eyebrow">Netskope CASB · Shadow IT Discovery</p>
+        <h1>Shadow IT Discovery</h1>
+        <p>Visit unsanctioned cloud applications and observe how Netskope CASB identifies, scores, and controls them in real time. Every app accessed through Netskope is automatically classified and risk-scored.</p>
+    </div>
+
+    <!-- CCI intro -->
+    <div class="cci-intro">
+        <div class="cci-intro-top">
+            <h3>Netskope Cloud Confidence Index™ (CCI)</h3>
+            <span class="cci-badge">NETSKOPE PROPRIETARY</span>
+        </div>
+        <p>Every app below displays its Netskope Cloud Confidence Index score — a 0–100 risk rating calculated across 50+ criteria including security certifications, data ownership, auditability, and encryption standards. Admins use CCI to set automatic policies: block all apps below CCI 60, coach between 60–75, and allow above 75.</p>
+        <div class="cci-bands">
+            <span class="cci-band band-high">● 76–100: Trusted</span>
+            <span class="cci-band band-med">● 51–75: General Confidence</span>
+            <span class="cci-band band-low">● 26–50: Low Confidence</span>
+            <span class="cci-band band-poor">● 0–25: Poor</span>
+        </div>
+    </div>
+
+    <div class="section-label"><h2>Unsanctioned File Sharing Apps</h2></div>
+    <div class="apps-grid">
+
+        <div class="app-card">
+            <div class="cci-score-ring">
+                <svg viewBox="0 0 52 52" width="52" height="52">
+                    <circle class="cci-ring-bg" cx="26" cy="26" r="22"/>
+                    <circle class="cci-ring-fg" cx="26" cy="26" r="22" stroke="#A16207" stroke-dasharray="55 83"/>
+                    <text class="cci-ring-text" x="26" y="26" fill="#92400E">42</text>
+                </svg>
+            </div>
+            <div class="app-info">
+                <div class="app-name">WeTransfer <span class="risk-label rl-low">LOW CONFIDENCE</span></div>
+                <div class="app-category">File Storage & Sharing · CCI: 42/100</div>
+                <div class="app-risks"><span class="risk-chip">No enterprise audit</span><span class="risk-chip">Data retention unclear</span><span class="risk-chip">No MFA</span></div>
+                <div class="app-cta"><a href="https://www.wetransfer.com" target="_blank" rel="noopener" class="app-visit">Access App →</a></div>
+            </div>
+        </div>
+
+        <div class="app-card">
+            <div class="cci-score-ring">
+                <svg viewBox="0 0 52 52" width="52" height="52">
+                    <circle class="cci-ring-bg" cx="26" cy="26" r="22"/>
+                    <circle class="cci-ring-fg" cx="26" cy="26" r="22" stroke="#DC2626" stroke-dasharray="28 110"/>
+                    <text class="cci-ring-text" x="26" y="26" fill="#DC2626">22</text>
+                </svg>
+            </div>
+            <div class="app-info">
+                <div class="app-name">MEGA <span class="risk-label rl-poor">POOR</span></div>
+                <div class="app-category">Cloud Storage · CCI: 22/100</div>
+                <div class="app-risks"><span class="risk-chip">No SOC2</span><span class="risk-chip">Jurisdiction risk</span><span class="risk-chip">No audit logs</span></div>
+                <div class="app-cta"><a href="https://mega.nz" target="_blank" rel="noopener" class="app-visit">Access App →</a></div>
+            </div>
+        </div>
+
+        <div class="app-card">
+            <div class="cci-score-ring">
+                <svg viewBox="0 0 52 52" width="52" height="52">
+                    <circle class="cci-ring-bg" cx="26" cy="26" r="22"/>
+                    <circle class="cci-ring-fg" cx="26" cy="26" r="22" stroke="#C2410C" stroke-dasharray="41 97"/>
+                    <text class="cci-ring-text" x="26" y="26" fill="#C2410C">33</text>
+                </svg>
+            </div>
+            <div class="app-info">
+                <div class="app-name">Filebin <span class="risk-label rl-low">LOW CONFIDENCE</span></div>
+                <div class="app-category">Temporary File Storage · CCI: 33/100</div>
+                <div class="app-risks"><span class="risk-chip">No auth required</span><span class="risk-chip">Public by default</span><span class="risk-chip">No DLP</span></div>
+                <div class="app-cta"><a href="https://filebin.net" target="_blank" rel="noopener" class="app-visit">Access App →</a></div>
+            </div>
+        </div>
+
+        <div class="app-card">
+            <div class="cci-score-ring">
+                <svg viewBox="0 0 52 52" width="52" height="52">
+                    <circle class="cci-ring-bg" cx="26" cy="26" r="22"/>
+                    <circle class="cci-ring-fg" cx="26" cy="26" r="22" stroke="#A16207" stroke-dasharray="47 91"/>
+                    <text class="cci-ring-text" x="26" y="26" fill="#92400E">38</text>
+                </svg>
+            </div>
+            <div class="app-info">
+                <div class="app-name">Pastebin <span class="risk-label rl-low">LOW CONFIDENCE</span></div>
+                <div class="app-category">Text Storage / Exfil Risk · CCI: 38/100</div>
+                <div class="app-risks"><span class="risk-chip">Public pastes</span><span class="risk-chip">API exfil risk</span><span class="risk-chip">No DLP</span></div>
+                <div class="app-cta"><a href="https://pastebin.com" target="_blank" rel="noopener" class="app-visit">Access App →</a></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-label"><h2>Personal Cloud Storage (Consumer Grade)</h2></div>
+    <div class="apps-grid" style="margin-bottom:3rem; animation: fade-up 0.5s 0.15s ease both;">
+
+        <div class="app-card">
+            <div class="cci-score-ring">
+                <svg viewBox="0 0 52 52" width="52" height="52">
+                    <circle class="cci-ring-bg" cx="26" cy="26" r="22"/>
+                    <circle class="cci-ring-fg" cx="26" cy="26" r="22" stroke="#0891B2" stroke-dasharray="85 53"/>
+                    <text class="cci-ring-text" x="26" y="26" fill="#0891B2">69</text>
+                </svg>
+            </div>
+            <div class="app-info">
+                <div class="app-name">Dropbox (Personal) <span class="risk-label rl-med">GENERAL CONFIDENCE</span></div>
+                <div class="app-category">Cloud Storage · Consumer · CCI: 69/100</div>
+                <div class="app-risks"><span class="risk-chip">SOC2 Type II</span><span class="risk-chip">No enterprise controls</span><span class="risk-chip">Data export risk</span></div>
+                <div class="app-cta"><a href="https://www.dropbox.com" target="_blank" rel="noopener" class="app-visit">Access App →</a></div>
+            </div>
+        </div>
+
+        <div class="app-card">
+            <div class="cci-score-ring">
+                <svg viewBox="0 0 52 52" width="52" height="52">
+                    <circle class="cci-ring-bg" cx="26" cy="26" r="22"/>
+                    <circle class="cci-ring-fg" cx="26" cy="26" r="22" stroke="#0891B2" stroke-dasharray="80 58"/>
+                    <text class="cci-ring-text" x="26" y="26" fill="#0891B2">65</text>
+                </svg>
+            </div>
+            <div class="app-info">
+                <div class="app-name">OneDrive Personal <span class="risk-label rl-med">GENERAL CONFIDENCE</span></div>
+                <div class="app-category">Cloud Storage · Consumer · CCI: 65/100</div>
+                <div class="app-risks"><span class="risk-chip">No tenant separation</span><span class="risk-chip">Personal vs corp data</span></div>
+                <div class="app-cta"><a href="https://onedrive.live.com" target="_blank" rel="noopener" class="app-visit">Access App →</a></div>
+            </div>
+        </div>
+
+        <div class="app-card">
+            <div class="cci-score-ring">
+                <svg viewBox="0 0 52 52" width="52" height="52">
+                    <circle class="cci-ring-bg" cx="26" cy="26" r="22"/>
+                    <circle class="cci-ring-fg" cx="26" cy="26" r="22" stroke="#DC2626" stroke-dasharray="22 116"/>
+                    <text class="cci-ring-text" x="26" y="26" fill="#DC2626">18</text>
+                </svg>
+            </div>
+            <div class="app-info">
+                <div class="app-name">AnonFiles (defunct) <span class="risk-label rl-poor">POOR</span></div>
+                <div class="app-category">Anonymous File Hosting · CCI: 18/100</div>
+                <div class="app-risks"><span class="risk-chip">Anonymous uploads</span><span class="risk-chip">No auth</span><span class="risk-chip">Abuse vector</span></div>
+                <div class="app-cta"><a href="https://gofile.io" target="_blank" rel="noopener" class="app-visit">GoFile (similar) →</a></div>
+            </div>
+        </div>
+
+        <div class="app-card">
+            <div class="cci-score-ring">
+                <svg viewBox="0 0 52 52" width="52" height="52">
+                    <circle class="cci-ring-bg" cx="26" cy="26" r="22"/>
+                    <circle class="cci-ring-fg" cx="26" cy="26" r="22" stroke="#059669" stroke-dasharray="110 28"/>
+                    <text class="cci-ring-text" x="26" y="26" fill="#059669">89</text>
+                </svg>
+            </div>
+            <div class="app-info">
+                <div class="app-name">SharePoint / OneDrive Corp <span class="risk-label rl-high">TRUSTED</span></div>
+                <div class="app-category">Enterprise Cloud Storage · CCI: 89/100</div>
+                <div class="app-risks"><span class="risk-chip">Enterprise DLP</span><span class="risk-chip">Full audit</span><span class="risk-chip">ISO27001</span></div>
+                <div class="app-cta"><a href="https://office.com" target="_blank" rel="noopener" class="app-visit">✓ Sanctioned App →</a></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload sequence -->
+    <div class="upload-section">
+        <h3>Shadow IT Upload Scenario</h3>
+        <div class="upload-steps">
+            <div class="upload-step">
+                <div class="step-num-label">STEP 01</div>
+                <div class="step-title">Access the App</div>
+                <div class="step-desc">Visit WeTransfer or MEGA above. Netskope logs the access and flags it as an unsanctioned app in the tenant's App Discovery dashboard.</div>
+                <a href="https://www.wetransfer.com" target="_blank" rel="noopener" class="step-btn">Open WeTransfer →</a>
+            </div>
+            <div class="upload-step">
+                <div class="step-num-label">STEP 02</div>
+                <div class="step-title">Attempt File Upload</div>
+                <div class="step-desc">Try to upload the synthetic PII file from the DLP demo. Netskope's CASB inline inspection scans the upload payload and matches DLP policy before it leaves the device.</div>
+                <a href="/temp/demos/dlp/" target="_blank" rel="noopener" class="step-btn">Get DLP test file →</a>
+            </div>
+            <div class="upload-step">
+                <div class="step-num-label">STEP 03</div>
+                <div class="step-title">Observe the Block</div>
+                <div class="step-desc">Netskope blocks the upload (policy: DLP match on unsanctioned app), shows the block page, and logs the event with full context: user, file, destination, content classification.</div>
+                <a href="/temp/" class="step-btn">Back to Portal →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- What gets discovered -->
+    <div class="discovery-note">
+        <h3>What Netskope Discovers Automatically</h3>
+        <p>Even without clicking any of the links above, organisations using Netskope get continuous shadow IT discovery across all traffic — not just browser traffic.</p>
+        <ul>
+            <li><strong>App inventory:</strong> Every cloud app accessed by any user, with full metadata, risk score, and usage volume</li>
+            <li><strong>User attribution:</strong> Which users accessed which apps, when, how often, and from which devices</li>
+            <li><strong>Data movement:</strong> What was uploaded to or downloaded from each app — even in sanctioned apps</li>
+            <li><strong>App families:</strong> When users switch from a blocked app to a functionally similar unsanctioned alternative, Netskope detects the evasion</li>
+            <li><strong>API-based discovery:</strong> For sanctioned apps with API integration, Netskope discovers activity that doesn't go through the proxy (desktop clients, mobile apps)</li>
+        </ul>
+    </div>
+</main>
+<footer><p>© 2026 Netskope, Inc. — Demo Environment — jskope.com/temp</p></footer>
+</body>
+</html>
