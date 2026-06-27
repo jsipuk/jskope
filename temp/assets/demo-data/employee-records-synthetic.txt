@@ -1,0 +1,58 @@
+SYNTHETIC TEST DATA — NETSKOPE DLP DEMONSTRATION
+=================================================
+This file contains entirely fabricated data created to trigger
+Netskope Data Loss Prevention pattern matching controls.
+No data below belongs to any real person or organisation.
+
+EMPLOYEE RECORDS (SYNTHETIC — NOT REAL)
+-----------------------------------------
+
+Employee ID: EMP-2024-0891
+Name: Sarah Mitchell
+Social Security Number: 078-05-1120
+Date of Birth: March 14, 1989
+Salary: $94,500
+Bank Account: 123456789  Routing: 021000021
+Address: 742 Evergreen Terrace, Springfield, CA 94107
+Email: s.mitchell@corp-example.com
+Performance Rating: Exceeds Expectations
+
+Employee ID: EMP-2024-0445
+Name: Marcus Johnson
+Social Security Number: 219-09-9999
+Date of Birth: July 22, 1984
+Salary: $127,000
+Bank Account: 987654321  Routing: 021000021
+Address: 1600 Pennsylvania Ave NW, Washington, DC 20500
+Email: m.johnson@corp-example.com
+Performance Rating: Meets Expectations
+
+Employee ID: EMP-2024-1102
+Name: Priya Patel
+Social Security Number: 457-55-5462
+Date of Birth: November 8, 1992
+Salary: $88,200
+Bank Account: 456789123  Routing: 021000021
+Address: 221B Baker Street, London, UK (US Office: Chicago, IL)
+Email: p.patel@corp-example.com
+Performance Rating: Exceptional
+
+Employee ID: EMP-2024-0678
+Name: David Chen
+Social Security Number: 321-54-8765
+Date of Birth: February 28, 1987
+Salary: $156,000
+Bank Account: 741852963  Routing: 021000021
+Address: 10 Downing Street, New York, NY 10001
+Email: d.chen@corp-example.com
+Performance Rating: Exceeds Expectations
+
+Employee ID: EMP-2024-0234
+Name: James Rodriguez
+Social Security Number: 567-89-0123
+Date of Birth: April 3, 1979
+Salary: $210,000
+Bank Account: 852963741  Routing: 021000021
+Address: 1 Infinite Loop, Cupertino, CA 95014
+Email: j.rodriguez@corp-example.com
+Performance Rating: Outstanding

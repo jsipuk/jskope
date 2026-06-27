@@ -1,0 +1,12 @@
+SYNTHETIC TEST DATA — NETSKOPE DLP DEMONSTRATION
+Warning: These are industry-standard test card numbers. Non-transactable. For DLP demo use only.
+
+order_id,customer_name,card_type,card_number,expiry,cvv,billing_postcode,amount_gbp
+ORD-2025-001,Test Customer One,Visa,4111111111111111,12/26,123,SW1A 1AA,249.99
+ORD-2025-002,Test Customer Two,Mastercard,5500005555555556,09/27,456,EC1A 1BB,1250.00
+ORD-2025-003,Test Customer Three,American Express,378282246310005,06/28,7890,WC2N 5DU,89.50
+ORD-2025-004,Test Customer Four,Discover,6011111111111117,03/25,321,E1W 1AD,567.25
+ORD-2025-005,Test Customer Five,Visa,4012888888881881,11/27,456,N1 9GU,33.00
+ORD-2025-006,Test Customer Six,Mastercard,5105105105105100,08/26,789,SE1 7PB,4200.00
+ORD-2025-007,Test Customer Seven,Visa,4222222222222,07/27,321,BS1 4DJ,175.50
+ORD-2025-008,Test Customer Eight,American Express,371449635398431,01/28,1234,M1 1AE,8900.00

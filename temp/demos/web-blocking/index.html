@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Blocking Demo | Jskope</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --turquoise: #00A7CE;
+            --orange: #FF8300;
+            --navy: #002B49;
+            --bg: #fafbfc;
+            --text: #1a1d23;
+            --muted: #6b7280;
+            --border: rgba(0,167,206,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,167,206,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,167,206,0.025) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: grid-shift 20s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes grid-shift { to { background-position: 60px 60px; } }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(250,251,252,0.88);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            height: 62px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .back:hover { color: var(--turquoise); }
+
+        .page-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            color: var(--turquoise);
+            background: rgba(0,167,206,0.07);
+            border: 1px solid rgba(0,167,206,0.18);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+        }
+
+        main {
+            position: relative;
+            z-index: 10;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3.5rem 2rem 6rem;
+        }
+
+        /* Page header */
+        .page-hero {
+            margin-bottom: 2.5rem;
+            animation: fade-up 0.5s ease both;
+        }
+
+        .page-hero .eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--turquoise);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+
+        .page-hero h1 {
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            font-weight: 700;
+            line-height: 1.2;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--turquoise) 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.75rem;
+        }
+
+        .page-hero p {
+            font-size: 1rem;
+            color: var(--muted);
+            max-width: 600px;
+            line-height: 1.7;
+        }
+
+        /* How it works box */
+        .how-it-works {
+            background: rgba(0,167,206,0.04);
+            border: 1px solid rgba(0,167,206,0.12);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 3rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            animation: fade-up 0.5s 0.1s ease both;
+        }
+
+        @media (max-width: 640px) { .how-it-works { grid-template-columns: 1fr; gap: 1rem; } }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .step-num {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--turquoise);
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            font-size: 0.84rem;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .step-text strong { color: var(--text); }
+
+        /* Category section */
+        .cat-section {
+            margin-bottom: 3rem;
+            animation: fade-up 0.5s 0.15s ease both;
+        }
+
+        .cat-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .cat-label h2 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .cat-label .policy-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.62rem;
+            padding: 0.18rem 0.55rem;
+            border-radius: 50px;
+            font-weight: 500;
+        }
+
+        .policy-block   { background: rgba(239,68,68,0.08);   color: #DC2626; border: 1px solid rgba(239,68,68,0.2); }
+        .policy-coach   { background: rgba(255,131,0,0.08);   color: #FF8300; border: 1px solid rgba(255,131,0,0.2); }
+        .policy-log     { background: rgba(16,185,129,0.08);  color: #059669; border: 1px solid rgba(16,185,129,0.2); }
+
+        .cat-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* Demo links grid */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.85rem;
+        }
+
+        @media (max-width: 600px) { .links-grid { grid-template-columns: 1fr; } }
+
+        .demo-link {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .demo-link:hover {
+            border-color: rgba(0,167,206,0.25);
+            box-shadow: 0 4px 20px rgba(0,43,73,0.06);
+            transform: translateX(2px);
+        }
+
+        .demo-link:hover .launch-btn {
+            background: var(--turquoise);
+            color: #fff;
+        }
+
+        .link-info { flex: 1; }
+
+        .link-name {
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .link-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--muted);
+        }
+
+        .link-meta span {
+            background: rgba(0,43,73,0.05);
+            padding: 0.1rem 0.4rem;
+            border-radius: 3px;
+        }
+
+        .launch-btn {
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--turquoise);
+            background: rgba(0,167,206,0.07);
+            border: 1px solid rgba(0,167,206,0.18);
+            padding: 0.4rem 0.9rem;
+            border-radius: 6px;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        /* What you'll see */
+        .expect-box {
+            background: var(--navy);
+            border-radius: 14px;
+            padding: 2rem;
+            color: #fff;
+            animation: fade-up 0.5s 0.25s ease both;
+        }
+
+        .expect-box h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            color: var(--turquoise);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .expect-items {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+
+        @media (max-width: 640px) { .expect-items { grid-template-columns: 1fr; } }
+
+        .expect-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .expect-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+
+        .expect-desc {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.55;
+        }
+
+        .expect-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-bottom: 0.25rem;
+        }
+
+        footer {
+            position: relative;
+            z-index: 10;
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        footer p {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--muted);
+            opacity: 0.55;
+        }
+
+        @keyframes fade-up {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-inner">
+        <a href="/temp/" class="back">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M10 7H2.5M5 4l-2.5 3L5 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Demo Portal
+        </a>
+        <span class="page-badge">SWG · WEB BLOCKING</span>
+    </div>
+</header>
+
+<main>
+
+    <div class="page-hero">
+        <p class="eyebrow">Netskope Secure Web Gateway</p>
+        <h1>Web Blocking Demos</h1>
+        <p>Each link below triggers a different Netskope SWG policy. With the Netskope client active, clicking a blocked category link will display the Netskope block or coaching page in real time.</p>
+    </div>
+
+    <div class="how-it-works">
+        <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-text"><strong>Ensure your Netskope client is active</strong> and your organisation's demo policy is applied to your device.</div>
+        </div>
+        <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-text"><strong>Click any demo link</strong> below. It opens in a new tab so you can return here easily.</div>
+        </div>
+        <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-text"><strong>Observe the Netskope response</strong> — block page, coaching notification, or pass-through with logging.</div>
+        </div>
+    </div>
+
+    <!-- File Sharing -->
+    <div class="cat-section">
+        <div class="cat-label">
+            <h2>Unsanctioned File Sharing</h2>
+            <span class="policy-tag policy-block">TYPICAL: BLOCK</span>
+        </div>
+        <div class="links-grid">
+            <a href="https://www.wetransfer.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">WeTransfer</div>
+                    <div class="link-meta"><span>File Storage & Sharing</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://pastebin.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Pastebin</div>
+                    <div class="link-meta"><span>Text Storage / Data Exfil Risk</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://www.sendgb.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">SendGB</div>
+                    <div class="link-meta"><span>File Storage & Sharing</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://filebin.net" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Filebin</div>
+                    <div class="link-meta"><span>File Storage & Sharing</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Personal Cloud Storage -->
+    <div class="cat-section">
+        <div class="cat-label">
+            <h2>Personal Cloud Storage</h2>
+            <span class="policy-tag policy-coach">TYPICAL: COACHING</span>
+        </div>
+        <div class="links-grid">
+            <a href="https://www.dropbox.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Dropbox (Personal)</div>
+                    <div class="link-meta"><span>Cloud Storage</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://onedrive.live.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">OneDrive Personal</div>
+                    <div class="link-meta"><span>Cloud Storage · Consumer</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://www.icloud.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">iCloud Drive</div>
+                    <div class="link-meta"><span>Cloud Storage · Consumer</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://mega.nz" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">MEGA</div>
+                    <div class="link-meta"><span>Cloud Storage · High Risk</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Social Media -->
+    <div class="cat-section">
+        <div class="cat-label">
+            <h2>Social Media</h2>
+            <span class="policy-tag policy-coach">TYPICAL: COACHING / BLOCK</span>
+        </div>
+        <div class="links-grid">
+            <a href="https://www.tiktok.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">TikTok</div>
+                    <div class="link-meta"><span>Social Networking · Video</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://www.reddit.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Reddit</div>
+                    <div class="link-meta"><span>Social Networking · Forums</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://discord.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Discord</div>
+                    <div class="link-meta"><span>Instant Messaging · Collab</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://www.twitch.tv" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Twitch</div>
+                    <div class="link-meta"><span>Streaming Media · Gaming</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Streaming & Entertainment -->
+    <div class="cat-section">
+        <div class="cat-label">
+            <h2>Streaming & Entertainment</h2>
+            <span class="policy-tag policy-log">TYPICAL: LOG / COACH</span>
+        </div>
+        <div class="links-grid">
+            <a href="https://www.netflix.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Netflix</div>
+                    <div class="link-meta"><span>Streaming Media</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://open.spotify.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Spotify Web</div>
+                    <div class="link-meta"><span>Streaming Media · Audio</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://www.disneyplus.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Disney+</div>
+                    <div class="link-meta"><span>Streaming Media · Video</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+            <a href="https://www.primevideo.com" target="_blank" rel="noopener" class="demo-link">
+                <div class="link-info">
+                    <div class="link-name">Amazon Prime Video</div>
+                    <div class="link-meta"><span>Streaming Media · Video</span></div>
+                </div>
+                <span class="launch-btn">Visit →</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- What you'll see -->
+    <div class="expect-box">
+        <h3>What You'll See</h3>
+        <div class="expect-items">
+            <div class="expect-item">
+                <div class="expect-dot" style="background:#EF4444;"></div>
+                <div class="expect-title">Block Page</div>
+                <div class="expect-desc">A full-page Netskope block notification. Includes the policy category, reason, and your organisation's support contact. No pass-through option.</div>
+            </div>
+            <div class="expect-item">
+                <div class="expect-dot" style="background:#FF8300;"></div>
+                <div class="expect-title">Coaching Notification</div>
+                <div class="expect-desc">An inline banner or interstitial that explains why the site is flagged. User may be given an option to proceed with a justification, or the session is logged.</div>
+            </div>
+            <div class="expect-item">
+                <div class="expect-dot" style="background:#10B981;"></div>
+                <div class="expect-title">Allow with Logging</div>
+                <div class="expect-desc">The site loads normally but Netskope logs the visit in the audit trail. Accessible in the Netskope tenant UI under Web Activity.</div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<footer>
+    <p>© 2026 Netskope, Inc. — Demo Environment — jskope.com/temp</p>
+</footer>
+
+</body>
+</html>
