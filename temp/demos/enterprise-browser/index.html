@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Browser | Jskope Demo Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --turquoise: #00A7CE;
+            --orange: #FF8300;
+            --navy: #002B49;
+            --eb-color: #0EA5E9;
+            --bg: #fafbfc;
+            --text: #1a1d23;
+            --muted: #6b7280;
+            --border: rgba(0,167,206,0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Outfit', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+        body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(0,167,206,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,167,206,0.025) 1px, transparent 1px); background-size: 60px 60px; animation: grid-shift 20s linear infinite; z-index: 0; }
+        @keyframes grid-shift { to { background-position: 60px 60px; } }
+        header { position: sticky; top: 0; z-index: 100; background: rgba(250,251,252,0.88); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+        .header-inner { max-width: 1060px; margin: 0 auto; padding: 0 2rem; height: 62px; display: flex; align-items: center; justify-content: space-between; }
+        .logo { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; }
+        .logo-mark { width: 30px; height: 30px; }
+        .logo-text { font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; font-weight: 500; color: var(--navy); letter-spacing: -0.5px; }
+        .logo-text em { color: var(--turquoise); font-style: normal; }
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+        .back-link { font-size: 0.82rem; color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 0.3rem; }
+        .back-link:hover { color: var(--turquoise); }
+        .page-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; background: var(--eb-color); color: #fff; padding: 0.22rem 0.7rem; border-radius: 50px; }
+        main { max-width: 1060px; margin: 0 auto; padding: 2.5rem 2rem 5rem; position: relative; z-index: 10; }
+        @keyframes fade-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+        .hero { margin-bottom: 2.5rem; animation: fade-up 0.5s ease both; }
+        .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; letter-spacing: 0.12em; color: var(--eb-color); text-transform: uppercase; margin-bottom: 0.65rem; }
+        .hero h1 { font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 700; color: var(--navy); line-height: 1.15; margin-bottom: 0.8rem; }
+        .hero-desc { font-size: 1rem; color: var(--muted); line-height: 1.65; max-width: 680px; }
+
+        /* BYOD vs Managed comparison */
+        .compare-strip { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 0; margin-bottom: 2rem; overflow: hidden; animation: fade-up 0.5s 0.1s ease both; }
+        .compare-strip-head { display: grid; grid-template-columns: 1fr 1fr; background: rgba(0,43,73,0.04); }
+        .csh { padding: 0.9rem 1.4rem; font-size: 0.88rem; font-weight: 700; }
+        .csh.byod { color: var(--orange); border-right: 1px solid var(--border); }
+        .csh.managed { color: var(--eb-color); }
+        .compare-strip-row { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border); }
+        .csr { padding: 0.75rem 1.4rem; font-size: 0.83rem; line-height: 1.55; }
+        .csr.byod { color: #DC2626; border-right: 1px solid var(--border); background: rgba(239,68,68,0.02); }
+        .csr.byod::before { content: '✗  '; }
+        .csr.managed { color: #059669; }
+        .csr.managed::before { content: '✓  '; }
+
+        /* Scenario cards */
+        .section-title { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 1.1rem; display: flex; align-items: center; gap: 0.6rem; }
+        .scenario-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem; animation: fade-up 0.5s 0.2s ease both; }
+        @media (max-width: 640px) { .scenario-grid { grid-template-columns: 1fr; } }
+        .scenario-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem; }
+        .scenario-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+        .scenario-card h3 { font-size: 0.9rem; font-weight: 700; color: var(--navy); }
+        .sc-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; padding: 0.15rem 0.5rem; border-radius: 4px; }
+        .sc-block { background: rgba(239,68,68,0.1); color: #DC2626; }
+        .sc-control { background: rgba(14,165,233,0.1); color: var(--eb-color); }
+        .scenario-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.55; margin-bottom: 0.9rem; }
+        .scenario-steps { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.9rem; }
+        .scenario-step { font-size: 0.8rem; color: var(--text); padding-left: 1.1rem; position: relative; line-height: 1.45; }
+        .scenario-step::before { content: '→'; position: absolute; left: 0; color: var(--eb-color); font-weight: 700; }
+        .sc-link { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--eb-color); font-size: 0.82rem; font-weight: 600; text-decoration: none; border: 1.5px solid rgba(14,165,233,0.25); padding: 0.4rem 0.85rem; border-radius: 7px; transition: all 0.18s; }
+        .sc-link:hover { background: rgba(14,165,233,0.07); }
+
+        /* RBI explainer */
+        .rbi-box { background: linear-gradient(135deg, var(--navy) 0%, #003d6b 100%); color: #fff; border-radius: 14px; padding: 1.75rem 2rem; margin-bottom: 2rem; animation: fade-up 0.5s 0.25s ease both; }
+        .rbi-box h2 { font-size: 1.05rem; margin-bottom: 0.75rem; }
+        .rbi-box p { font-size: 0.88rem; opacity: 0.8; line-height: 1.65; margin-bottom: 1.25rem; }
+        .rbi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        @media (max-width: 580px) { .rbi-grid { grid-template-columns: 1fr; } }
+        .rbi-item { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 1rem; }
+        .rbi-item h4 { font-size: 0.82rem; font-weight: 700; margin-bottom: 0.35rem; }
+        .rbi-item p { font-size: 0.75rem; opacity: 0.7; line-height: 1.5; margin-bottom: 0; }
+
+        .info-box { background: rgba(14,165,233,0.05); border: 1px solid rgba(14,165,233,0.2); border-radius: 10px; padding: 1rem 1.25rem; font-size: 0.85rem; color: var(--text); line-height: 1.6; }
+        .info-box strong { color: var(--eb-color); }
+
+        footer { position: relative; z-index: 10; border-top: 1px solid var(--border); padding: 2rem; text-align: center; }
+        footer p { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--muted); opacity: 0.55; }
+    </style>
+</head>
+<body>
+<header>
+    <div class="header-inner">
+        <a href="/" class="logo">
+            <svg class="logo-mark" viewBox="0 0 32 32" fill="none">
+                <circle cx="16" cy="16" r="14" fill="#002B49"/>
+                <ellipse cx="16" cy="16" rx="12" ry="4.2" fill="none" stroke="#00A7CE" stroke-width="0.9" opacity="0.75" transform="rotate(-20 16 16)"/>
+                <ellipse cx="16" cy="16" rx="9" ry="3.2" fill="none" stroke="#00A7CE" stroke-width="0.65" opacity="0.4" transform="rotate(55 16 16)"/>
+                <circle cx="16" cy="16" r="4.5" fill="#001525" stroke="#00DDFF" stroke-width="0.9"/>
+                <circle cx="16" cy="16" r="1.6" fill="#00EEFF" opacity="0.92"/>
+                <line x1="14.2" y1="13.4" x2="18" y2="13.4" stroke="#00EEFF" stroke-width="1.1" stroke-linecap="round" opacity="0.9"/>
+                <line x1="17" y1="13.4" x2="17" y2="17.6" stroke="#00EEFF" stroke-width="1.1" stroke-linecap="round" opacity="0.9"/>
+                <path d="M17 17.6 Q17 19.6 15.4 19.6 Q13.8 19.6 13.8 18" fill="none" stroke="#00EEFF" stroke-width="1.1" stroke-linecap="round" opacity="0.9"/>
+            </svg>
+            <span class="logo-text">j<em>skope</em></span>
+        </a>
+        <div class="header-right">
+            <a href="/temp/" class="back-link">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M10.5 6.5h-8M5 4 2.5 6.5 5 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Demo Portal
+            </a>
+            <span class="page-badge">ENTERPRISE BROWSER</span>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="hero">
+        <div class="eyebrow">Netskope Enterprise Browser &amp; Browser Security</div>
+        <h1>Secure Any Browser, Any Device</h1>
+        <p class="hero-desc">Enterprise Browser brings Netskope's inline security controls directly into the browser — enabling DLP, clipboard controls, watermarking, and download blocking on any device, including unmanaged BYOD endpoints where traditional agents can't be installed. It extends zero trust all the way to the point of interaction.</p>
+    </div>
+
+    <!-- BYOD vs Managed comparison -->
+    <div class="compare-strip">
+        <div class="compare-strip-head">
+            <div class="csh byod">Without Enterprise Browser (BYOD / Unmanaged)</div>
+            <div class="csh managed">With Netskope Enterprise Browser</div>
+        </div>
+        <div class="compare-strip-row">
+            <div class="csr byod">No visibility into what a contractor does in their browser</div>
+            <div class="csr managed">Full session activity logged — pages visited, data copied, files downloaded</div>
+        </div>
+        <div class="compare-strip-row">
+            <div class="csr byod">Clipboard copy from SharePoint or Salesforce goes to personal notes, WhatsApp, personal email</div>
+            <div class="csr managed">Clipboard copy from protected apps restricted — policy controls what can be pasted where</div>
+        </div>
+        <div class="compare-strip-row">
+            <div class="csr byod">Files can be downloaded from corporate apps to personal device storage</div>
+            <div class="csr managed">Download blocking prevents files leaving the browser context; watermarking on screen-visible data</div>
+        </div>
+        <div class="compare-strip-row">
+            <div class="csr byod">No DLP on data typed into web forms or AI prompts</div>
+            <div class="csr managed">Inline DLP scans form submissions, AI prompts, and upload inputs before data leaves</div>
+        </div>
+        <div class="compare-strip-row">
+            <div class="csr byod">Phishing sites load fully in personal browser — no interception</div>
+            <div class="csr managed">Risky sites loaded in Remote Browser Isolation (RBI) — page renders safely, malicious code never reaches device</div>
+        </div>
+    </div>
+
+    <!-- Scenarios -->
+    <div class="section-title">Demo Scenarios</div>
+    <div class="scenario-grid">
+        <div class="scenario-card">
+            <div class="scenario-head">
+                <h3>Contractor Clipboard Restriction</h3>
+                <span class="sc-tag sc-control">CONTROLLED</span>
+            </div>
+            <p>A contractor accesses a SharePoint document on their personal laptop. They try to copy-paste client data into a personal email or messaging app.</p>
+            <div class="scenario-steps">
+                <div class="scenario-step">Contractor opens SharePoint in their personal Chrome browser</div>
+                <div class="scenario-step">Enterprise Browser extension enforces the session</div>
+                <div class="scenario-step">Copy action on protected content is blocked or watermarked</div>
+                <div class="scenario-step">Paste to external destinations returns empty or redacted content</div>
+            </div>
+            <a href="https://[YOUR-SHAREPOINT].sharepoint.com" class="sc-link" onclick="alert('Replace [YOUR-SHAREPOINT] with your tenant before using this link.'); return false;">Open SharePoint Demo →</a>
+        </div>
+        <div class="scenario-card">
+            <div class="scenario-head">
+                <h3>Sensitive File Download Block</h3>
+                <span class="sc-tag sc-block">BLOCKED</span>
+            </div>
+            <p>A user on an unmanaged device attempts to download a contract or report from a corporate web app to their local device storage.</p>
+            <div class="scenario-steps">
+                <div class="scenario-step">User accesses corporate web app from unmanaged device</div>
+                <div class="scenario-step">Clicks download on a PDF marked as confidential</div>
+                <div class="scenario-step">Enterprise Browser intercepts the download request</div>
+                <div class="scenario-step">Block page appears: "Download not permitted on unmanaged device"</div>
+            </div>
+            <a href="/temp/assets/demo-data/employee-records-synthetic.txt" download class="sc-link">Try Download (trigger DLP) →</a>
+        </div>
+        <div class="scenario-card">
+            <div class="scenario-head">
+                <h3>Screen Watermarking</h3>
+                <span class="sc-tag sc-control">WATERMARKED</span>
+            </div>
+            <p>Users accessing sensitive SaaS applications from personal devices see a dynamic watermark overlay — deterring and attributing any screen capture attempts.</p>
+            <div class="scenario-steps">
+                <div class="scenario-step">User accesses protected app from unmanaged device</div>
+                <div class="scenario-step">Enterprise Browser applies transparent watermark overlay</div>
+                <div class="scenario-step">Watermark contains username + timestamp, invisible in normal use</div>
+                <div class="scenario-step">Any screenshot or screen recording captures the watermark</div>
+            </div>
+            <div class="sc-link" style="cursor:default;opacity:0.5;pointer-events:none">Requires tenant configuration</div>
+        </div>
+        <div class="scenario-card">
+            <div class="scenario-head">
+                <h3>Remote Browser Isolation (RBI)</h3>
+                <span class="sc-tag sc-control">ISOLATED</span>
+            </div>
+            <p>When a user navigates to a risky or unknown website, Netskope renders the page in an isolated cloud container — no code from the site ever reaches the user's device.</p>
+            <div class="scenario-steps">
+                <div class="scenario-step">User clicks a link to an uncategorised or risky domain</div>
+                <div class="scenario-step">SWG policy routes the site to Netskope RBI</div>
+                <div class="scenario-step">Page renders as a pixel stream in the user's browser — safe view</div>
+                <div class="scenario-step">All JavaScript, plugins, and active content execute in the cloud container only</div>
+            </div>
+            <a href="https://www.wicar.org/test-malware.html" target="_blank" rel="noopener" class="sc-link">Test with Wicar (if RBI active) →</a>
+        </div>
+    </div>
+
+    <!-- RBI explainer -->
+    <div class="rbi-box">
+        <h2>Remote Browser Isolation (RBI)</h2>
+        <p>RBI is the most powerful capability within the Enterprise Browser portfolio. Instead of delivering web content directly to the user's device, Netskope renders the entire page in an isolated cloud container. The user sees a pixel-perfect stream — the page looks and behaves normally — but no HTML, JavaScript, or active content ever touches the endpoint.</p>
+        <div class="rbi-grid">
+            <div class="rbi-item">
+                <h4>Zero-Day Protection</h4>
+                <p>Even unknown browser exploits are contained in the cloud container. The endpoint is never exposed to malicious code — only to rendered pixels.</p>
+            </div>
+            <div class="rbi-item">
+                <h4>File-less Browsing</h4>
+                <p>Downloaded files from risky sites can be optionally sanitised (Content Disarm and Reconstruction) before delivery, or blocked entirely from reaching the device.</p>
+            </div>
+            <div class="rbi-item">
+                <h4>BYOD SaaS Access</h4>
+                <p>Personal devices can access corporate SaaS safely via RBI — full session visibility and controls without needing to install any agent or manage the device.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <strong>Deployment options:</strong> Netskope Enterprise Browser can be deployed as (1) a lightweight browser extension for Chrome/Edge on managed or BYOD devices, (2) a fully managed browser based on Chromium, or (3) agentless via Identity Provider (IdP) integration — redirecting SaaS app sessions through Netskope's proxy using SAML/OIDC reverse proxy, requiring no installation at all. Option 3 is the most practical for contractor and BYOD scenarios where device management isn't possible.
+    </div>
+</main>
+<footer><p>© 2026 Netskope, Inc. — Demo Environment — jskope.com/temp</p></footer>
+</body>
+</html>

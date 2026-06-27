@@ -1,0 +1,82 @@
+PERSONNEL SECURITY RECORD — SYNTHETIC TEST DATA — NOT REAL
+===========================================================
+Classification: UNCLASSIFIED (DEMO USE ONLY)
+Programme: Project KINGFISHER — Systems Integration Phase 2
+Contracting Authority: [SYNTHETIC DEFENCE PRIME]
+
+PERSONNEL ROSTER — CONTRACT STAFF
+===================================
+
+RECORD 1
+--------
+Name:              Col. Richard Watkins (Retd.)
+Role:              Programme Director
+Contractor:        Aether Systems Ltd (contract ref: AS-MOD-2026-0441)
+Security Clearance: Developed Vetting (DV) — renewed 12 March 2024
+Clearance Expiry:  12 March 2029
+NI Number:         AB 11 22 33 C
+DoB:               14 February 1968
+Pass Number:       MOD-DV-2024-00441
+Site Access:       ABERDEEN, BRISTOL, PORTON DOWN
+Email:             r.watkins@aethersystems.co.uk
+Mobile (personal): 07700 900441
+
+RECORD 2
+--------
+Name:              Dr. Sunita Okafor
+Role:              Technical Authority — Communications Systems
+Contractor:        Vertex Defence Technologies Ltd
+Security Clearance: Developed Vetting (DV) + List X
+Clearance Expiry:  08 November 2027
+NI Number:         CD 22 33 44 E
+DoB:               18 February 1977
+Pass Number:       MOD-DV-2023-00872
+Site Access:       PORTON DOWN, DSTL FARNBOROUGH
+Email:             s.okafor@vertexdefence.co.uk
+Note:              Travel restriction — no travel to [REDACTED] without DSO approval ref DS/TRV/2026/114
+
+RECORD 3
+--------
+Name:              Jamie Connolly
+Role:              Cyber Security Analyst
+Contractor:        Internal MOD (DE&S, Abbey Wood)
+Security Clearance: Security Check (SC)
+Clearance Expiry:  22 July 2025 — RENEWAL OVERDUE
+NI Number:         EF 33 44 55 G
+DoB:               09 October 1992
+Pass Number:       MOD-SC-2020-01104
+Site Access:       ABBEY WOOD only — SUSPENDED pending re-vetting
+Email:             j.connolly@mod.gov.uk
+Note:              DBS enhanced check outstanding since Jan 2026 — escalate to DSyA
+
+RECORD 4
+--------
+Name:              Flight Lt. Priya Mehta
+Role:              Project Officer
+Organisation:      Royal Air Force, 1 Group HQ
+Security Clearance: Developed Vetting (DV)
+Clearance Expiry:  30 September 2028
+NI Number:         GH 44 55 66 I
+DoB:               27 April 1989
+Pass Number:       MOD-DV-2022-00334
+Site Access:       RAF WADDINGTON, NORTHWOOD, ABBEY WOOD
+
+PROGRAMME SENSITIVE INFORMATION
+================================
+Budget Line:        CONFIDENTIAL PROGRAMME — GBP 42,000,000 (Phase 2)
+Prime Contractor:   [SYNTHETIC PRIME — REDACTED]
+Sub-contractor NDA: NDAs held for 7 sub-contractors
+Key Deliverable:    Encrypted comms layer — delivery 31 October 2026
+Test Environment:   INTERNAL ONLY — not connected to internet
+
+VETTING CONTACTS
+================
+Defence Vetting Agency: 01226 742523
+DSyA Reference:         DSyA/PK/2026/KINGFISHER/0441
+
+===========================================================
+SYNTHETIC TEST DATA — NOT REAL — FOR NETSKOPE DLP DEMO ONLY
+Designed to trigger DLP controls for: personnel PII, NI numbers,
+security clearance levels, access permissions.
+Relevant to: JSP 440, Cyber Essentials+, NCSC CAF, ISO 27001.
+No real classified information is contained in this file.

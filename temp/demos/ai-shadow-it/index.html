@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow AI & Token Exhaustion | Jskope Demo Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --turquoise: #00A7CE;
+            --orange: #FF8300;
+            --navy: #002B49;
+            --ai-color: #8B5CF6;
+            --bg: #fafbfc;
+            --text: #1a1d23;
+            --muted: #6b7280;
+            --border: rgba(0,167,206,0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Outfit', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+        body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(0,167,206,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,167,206,0.025) 1px, transparent 1px); background-size: 60px 60px; animation: grid-shift 20s linear infinite; z-index: 0; }
+        @keyframes grid-shift { to { background-position: 60px 60px; } }
+        header { position: sticky; top: 0; z-index: 100; background: rgba(250,251,252,0.88); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+        .header-inner { max-width: 1060px; margin: 0 auto; padding: 0 2rem; height: 62px; display: flex; align-items: center; justify-content: space-between; }
+        .logo { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; }
+        .logo-mark { width: 30px; height: 30px; }
+        .logo-text { font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; font-weight: 500; color: var(--navy); letter-spacing: -0.5px; }
+        .logo-text em { color: var(--turquoise); font-style: normal; }
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+        .back-link { font-size: 0.82rem; color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 0.3rem; }
+        .back-link:hover { color: var(--turquoise); }
+        .page-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; background: var(--ai-color); color: #fff; padding: 0.22rem 0.7rem; border-radius: 50px; }
+        main { max-width: 1060px; margin: 0 auto; padding: 2.5rem 2rem 5rem; position: relative; z-index: 10; }
+        @keyframes fade-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+        .hero { margin-bottom: 2.5rem; animation: fade-up 0.5s ease both; }
+        .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; letter-spacing: 0.12em; color: var(--ai-color); text-transform: uppercase; margin-bottom: 0.65rem; }
+        .hero h1 { font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 700; color: var(--navy); line-height: 1.15; margin-bottom: 0.8rem; }
+        .hero-desc { font-size: 1rem; color: var(--muted); line-height: 1.65; max-width: 680px; }
+
+        /* Scenario flow */
+        .scenario-flow { background: var(--navy); border-radius: 14px; padding: 1.75rem 2rem; margin-bottom: 2rem; animation: fade-up 0.5s 0.1s ease both; }
+        .sf-title { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 1.5rem; }
+        .sf-steps { display: flex; flex-wrap: wrap; gap: 0; }
+        .sf-step { flex: 1; min-width: 140px; display: flex; flex-direction: column; gap: 0.5rem; padding-right: 1rem; position: relative; }
+        .sf-step:not(:last-child)::after { content: '→'; position: absolute; right: -4px; top: 18px; color: rgba(255,255,255,0.25); font-size: 0.9rem; }
+        .sf-num { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--ai-color); font-weight: 700; }
+        .sf-text { font-size: 0.78rem; color: rgba(255,255,255,0.8); line-height: 1.45; font-weight: 600; }
+        .sf-sub { font-size: 0.7rem; color: rgba(255,255,255,0.4); line-height: 1.4; }
+        .sf-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; padding: 0.18rem 0.5rem; border-radius: 4px; align-self: flex-start; }
+        .sf-block { background: rgba(239,68,68,0.25); color: #f87171; }
+        .sf-log   { background: rgba(16,185,129,0.2); color: #34d399; }
+        .sf-ok    { background: rgba(14,165,233,0.2); color: #38bdf8; }
+
+        /* Industry banner */
+        .industry-banner { background: linear-gradient(135deg, rgba(139,92,246,0.05) 0%, rgba(0,43,73,0.06) 100%); border: 1px solid rgba(139,92,246,0.2); border-radius: 10px; padding: 0.9rem 1.25rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem; animation: fade-up 0.5s 0.12s ease both; }
+        .industry-banner.hidden { display: none; }
+        .ib-label { font-size: 0.8rem; color: var(--muted); }
+        .ib-name { font-weight: 600; color: var(--navy); }
+        .ib-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; background: rgba(139,92,246,0.1); color: var(--ai-color); padding: 0.18rem 0.6rem; border-radius: 50px; margin-left: auto; }
+
+        /* Shadow AI apps */
+        .section-title { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 1.1rem; display: flex; align-items: center; gap: 0.6rem; }
+        .ai-apps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; animation: fade-up 0.5s 0.15s ease both; }
+        @media (max-width: 700px) { .ai-apps-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 460px) { .ai-apps-grid { grid-template-columns: 1fr; } }
+        .ai-app-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1.1rem; transition: border-color 0.18s, box-shadow 0.18s; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 0.4rem; }
+        .ai-app-card:hover { border-color: rgba(139,92,246,0.3); box-shadow: 0 3px 12px rgba(139,92,246,0.07); }
+        .ai-app-head { display: flex; align-items: center; justify-content: space-between; }
+        .ai-app-name { font-size: 0.9rem; font-weight: 700; color: var(--navy); }
+        .ai-app-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; padding: 0.15rem 0.5rem; border-radius: 4px; }
+        .tag-shadow { background: rgba(255,131,0,0.12); color: var(--orange); }
+        .tag-corp   { background: rgba(16,185,129,0.1); color: #059669; }
+        .tag-unknown{ background: rgba(107,114,128,0.1); color: var(--muted); }
+        .ai-app-url { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); }
+        .ai-app-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+        .ai-app-cci { font-size: 0.75rem; color: var(--muted); }
+        .cci-val { font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+        .cci-low { color: var(--orange); }
+        .cci-general { color: #FBBF24; }
+        .cci-trusted { color: #10B981; }
+
+        /* Prompt scenarios */
+        .prompt-section { margin-bottom: 2rem; animation: fade-up 0.5s 0.2s ease both; }
+        .prompt-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1.4rem; margin-bottom: 1rem; }
+        .prompt-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 0.75rem; }
+        .prompt-card h3 { font-size: 0.92rem; font-weight: 700; color: var(--navy); }
+        .prompt-scenario { font-size: 0.82rem; color: var(--muted); line-height: 1.55; margin-bottom: 0.9rem; font-style: italic; }
+        .prompt-block { background: var(--navy); border-radius: 8px; padding: 1rem 1.1rem; margin-bottom: 0.9rem; position: relative; }
+        .prompt-label { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+        .prompt-text { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: rgba(255,255,255,0.85); line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+        .prompt-copy { position: absolute; top: 0.65rem; right: 0.8rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); font-size: 0.7rem; font-family: inherit; padding: 0.22rem 0.6rem; border-radius: 5px; cursor: pointer; transition: all 0.18s; }
+        .prompt-copy:hover { background: rgba(255,255,255,0.18); color: #fff; }
+        .prompt-copy.copied { background: rgba(16,185,129,0.25); border-color: rgba(16,185,129,0.4); color: #10B981; }
+        .prompt-actions { display: flex; flex-wrap: wrap; gap: 0.65rem; align-items: center; }
+        .pa-link { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; font-weight: 600; padding: 0.5rem 1rem; border-radius: 7px; text-decoration: none; transition: all 0.18s; }
+        .pa-primary { background: var(--ai-color); color: #fff; }
+        .pa-primary:hover { background: #7c3aed; }
+        .pa-outline { background: transparent; color: var(--navy); border: 1.5px solid rgba(0,43,73,0.2); }
+        .pa-outline:hover { border-color: var(--ai-color); color: var(--ai-color); }
+        .outcome-block { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2); border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.82rem; margin-top: 0.9rem; }
+        .outcome-label { font-weight: 700; font-size: 0.75rem; color: #DC2626; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem; }
+        .outcome-desc { color: var(--muted); line-height: 1.5; }
+
+        .safe-notice { background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2); border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.82rem; color: #059669; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 0.5rem; }
+
+        /* What Netskope detects */
+        .detect-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem; animation: fade-up 0.5s 0.3s ease both; }
+        @media (max-width: 580px) { .detect-grid { grid-template-columns: 1fr; } }
+        .detect-card { background: rgba(139,92,246,0.04); border: 1px solid rgba(139,92,246,0.15); border-radius: 12px; padding: 1.2rem; }
+        .detect-card h3 { font-size: 0.88rem; font-weight: 700; color: var(--ai-color); margin-bottom: 0.5rem; }
+        .detect-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+
+        footer { position: relative; z-index: 10; border-top: 1px solid var(--border); padding: 2rem; text-align: center; }
+        footer p { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--muted); opacity: 0.55; }
+    </style>
+</head>
+<body>
+<header>
+    <div class="header-inner">
+        <a href="/" class="logo">
+            <svg class="logo-mark" viewBox="0 0 32 32" fill="none">
+                <circle cx="16" cy="16" r="14" fill="#002B49"/>
+                <ellipse cx="16" cy="16" rx="12" ry="4.2" fill="none" stroke="#00A7CE" stroke-width="0.9" opacity="0.75" transform="rotate(-20 16 16)"/>
+                <ellipse cx="16" cy="16" rx="9" ry="3.2" fill="none" stroke="#00A7CE" stroke-width="0.65" opacity="0.4" transform="rotate(55 16 16)"/>
+                <circle cx="16" cy="16" r="4.5" fill="#001525" stroke="#00DDFF" stroke-width="0.9"/>
+                <circle cx="16" cy="16" r="1.6" fill="#00EEFF" opacity="0.92"/>
+                <line x1="14.2" y1="13.4" x2="18" y2="13.4" stroke="#00EEFF" stroke-width="1.1" stroke-linecap="round" opacity="0.9"/>
+                <line x1="17" y1="13.4" x2="17" y2="17.6" stroke="#00EEFF" stroke-width="1.1" stroke-linecap="round" opacity="0.9"/>
+                <path d="M17 17.6 Q17 19.6 15.4 19.6 Q13.8 19.6 13.8 18" fill="none" stroke="#00EEFF" stroke-width="1.1" stroke-linecap="round" opacity="0.9"/>
+            </svg>
+            <span class="logo-text">j<em>skope</em></span>
+        </a>
+        <div class="header-right">
+            <a href="/temp/" class="back-link">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M10.5 6.5h-8M5 4 2.5 6.5 5 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Demo Portal
+            </a>
+            <span class="page-badge">SHADOW AI</span>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="hero">
+        <div class="eyebrow">Shadow AI &amp; AI Instance Switching</div>
+        <h1>When Corporate AI Runs Out — What Happens Next?</h1>
+        <p class="hero-desc">Your organisation provides a corporate ChatGPT, Claude, or Copilot licence with appropriate controls. But tokens run out, the approved tool doesn't support a task, or the user simply finds the personal version easier. They switch to a personal account — and paste in company data. Netskope identifies personal vs. corporate AI instances and intercepts sensitive content at the prompt level.</p>
+    </div>
+
+    <!-- Scenario flow -->
+    <div class="scenario-flow">
+        <div class="sf-title">The Token Exhaustion Attack Path</div>
+        <div class="sf-steps">
+            <div class="sf-step">
+                <div class="sf-num">STEP 01</div>
+                <div class="sf-text">Uses corporate AI</div>
+                <div class="sf-sub">ChatGPT Teams or Claude for Work — monitored, DLP active</div>
+                <span class="sf-tag sf-ok">CONTROLLED</span>
+            </div>
+            <div class="sf-step">
+                <div class="sf-num">STEP 02</div>
+                <div class="sf-text">Hits token limit</div>
+                <div class="sf-sub">Monthly usage cap reached or feature restricted by IT policy</div>
+                <span class="sf-tag sf-log">FRUSTRATED</span>
+            </div>
+            <div class="sf-step">
+                <div class="sf-num">STEP 03</div>
+                <div class="sf-text">Opens personal account</div>
+                <div class="sf-sub">Same site, different login — personal claude.ai or chat.openai.com</div>
+                <span class="sf-tag sf-log">SHADOW AI</span>
+            </div>
+            <div class="sf-step">
+                <div class="sf-num">STEP 04</div>
+                <div class="sf-text">Pastes company data</div>
+                <div class="sf-sub">Full work context — customer records, code, strategy docs — pasted into personal account</div>
+                <span class="sf-tag sf-block">DATA AT RISK</span>
+            </div>
+            <div class="sf-step">
+                <div class="sf-num">NETSKOPE</div>
+                <div class="sf-text">Intercepts at prompt</div>
+                <div class="sf-sub">Personal AI instance identified. Sensitive content blocked before reaching model</div>
+                <span class="sf-tag sf-block">BLOCKED</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Industry banner -->
+    <div class="industry-banner hidden" id="industry-banner">
+        <div>
+            <div class="ib-label">Scenario tailored for</div>
+            <div class="ib-name" id="ib-name"></div>
+        </div>
+        <span class="ib-tag">TAILORED PROMPTS ACTIVE</span>
+    </div>
+
+    <div class="safe-notice">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5L13 4v4.5C13 11.8 10.5 14.2 7.5 14.5 4.5 14.2 2 11.8 2 8.5V4Z" stroke="#059669" stroke-width="1.3"/><path d="M5 7.5l2 2 3-3" stroke="#059669" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>All prompts use synthetic data only. Safe to copy and use in live demos.</span>
+    </div>
+
+    <!-- Shadow AI apps -->
+    <div class="section-title">Shadow AI Applications — Unsanctioned Personal Instances</div>
+    <div class="ai-apps-grid">
+        <a href="https://claude.ai" target="_blank" rel="noopener" class="ai-app-card">
+            <div class="ai-app-head">
+                <div class="ai-app-name">Claude (Personal)</div>
+                <span class="ai-app-tag tag-shadow">SHADOW AI</span>
+            </div>
+            <div class="ai-app-url">claude.ai</div>
+            <div class="ai-app-desc">Personal Anthropic account. Netskope distinguishes between claude.ai personal and Claude for Work (enterprise SSO). Data pasted into personal accounts leaves corporate control.</div>
+        </a>
+        <a href="https://chat.openai.com" target="_blank" rel="noopener" class="ai-app-card">
+            <div class="ai-app-head">
+                <div class="ai-app-name">ChatGPT (Personal)</div>
+                <span class="ai-app-tag tag-shadow">SHADOW AI</span>
+            </div>
+            <div class="ai-app-url">chat.openai.com</div>
+            <div class="ai-app-desc">Personal OpenAI account. Distinct from ChatGPT Team/Enterprise with organisational controls. Same domain — Netskope identifies by authentication tenant context.</div>
+        </a>
+        <a href="https://gemini.google.com" target="_blank" rel="noopener" class="ai-app-card">
+            <div class="ai-app-head">
+                <div class="ai-app-name">Gemini (Personal)</div>
+                <span class="ai-app-tag tag-shadow">SHADOW AI</span>
+            </div>
+            <div class="ai-app-url">gemini.google.com</div>
+            <div class="ai-app-desc">Personal Google account. Distinguishable from Gemini for Google Workspace. Personal prompts are used to train Google's models unless opted out.</div>
+        </a>
+        <a href="https://copilot.microsoft.com" target="_blank" rel="noopener" class="ai-app-card">
+            <div class="ai-app-head">
+                <div class="ai-app-name">Copilot (Personal)</div>
+                <span class="ai-app-tag tag-shadow">SHADOW AI</span>
+            </div>
+            <div class="ai-app-url">copilot.microsoft.com</div>
+            <div class="ai-app-desc">Microsoft Copilot via personal MSA account. Different from Microsoft 365 Copilot with enterprise data protection. Prompts not covered by enterprise data boundary.</div>
+        </a>
+        <a href="https://www.perplexity.ai" target="_blank" rel="noopener" class="ai-app-card">
+            <div class="ai-app-head">
+                <div class="ai-app-name">Perplexity AI</div>
+                <span class="ai-app-tag tag-unknown">UNMANAGED</span>
+            </div>
+            <div class="ai-app-url">perplexity.ai</div>
+            <div class="ai-app-desc">AI-powered search tool with conversational interface. Not typically in corporate AI catalogue. Users often paste work context to get research answers — data is sent to Perplexity's servers.</div>
+        </a>
+        <a href="https://poe.com" target="_blank" rel="noopener" class="ai-app-card">
+            <div class="ai-app-head">
+                <div class="ai-app-name">Poe (Quora)</div>
+                <span class="ai-app-tag tag-unknown">UNMANAGED</span>
+            </div>
+            <div class="ai-app-url">poe.com</div>
+            <div class="ai-app-desc">Quora's multi-model AI platform — allows switching between Claude, GPT-4, Gemini, and others. Useful for model comparison, but entirely outside corporate data governance.</div>
+        </a>
+    </div>
+
+    <!-- Prompt scenarios -->
+    <div class="section-title">Try These Scenarios</div>
+    <div class="prompt-section">
+
+        <div class="prompt-card">
+            <div class="prompt-card-head">
+                <div>
+                    <h3>Scenario 1 — "I've run out of tokens on my corporate Claude"</h3>
+                </div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;background:rgba(139,92,246,0.1);color:#8B5CF6;padding:0.18rem 0.6rem;border-radius:50px;white-space:nowrap">CASB + AI GUARDRAILS</span>
+            </div>
+            <p class="prompt-scenario" id="s1-scenario">The user's Claude for Work usage limit resets monthly. Mid-month, they open a personal claude.ai account to continue a project — pasting in the same work context they were building up in the corporate version.</p>
+            <div class="prompt-block">
+                <div class="prompt-label">Prompt to copy → paste into personal claude.ai</div>
+                <pre class="prompt-text" id="prompt-1">I've been working on a client account review. Here's the context from my earlier session:
+
+Client: Michael O'Brien (DOB 15/03/1978), Account ref: CLI-001
+Portfolio value: £4,200,000 — Moderate Growth profile
+Last trade: SHELL PLC 50,000 shares @ £25.42 = £1.27M (01 Jun 2026)
+Card on file: 4111111111111111 (Visa, exp 12/28)
+NI: QQ 12 34 56 A
+
+Can you draft a Q2 portfolio review letter for this client highlighting performance against the FTSE All-Share benchmark?</pre>
+                <button class="prompt-copy" onclick="copyPrompt('prompt-1', this)">Copy</button>
+            </div>
+            <div class="prompt-actions">
+                <a href="https://claude.ai" target="_blank" rel="noopener" class="pa-link pa-primary">Open Claude (Personal) →</a>
+                <a href="https://chat.openai.com" target="_blank" rel="noopener" class="pa-link pa-outline">Try on ChatGPT →</a>
+                <a href="https://www.perplexity.ai" target="_blank" rel="noopener" class="pa-link pa-outline">Try on Perplexity →</a>
+            </div>
+            <div class="outcome-block">
+                <div class="outcome-label">Expected Netskope Response</div>
+                <div class="outcome-desc">Netskope's CASB identifies this as a personal AI account (not the corporate-managed instance). The AI guardrails policy fires on the prompt content — detecting PII (name, DOB, NI number), financial data (card PAN), and portfolio values. The prompt is blocked before it reaches the AI model. An incident is raised with the matched profile, user identity, and the AI tool used.</div>
+            </div>
+        </div>
+
+        <div class="prompt-card">
+            <div class="prompt-card-head">
+                <div>
+                    <h3>Scenario 2 — Switching to Gemini after hitting Copilot's daily limit</h3>
+                </div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;background:rgba(139,92,246,0.1);color:#8B5CF6;padding:0.18rem 0.6rem;border-radius:50px;white-space:nowrap">SHADOW AI CASB</span>
+            </div>
+            <p class="prompt-scenario" id="s2-scenario">Microsoft 365 Copilot usage is capped for budget reasons. The employee switches to personal Gemini, pasting in a strategy document they were working on to continue the drafting task.</p>
+            <div class="prompt-block">
+                <div class="prompt-label">Prompt to copy → paste into personal Gemini</div>
+                <pre class="prompt-text" id="prompt-2">Please continue helping me draft this board paper. Here's where I got to in Copilot:
+
+CONFIDENTIAL — BOARD PAPER Q3 2026
+Project: Acquisition of Thornfield Financial Services Ltd
+Consideration: £85,000,000 (cash and shares, 60:40 split)
+Due diligence lead: Sarah Mitchell (s.mitchell@company.com)
+Legal counsel: Victoria Spencer, Spencer & Associates (ref: SA-2025-04821)
+Key risk: Thornfield has outstanding FCA investigation ref: FCA-2026-00441
+
+Draft the "Strategic Rationale" section (500 words) explaining why this acquisition advances our 2026 growth strategy.</pre>
+                <button class="prompt-copy" onclick="copyPrompt('prompt-2', this)">Copy</button>
+            </div>
+            <div class="prompt-actions">
+                <a href="https://gemini.google.com" target="_blank" rel="noopener" class="pa-link pa-primary">Open Gemini (Personal) →</a>
+                <a href="https://poe.com" target="_blank" rel="noopener" class="pa-link pa-outline">Try on Poe →</a>
+            </div>
+            <div class="outcome-block">
+                <div class="outcome-label">Expected Netskope Response</div>
+                <div class="outcome-desc">The prompt contains a CONFIDENTIAL label, M&A deal details, financial consideration values, named individuals with email addresses, and a regulatory investigation reference — multiple DLP profiles match simultaneously. Netskope blocks the prompt from reaching Gemini and raises a high-severity DLP incident for review. The CASB event log shows the switch from corporate Copilot to personal Gemini.</div>
+            </div>
+        </div>
+
+        <div class="prompt-card">
+            <div class="prompt-card-head">
+                <div>
+                    <h3>Scenario 3 — Using an unapproved AI tool entirely</h3>
+                </div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;background:rgba(255,131,0,0.1);color:#FF8300;padding:0.18rem 0.6rem;border-radius:50px;white-space:nowrap">UNSANCTIONED APP</span>
+            </div>
+            <p class="prompt-scenario" id="s3-scenario">The employee uses Poe.com (not on the approved app list) to compare different AI models — and pastes in source code from an internal system that contains hardcoded credentials and internal hostnames.</p>
+            <div class="prompt-block">
+                <div class="prompt-label">Prompt to copy → paste into Poe or Perplexity</div>
+                <pre class="prompt-text" id="prompt-3">I need to refactor this internal service, can you help?
+
+# Internal payment processing service
+API_KEY = "AKIAIOSFODNN7EXAMPLE"
+DB_CONN  = "postgresql://svc_account:P@ssw0rd123@payments-db.internal.corp:5432/prod_payments"
+STRIPE_KEY = "SK_SYNTHETIC_4eC39HqLyjWDarjtT1zdp7dc"
+
+def process_payment(customer_id, amount, card_token):
+    # This hits our internal payments API
+    resp = requests.post(
+        "https://payments-api.internal.corp/v2/charge",
+        json={"customer": customer_id, "amount": amount, "token": card_token},
+        headers={"X-API-Key": API_KEY}
+    )
+    return resp.json()
+
+Please add proper error handling and improve the structure.</pre>
+                <button class="prompt-copy" onclick="copyPrompt('prompt-3', this)">Copy</button>
+            </div>
+            <div class="prompt-actions">
+                <a href="https://poe.com" target="_blank" rel="noopener" class="pa-link pa-primary">Open Poe →</a>
+                <a href="https://www.perplexity.ai" target="_blank" rel="noopener" class="pa-link pa-outline">Try on Perplexity →</a>
+                <a href="https://chat.openai.com" target="_blank" rel="noopener" class="pa-link pa-outline">Try on ChatGPT Personal →</a>
+            </div>
+            <div class="outcome-block">
+                <div class="outcome-label">Expected Netskope Response</div>
+                <div class="outcome-desc">Poe.com is an unsanctioned application — Netskope CASB logs the access with its CCI score. The prompt contains credential patterns (API key format, DB connection string with password, internal hostname), triggering the Source Code and Credentials DLP profile. Even if Poe isn't explicitly blocked, the sensitive prompt is intercepted inline and the upload is prevented.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- What Netskope detects -->
+    <div class="section-title">How Netskope Identifies Personal vs Corporate AI Instances</div>
+    <div class="detect-grid">
+        <div class="detect-card">
+            <h3>Authentication Tenant Detection</h3>
+            <p>Netskope inspects the authentication flow when a user logs into an AI tool. A corporate Claude for Work login goes through an enterprise SSO (Okta, Entra ID) — a personal login uses the standard claude.ai authentication. Netskope identifies the tenant context and applies different policies to each.</p>
+        </div>
+        <div class="detect-card">
+            <h3>CASB App Instance Classification</h3>
+            <p>For major AI tools, Netskope maintains instance-level classification: "ChatGPT Personal," "ChatGPT Team," "ChatGPT Enterprise" are treated as distinct applications with different CCI scores and policy applicability. Personal instances can be blocked while corporate instances are allowed and monitored.</p>
+        </div>
+        <div class="detect-card">
+            <h3>Prompt Inspection — Inline DLP</h3>
+            <p>Regardless of which AI tool is used, Netskope's inline DLP inspects every prompt before it reaches the model. PII, financial data, credentials, PHI, source code — all matched against DLP profiles. A block stops the data leaving; a coaching notification explains the policy to the user in real time.</p>
+        </div>
+        <div class="detect-card">
+            <h3>Unsanctioned App Detection</h3>
+            <p>Tools like Poe, Perplexity, Character.ai, and local AI interfaces (Ollama web UI) are automatically scored against the Cloud Confidence Index. Low-CCI AI apps can be blocked entirely, or allowed with logging and DLP enforcement applied to all interactions.</p>
+        </div>
+    </div>
+
+</main>
+<footer><p>© 2026 Netskope, Inc. — Demo Environment — jskope.com/temp</p></footer>
+
+<script>
+const INDUSTRIES = {
+    general:    { label: 'General',            s1: null, s2: null, s3: null },
+    lawfirm: {
+        label: 'Law Firm',
+        s1: 'The fee earner\'s Claude for Work allocation has been used up mid-matter. They open a personal claude.ai account and paste in client privileged notes to continue drafting a court submission.',
+        s2: 'A paralegal switches to personal Gemini after hitting the firm\'s Copilot usage cap, pasting in a client matter file marked Legal Privilege.',
+        s3: null
+    },
+    finance: {
+        label: 'Financial Services',
+        s1: 'An analyst hits their corporate ChatGPT token limit mid-month. They log into a personal account to continue drafting a client portfolio letter — pasting in the customer account context.',
+        s2: 'A portfolio manager uses personal Gemini after Copilot is unavailable, pasting MNPI (material non-public information) about a pending acquisition into the prompt.',
+        s3: null
+    },
+    insurance: {
+        label: 'Insurance',
+        s1: 'An underwriter\'s Claude for Work subscription is temporarily suspended. They switch to a personal account and paste policyholder claim details to help draft an assessment letter.',
+        s2: null, s3: null
+    },
+    healthcare: {
+        label: 'Healthcare',
+        s1: 'A clinician finds the corporate AI tool too restrictive for discharge letter drafting. They open personal Gemini and paste in a patient record to generate a GP referral letter.',
+        s2: 'A researcher switches to ChatGPT personal after hitting Copilot\'s limit, pasting in a clinical trial dataset with patient identifiers to help with statistical analysis.',
+        s3: null
+    },
+    defence: {
+        label: 'Defence & Gov',
+        s1: 'A contractor reaches their monthly token limit on the corporate AI tool. They use a personal Claude account and paste in project personnel data and clearance levels to help draft a briefing document.',
+        s2: null, s3: null
+    }
+};
+
+function applyIndustry(key) {
+    const ind = INDUSTRIES[key] || INDUSTRIES.general;
+    const el = (id) => document.getElementById(id);
+    if (ind.s1 && el('s1-scenario')) el('s1-scenario').textContent = ind.s1;
+    if (ind.s2 && el('s2-scenario')) el('s2-scenario').textContent = ind.s2;
+    const banner = el('industry-banner');
+    if (banner) {
+        if (key !== 'general') {
+            el('ib-name').textContent = ind.label;
+            banner.classList.remove('hidden');
+        } else {
+            banner.classList.add('hidden');
+        }
+    }
+}
+
+function copyPrompt(id, btn) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const text = el.textContent.trim();
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2200);
+    }).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2200);
+    });
+}
+
+function init() {
+    const key = localStorage.getItem('jskope-industry') || 'general';
+    applyIndustry(key);
+}
+init();
+</script>
+</body>
+</html>

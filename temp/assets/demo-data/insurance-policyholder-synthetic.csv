@@ -1,0 +1,26 @@
+SYNTHETIC TEST DATA — NOT REAL — FOR NETSKOPE DLP DEMO ONLY
+Relevant to: FCA ICOBs, Solvency II, GDPR, PRA Supervisory
+
+POLICY_REF,POLICYHOLDER_NAME,DOB,NI_NUMBER,ADDRESS_LINE1,POSTCODE,EMAIL,PHONE,POLICY_TYPE,PREMIUM_ANNUAL_GBP,COVER_AMOUNT_GBP,START_DATE,RENEWAL_DATE,STATUS,CLAIMS_COUNT
+HH-20251034,David Chen,15/09/1978,AB 12 34 56 C,"42 Birchwood Avenue, Manchester",M14 5GH,d.chen@email.com,07700 900112,HOME_BUILDINGS_CONTENTS,1240,450000,2025-09-01,2026-09-01,ACTIVE,1
+AU-20254421,Emma Rodriguez,22/03/1985,CD 34 56 78 E,"17 Maple Street, Leeds",LS7 3AQ,e.rodriguez@email.com,07700 900334,MOTOR_COMPREHENSIVE,890,0,2025-11-15,2026-11-15,ACTIVE,0
+LI-20250872,Geoffrey Hartley,07/12/1960,EF 56 78 90 G,"8 Manor Close, Edinburgh",EH9 1SX,g.hartley@email.com,07700 900556,LIFE_TERM_25YR,2100,500000,2025-03-01,2026-03-01,ACTIVE,0
+TR-20261109,Anita Patel,14/06/1995,GH 78 90 12 I,"3 Station Road, Birmingham",B1 2NQ,a.patel@email.com,07700 900778,TRAVEL_ANNUAL_WORLDWIDE,340,10000000,2026-01-10,2027-01-10,ACTIVE,0
+PH-20259923,Bernard Walsh,03/11/1952,IJ 90 12 34 K,"55 Clifton Road, Bristol",BS8 1AY,b.walsh@email.com,07700 900990,PRIVATE_HEALTH,3800,0,2025-06-01,2026-06-01,ACTIVE,3
+
+OPEN_CLAIMS
+CLAIM_REF,POLICY_REF,POLICYHOLDER,INCIDENT_DATE,CLAIM_TYPE,CLAIM_VALUE_GBP,STATUS,LOSS_ADJUSTER,NOTES
+CLM-2026-00441,HH-20251034,David Chen,2026-03-14,ESCAPE_OF_WATER,8400,IN_ASSESSMENT,J. Morrison (ref: LAS-441),"Burst pipe in upstairs bathroom. Third party contractor quote received £8,400. Client medical condition (hypertension) referenced as stress claim — SSN: 078-05-1120 (US entity, forwarding info)"
+CLM-2026-00892,PH-20259923,Bernard Walsh,2026-05-22,INPATIENT_PROCEDURE,12750,SETTLED,"N/A","Hip replacement surgery, Bristol Royal Infirmary. Pre-authorised. DOB 03/11/1952. NHS: 943 476 2819"
+CLM-2026-01104,AU-20254421,Emma Rodriguez,2026-06-01,MOTOR_THIRD_PARTY,4200,OPEN,T. Okafor (ref: LAS-892),"Rear-end collision on M62. Third-party vehicle: YK21 ZXW. Third-party card: 4111111111111111 (used for excess payment)"
+
+REINSURANCE_TREATY (CONFIDENTIAL)
+Treaty: QUOTA_SHARE_RI_2026
+Cedant: Meridian Insurance PLC
+Reinsurer: Swiss Re Group (treaty ref: SR-UK-26-0044)
+Cession: 40% of gross written premium above £500,000 xs layer
+Aggregate limit: £25,000,000
+
+SYNTHETIC TEST DATA — NOT REAL — FOR NETSKOPE DLP DEMO ONLY
+NI numbers, claim values, policyholder details are entirely fictional.
+Card numbers are published test PANs only.

@@ -451,6 +451,15 @@
         </p>
     </div>
 
+    <!-- Industry-specific files (shown when industry selected) -->
+    <div id="industry-files-section" style="display:none; margin-bottom:2.5rem;">
+        <div class="section-label">
+            <h2 id="industry-files-title">Industry-Specific Files</h2>
+        </div>
+        <p class="section-desc" id="industry-files-desc"></p>
+        <div class="download-grid" id="industry-files-grid"></div>
+    </div>
+
     <!-- Download triggers -->
     <div class="demo-section">
         <div class="section-label">
@@ -633,6 +642,84 @@ function copyText(id, btn) {
         }, 2200);
     });
 }
+
+const INDUSTRY_FILES = {
+    lawfirm: {
+        title: 'Law Firm — Client Matter Files',
+        desc: 'Industry-specific DLP test file simulating a client matter record with privileged legal notes, PII, NI numbers, and financial account details. Triggers Legal Privilege, PII, and Financial DLP profiles.',
+        files: [
+            { name: 'lawfirm-client-matter-synthetic.txt', path: '/temp/assets/demo-data/lawfirm-client-matter-synthetic.txt', desc: 'Client matter file: names, DOB, NI number, bank account, billing details, and attorney-client privileged notes.', tags: ['Legal Privilege', 'PII', 'NI Number', 'Financial'], color: '#7C3AED' }
+        ]
+    },
+    finance: {
+        title: 'Financial Services — Trading Accounts & Payment Data',
+        desc: 'Industry-specific files simulating a financial services environment: customer trading accounts with Luhn-valid card PANs, ISIN codes, wire transfer details, and NI numbers. Triggers PCI-DSS and PII DLP profiles.',
+        files: [
+            { name: 'finance-trading-accounts-synthetic.csv', path: '/temp/assets/demo-data/finance-trading-accounts-synthetic.csv', desc: 'Client trading accounts with card PANs (Visa/MC/Amex), portfolio values, ISIN codes, sort codes, and pending wire transfers.', tags: ['PCI-DSS', 'Card PANs', 'PII', 'Financial'], color: '#059669' }
+        ]
+    },
+    insurance: {
+        title: 'Insurance — Policyholder & Claims Data',
+        desc: 'Industry-specific file simulating policyholder data with NI numbers, policy references, premium amounts, open claims with PHI references, and reinsurance treaty details. Triggers PII, PHI, and Financial DLP profiles.',
+        files: [
+            { name: 'insurance-policyholder-synthetic.csv', path: '/temp/assets/demo-data/insurance-policyholder-synthetic.csv', desc: 'Policyholder records: NI numbers, addresses, policy types, annual premiums, open claims with health data and card numbers.', tags: ['PII', 'PHI', 'Policy Data', 'Claims'], color: '#0EA5E9' }
+        ]
+    },
+    healthcare: {
+        title: 'Healthcare — Patient Health Records (PHI)',
+        desc: 'Industry-specific file simulating a patient health record containing NHS number, diagnoses (ICD-10 codes), medication list, and clinical notes. Directly triggers HIPAA PHI and NHS DSPT DLP profiles.',
+        files: [
+            { name: 'healthcare-patient-records-synthetic.txt', path: '/temp/assets/demo-data/healthcare-patient-records-synthetic.txt', desc: 'Full patient record: NHS number, DOB, diagnoses (ICD-10), current medications, clinical notes, and mental health assessment.', tags: ['PHI', 'NHS Number', 'Diagnoses', 'HIPAA'], color: '#DC2626' }
+        ]
+    },
+    defence: {
+        title: 'Defence & Gov — Personnel Security Records',
+        desc: 'Industry-specific file simulating a programme personnel roster with security clearance levels (DV/SC), NI numbers, site access permissions, and programme financial details. Triggers PII and Security Classification DLP profiles.',
+        files: [
+            { name: 'defence-personnel-synthetic.txt', path: '/temp/assets/demo-data/defence-personnel-synthetic.txt', desc: 'Programme personnel: names, clearance levels (Developed Vetting/SC), NI numbers, site access, and budget information.', tags: ['Personnel PII', 'Security Clearance', 'NI Number', 'Classified Context'], color: '#374151' }
+        ]
+    }
+};
+
+function renderIndustryFiles(key) {
+    const section = document.getElementById('industry-files-section');
+    const data = INDUSTRY_FILES[key];
+    if (!data) { section.style.display = 'none'; return; }
+
+    document.getElementById('industry-files-title').textContent = data.title;
+    document.getElementById('industry-files-desc').textContent = data.desc;
+
+    const grid = document.getElementById('industry-files-grid');
+    grid.innerHTML = data.files.map(f => `
+        <div class="download-card" style="border-color:${f.color}22;">
+            <div class="file-icon" style="background:${f.color}12;">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                    <rect x="4" y="2" width="14" height="18" rx="2" stroke="${f.color}" stroke-width="1.4"/>
+                    <line x1="7" y1="7" x2="15" y2="7" stroke="${f.color}" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+                    <line x1="7" y1="10" x2="15" y2="10" stroke="${f.color}" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+                    <line x1="7" y1="13" x2="11" y2="13" stroke="${f.color}" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+                    <circle cx="14" cy="14" r="3.5" fill="${f.color}" opacity="0.15"/>
+                    <path d="M13 14h2M14 13v2" stroke="${f.color}" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="file-name">${f.name}</div>
+            <div class="file-desc">${f.desc}</div>
+            <div class="file-tags">${f.tags.map(t => `<span class="file-tag">${t}</span>`).join('')}</div>
+            <a href="${f.path}" download class="download-btn" style="background:${f.color};">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v7M4 6.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><line x1="2" y1="12" x2="12" y2="12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                Download Industry File
+            </a>
+        </div>
+    `).join('');
+
+    section.style.display = 'block';
+}
+
+function init() {
+    const key = localStorage.getItem('jskope-industry') || 'general';
+    renderIndustryFiles(key);
+}
+init();
 </script>
 
 </body>
