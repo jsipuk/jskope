@@ -1,0 +1,58 @@
+CLIENT MATTER FILE — SYNTHETIC TEST DATA — NOT REAL
+===================================================
+Prepared by: Spencer & Associates LLP | Matter Ref: SA-2025-04821
+
+CLIENT DETAILS
+--------------
+Name:                   Victoria Spencer
+Date of Birth:          22 April 1971
+National Insurance No:  AB 12 34 56 C
+Address:                14 Grosvenor Square, London, W1K 6JP
+Mobile:                 07700 900234
+Email:                  v.spencer@personalmail.com
+SSN (US entity):        219-09-9999
+
+OPPOSING PARTY
+--------------
+Entity:         Meridian Holdings Ltd (registered No. 04821047)
+Contact:        Robert Hayes, Barrister
+Chambers:       4 Pump Court, Temple, London EC4Y 7AN
+Direct line:    020 7600 0000
+
+MATTER SUMMARY
+--------------
+Type:                Commercial Dispute — Breach of Contract
+Value in Dispute:    £4,200,000
+Court:               High Court, Business & Property Courts, London
+Case Reference:      HC-2025-04821
+Hearing Date:        14 October 2026, 10:00 AM
+Judge:               HHJ Watkins (TBC)
+Status:              Pre-trial disclosure — Witness statements due 01 August 2026
+
+BILLING DETAILS
+---------------
+Client Account:      BACS sort 20-45-16, account 73849201
+Hourly Rate:         £480 + VAT (Partner); £220 + VAT (Associate)
+Retainer Paid:       £25,000 (received 10 June 2026)
+
+PRIVILEGED NOTES — ATTORNEY-CLIENT PRIVILEGE APPLIES
+-----------------------------------------------------
+Client attended on 03 June 2026. Disclosed medical history relevant to
+quantum of damages claim — client suffers from anxiety disorder (diagnosed
+2019, treated by Dr. P. Malik, ref: PMH-19-3847) which she contends has
+been exacerbated by the commercial dispute.
+
+Client also disclosed she possesses copies of internal Meridian Holdings
+emails from March 2024 that suggest deliberate misrepresentation during
+contract negotiations. Client instructed to provide these by 25 June 2026.
+Legal advice privilege confirmed. Do NOT disclose without client consent.
+
+RELATED PARTIES
+---------------
+Name: James Spencer (husband), DOB: 04/07/1968, NI: CD 45 67 89 E
+Name: Sophia Carter (financial advisor), Email: s.carter@wealthmgmt.co.uk
+
+===================================================
+SYNTHETIC TEST DATA — NOT REAL — FOR NETSKOPE DLP DEMO USE ONLY
+This file is designed to trigger DLP controls for: PII, legal privilege,
+financial account numbers, NI numbers, medical data.

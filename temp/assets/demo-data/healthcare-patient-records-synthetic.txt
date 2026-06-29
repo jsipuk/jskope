@@ -1,0 +1,73 @@
+PATIENT HEALTH RECORD — SYNTHETIC TEST DATA — NOT REAL
+=======================================================
+DO NOT USE FOR CLINICAL PURPOSES — FOR NETSKOPE DLP DEMO ONLY
+
+PATIENT DETAILS
+---------------
+Name:               Thomas Hardy
+NHS Number:         943 476 2819
+Date of Birth:      03 November 1952
+Age:                73
+Sex:                Male
+Address:            22 Elm Grove, Bristol, BS6 6AJ
+Mobile:             07700 900123
+GP Practice:        Clifton Surgery, 18 Whiteladies Road, Bristol, BS8 2NH
+Named GP:           Dr. Sarah Okafor (GMC: 7654321)
+Emergency Contact:  Margaret Hardy (wife), 07700 900456
+
+CLINICAL SUMMARY
+----------------
+Primary Diagnosis:    Type 2 Diabetes Mellitus (ICD-10: E11.9)
+Secondary Dx 1:       Essential Hypertension (ICD-10: I10)
+Secondary Dx 2:       Chronic Kidney Disease, Stage 3a (ICD-10: N18.3)
+Secondary Dx 3:       Hyperlipidaemia (ICD-10: E78.5)
+Allergies:            Penicillin (anaphylaxis, confirmed 1998), Sulphonamides (rash)
+
+ADMISSION
+---------
+Admitted:     14 June 2026 — Emergency via A&E
+Ward:         7B, Bristol Royal Infirmary
+Admitting Dr: Dr. C. Rao, SpR Endocrinology (GMC: 8912345)
+Discharge:    16 June 2026
+Reason:       Hyperglycaemic episode, BG 24.3 mmol/L on admission
+
+INVESTIGATIONS (14 June 2026)
+-----------------------------
+HbA1c:          8.2% (66 mmol/mol) — above target
+eGFR:           52 mL/min/1.73m² — mild-moderate CKD
+Fasting glucose: 19.4 mmol/L
+BMI:            31.4 kg/m²
+BP:             156/94 mmHg
+Urine ACR:      42 mg/mmol (moderately increased)
+ECG:            Normal sinus rhythm
+
+CURRENT MEDICATIONS (as prescribed)
+------------------------------------
+1. Metformin 500mg twice daily (BD)
+2. Empagliflozin 10mg once daily (OD)
+3. Ramipril 5mg once daily (OD) — caution: CKD
+4. Amlodipine 5mg once daily (OD)
+5. Atorvastatin 40mg once nightly (ON)
+6. Aspirin 75mg once daily (OD) — secondary prevention
+
+CLINICAL NOTES
+--------------
+Patient reports poor dietary compliance since bereavement of son in
+February 2026. Social history: retired teacher, lives with wife,
+non-smoker, occasional alcohol (8 units/week). Referred to community
+dietitian (ref: CD-BRI-2026-04412).
+
+Mental health: PHQ-9 score 11 (moderate depression). Referred to
+talking therapies. Patient consented to sharing records with IAPT.
+
+DISCHARGE PLAN
+--------------
+- Increase Metformin to 1000mg BD when tolerated
+- Repeat HbA1c and eGFR in 12 weeks
+- BP target <130/80 per NICE NG136
+- Follow-up with Dr. Okafor: 30 July 2026
+
+=======================================================
+SYNTHETIC TEST DATA — NOT REAL — FOR NETSKOPE DLP DEMO USE ONLY
+This file is designed to trigger DLP controls for: PHI, NHS numbers,
+diagnoses, medication lists, DOB, address. Relevant to HIPAA, NHS DSPT.

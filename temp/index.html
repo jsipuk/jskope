@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Netskope interactive demo portal — trigger real security controls for DLP, CASB, AI guardrails, threat protection, ZTNA, DNS security, cloud firewall, and enterprise browser. Industry-tailored for law firm, finance, healthcare, insurance, and defence.">
     <title>Demo Portal | Jskope</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -196,14 +197,15 @@
         /* ── DEMO GRID ── */
         .demo-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 1.1rem;
             margin-bottom: 4rem;
             animation: fade-up 0.6s 0.2s ease both;
         }
 
-        @media (max-width: 860px) { .demo-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 540px) { .demo-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 1040px) { .demo-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 700px)  { .demo-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 460px)  { .demo-grid { grid-template-columns: 1fr; } }
 
         .card {
             background: #fff;
@@ -237,12 +239,6 @@
         }
 
         .card:hover::after { transform: scaleX(1); }
-
-        .card.soon {
-            opacity: 0.55;
-            pointer-events: none;
-            cursor: default;
-        }
 
         .card-head {
             display: flex;
@@ -399,6 +395,16 @@
             gap: 0.35rem;
         }
 
+        .series-meta { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: -0.2rem; }
+        .series-chip {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.59rem;
+            color: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.12rem 0.5rem;
+            border-radius: 50px;
+        }
+
         /* ── FOOTER ── */
         footer {
             position: relative;
@@ -536,7 +542,7 @@
         </svg>
         <p>
             <strong>Prerequisite:</strong> These demos require the <strong>Netskope Client</strong> to be active on your device, or your traffic to be steered through a Netskope tenant. Without this, links open normally without security controls firing.
-            &nbsp;<a href="https://docs.netskope.com" target="_blank" rel="noopener">Client setup guide →</a>
+            &nbsp;<a href="https://docs.netskope.com" target="_blank" rel="noopener noreferrer">Client setup guide →</a>
         </p>
     </div>
 
@@ -757,6 +763,7 @@
             <div class="series-num">SERIES 01</div>
             <div class="series-title">The Insider Threat</div>
             <div class="series-desc">Walk through how an employee might attempt to exfiltrate sensitive data — and how Netskope catches it at every step.</div>
+            <div class="series-meta"><span class="series-chip">4 steps</span><span class="series-chip">~10 min</span></div>
             <div class="series-steps">
                 <div class="series-step">Access a personal cloud storage site</div>
                 <div class="series-step">Upload a file with synthetic PII</div>
@@ -770,6 +777,7 @@
             <div class="series-num">SERIES 02</div>
             <div class="series-title">AI Risk in the Enterprise</div>
             <div class="series-desc">Demonstrate the data risk posed by ungoverned AI tool usage, then show how Netskope's guardrails protect the organisation.</div>
+            <div class="series-meta"><span class="series-chip">3 steps</span><span class="series-chip">~8 min</span></div>
             <div class="series-steps">
                 <div class="series-step">Paste synthetic PII into a ChatGPT prompt</div>
                 <div class="series-step">Attempt to upload source code to Copilot</div>
@@ -782,6 +790,7 @@
             <div class="series-num">SERIES 03</div>
             <div class="series-title">Shadow IT Audit</div>
             <div class="series-desc">Explore how employees use unsanctioned applications and observe CASB discovery and DLP policy firing across cloud apps.</div>
+            <div class="series-meta"><span class="series-chip">3 steps</span><span class="series-chip">~8 min</span></div>
             <div class="series-steps">
                 <div class="series-step">Visit an unsanctioned file-sharing site</div>
                 <div class="series-step">Download a sensitive document</div>
@@ -798,13 +807,63 @@
 </footer>
 
 <script>
-const INDUSTRY_LABELS = {
-    general: 'General',
-    lawfirm: 'Law Firm',
-    finance: 'Financial Services',
-    insurance: 'Insurance',
-    healthcare: 'Healthcare',
-    defence: 'Defence & Gov'
+const INDUSTRIES = {
+    general: {
+        label: 'General',
+        context: null,
+        recs: [],
+        regs: []
+    },
+    lawfirm: {
+        label: 'Law Firm',
+        context: 'Tailored for legal services: demo data uses client matter files, case PII, and legal privilege scenarios. AI prompts simulate counsel pasting client notes into ChatGPT.',
+        recs: [
+            { label: 'DLP', title: 'Client File Exfiltration', reason: 'Download the synthetic employee records file — in a law firm context this represents a client matter file with personal identifiers and case references.', href: '/temp/demos/dlp/' },
+            { label: 'AI SECURITY', title: 'Counsel Using ChatGPT', reason: 'Industry-tailored prompts show a paralegal pasting client PII and matter notes into ChatGPT for case summarisation — triggering AI guardrail controls.', href: '/temp/demos/ai-security/' },
+            { label: 'SERIES 01', title: 'Insider Threat Journey', reason: 'Walk the 4-step scenario of a paralegal attempting to move client files via personal cloud storage to a home device.', href: '/temp/demos/series/insider-threat/' }
+        ],
+        regs: ['SRA Code of Conduct', 'GDPR Art.9', 'Legal Privilege', 'ISO 27001']
+    },
+    finance: {
+        label: 'Financial Services',
+        context: 'Tailored for financial services: demo data uses customer trading accounts with card PANs, ISIN codes, wire transfers, and portfolio values. AI prompts simulate analysts pasting deal data and customer accounts into public AI tools.',
+        recs: [
+            { label: 'DLP', title: 'Trading Account Data Leakage', reason: 'The finance-trading-accounts-synthetic.csv includes card PANs, sort codes, portfolio values, and wire transfer details — triggering PCI-DSS and PII DLP profiles.', href: '/temp/demos/dlp/' },
+            { label: 'SHADOW AI', title: 'Analyst Hits Token Limit', reason: 'An analyst\'s corporate ChatGPT token limit runs out mid-month. They switch to a personal account and paste in a client portfolio review — see Netskope catch it.', href: '/temp/demos/ai-shadow-it/' },
+            { label: 'SHADOW IT', title: 'Unsanctioned File Sharing', reason: 'Deal-sensitive documents moving via WeTransfer (CCI 42) or MEGA (CCI 22) outside corporate DRM controls — a common data governance gap in finance.', href: '/temp/demos/shadow-it/' }
+        ],
+        regs: ['PCI-DSS v4', 'FCA SYSC', 'MiFID II', 'GDPR']
+    },
+    insurance: {
+        label: 'Insurance',
+        context: 'Tailored for insurance: demo data covers policyholder PII, premium details, and claims information. AI prompts show underwriters seeking AI assistance with sensitive policy data in context.',
+        recs: [
+            { label: 'DLP', title: 'Policyholder Data Exposure', reason: 'Synthetic employee records stand in for policyholder exports — containing names, addresses, SSNs, and DOBs that trigger PII DLP profiles inline.', href: '/temp/demos/dlp/' },
+            { label: 'SHADOW AI', title: 'Underwriter Hits Token Limit', reason: 'An underwriter\'s corporate AI allocation runs out. They switch to a personal Claude or ChatGPT account and paste policyholder claim details — see Netskope identify the personal AI instance and block the sensitive prompt.', href: '/temp/demos/ai-shadow-it/' },
+            { label: 'SERIES 03', title: 'Shadow IT Audit', reason: 'Underwriters commonly use personal Dropbox to access policy files remotely. Walk the full CASB discovery and DLP block journey.', href: '/temp/demos/series/shadow-it-audit/' }
+        ],
+        regs: ['FCA ICOBs', 'Solvency II', 'GDPR', 'PRA Supervisory']
+    },
+    healthcare: {
+        label: 'Healthcare',
+        context: 'Tailored for healthcare: demo data includes a full patient health record with NHS number, ICD-10 diagnoses, medication list, and clinical notes. AI prompts simulate clinicians using personal AI tools for discharge summaries.',
+        recs: [
+            { label: 'DLP', title: 'Patient PHI Download', reason: 'The healthcare-patient-records-synthetic.txt simulates a real patient record with NHS number, diagnoses, medications, and clinical notes — directly triggering HIPAA PHI DLP profiles.', href: '/temp/demos/dlp/' },
+            { label: 'SHADOW AI', title: 'Clinician Hits Corporate AI Limit', reason: 'A clinician\'s corporate AI tool restricts medical content. They switch to personal Gemini and paste a full patient record to draft a GP referral letter — see Netskope intercept it.', href: '/temp/demos/ai-shadow-it/' },
+            { label: 'WEB BLOCKING', title: 'Unsanctioned Cloud Storage', reason: 'Clinicians sharing patient records via personal email or file sharing is a common NHS DSPT compliance gap — show how SWG blocks these categories from clinical devices.', href: '/temp/demos/web-blocking/' }
+        ],
+        regs: ['HIPAA', 'NHS DSPT', 'GDPR Art.9', 'CQC Data Standards']
+    },
+    defence: {
+        label: 'Defence & Gov',
+        context: 'Tailored for defence and government: demo data uses project personnel records, contractor details, and security classification markers. AI prompts simulate staff seeking AI help with sensitive project summaries.',
+        recs: [
+            { label: 'ZTNA / NPA', title: 'Private App Access', reason: 'ZTNA is particularly relevant here — show how zero-trust least-privilege access replaces VPN for contractors accessing internal systems from remote or deployed locations.', href: '/temp/demos/ztna/' },
+            { label: 'AI SECURITY', title: 'Contractor Using ChatGPT', reason: 'Tailored prompt: a contractor pastes sensitive project personnel details and clearance levels into ChatGPT to draft a briefing document.', href: '/temp/demos/ai-security/' },
+            { label: 'DNS SECURITY', title: 'C2 Channel Blocking', reason: 'DNS-layer threat blocking is critical in defence and government environments — preventing malware C2 callbacks and blocking threat infrastructure before a TCP connection is ever made. Covers non-browser endpoints and IoT/OT devices on-base.', href: '/temp/demos/dns-security/' }
+        ],
+        regs: ['JSP 440', 'Cyber Essentials+', 'ISO 27001', 'NCSC CAF']
+    }
 };
 
 function setIndustry(key, btn) {

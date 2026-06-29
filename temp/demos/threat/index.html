@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Netskope threat protection demo — trigger malware detection and phishing controls using industry-standard EICAR test files and safe simulation URLs. Multi-engine inline AV scanning.">
     <title>Threat Protection Demo | Jskope</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -128,15 +129,15 @@
             </div>
         </div>
         <div class="eicar-actions" style="margin-bottom:1.5rem;">
-            <a href="https://secure.eicar.org/eicar.com.txt" target="_blank" rel="noopener" class="eicar-dl">
+            <a href="https://secure.eicar.org/eicar.com.txt" target="_blank" rel="noopener noreferrer" class="eicar-dl">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v7M4 6.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><line x1="2" y1="12" x2="12" y2="12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
                 Download EICAR Test File (.txt)
             </a>
-            <a href="https://secure.eicar.org/eicar_com.zip" target="_blank" rel="noopener" class="eicar-info">
+            <a href="https://secure.eicar.org/eicar_com.zip" target="_blank" rel="noopener noreferrer" class="eicar-info">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v7M4 6.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><line x1="2" y1="12" x2="12" y2="12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
                 Download EICAR in ZIP
             </a>
-            <a href="https://secure.eicar.org/eicar2.com" target="_blank" rel="noopener" class="eicar-info">
+            <a href="https://secure.eicar.org/eicar2.com" target="_blank" rel="noopener noreferrer" class="eicar-info">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v7M4 6.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><line x1="2" y1="12" x2="12" y2="12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
                 EICAR Double-ZIP (bypass test)
             </a>
@@ -163,7 +164,7 @@
                     <div class="threat-name">AMTSO Phishing Test <span class="threat-tag t-critical">PHISHING</span></div>
                     <div class="threat-desc">AMTSO's official phishing test page. Designed to trigger phishing protection in any compliant security tool.</div>
                     <div class="threat-meta">amtso.org · Safe test page</div>
-                    <a href="https://www.amtso.org/check-desktop-security-software-with-the-amtso-security-features-check/" target="_blank" rel="noopener" class="visit-btn">Visit →</a>
+                    <a href="https://www.amtso.org/check-desktop-security-software-with-the-amtso-security-features-check/" target="_blank" rel="noopener noreferrer" class="visit-btn">Visit →</a>
                 </div>
             </div>
             <div class="threat-card">
@@ -172,7 +173,7 @@
                     <div class="threat-name">AMTSO Malware Test <span class="threat-tag t-critical">MALWARE</span></div>
                     <div class="threat-desc">AMTSO's malware download check. Tests whether your security tool intercepts malicious file downloads.</div>
                     <div class="threat-meta">amtso.org · Safe test page</div>
-                    <a href="https://www.amtso.org/check-desktop-security-software-with-the-amtso-security-features-check/" target="_blank" rel="noopener" class="visit-btn">Visit →</a>
+                    <a href="https://www.amtso.org/check-desktop-security-software-with-the-amtso-security-features-check/" target="_blank" rel="noopener noreferrer" class="visit-btn">Visit →</a>
                 </div>
             </div>
             <div class="threat-card">
@@ -181,7 +182,7 @@
                     <div class="threat-name">Wicar Browser Malware Test <span class="threat-tag t-high">BROWSER</span></div>
                     <div class="threat-desc">Browser-based malware test using real browser exploit techniques — completely safe, designed for testing security tools.</div>
                     <div class="threat-meta">wicar.org · Browser exploit simulation</div>
-                    <a href="https://www.wicar.org/test-malware.html" target="_blank" rel="noopener" class="visit-btn">Visit →</a>
+                    <a href="https://www.wicar.org/test-malware.html" target="_blank" rel="noopener noreferrer" class="visit-btn">Visit →</a>
                 </div>
             </div>
             <div class="threat-card">
@@ -190,7 +191,7 @@
                     <div class="threat-name">AMTSO Potentially Unwanted App <span class="threat-tag t-medium">PUA</span></div>
                     <div class="threat-desc">Tests detection of Potentially Unwanted Applications — adware, toolbars, and grayware that isn't outright malware.</div>
                     <div class="threat-meta">amtso.org · PUA test</div>
-                    <a href="https://www.amtso.org/check-desktop-security-software-with-the-amtso-security-features-check/" target="_blank" rel="noopener" class="visit-btn">Visit →</a>
+                    <a href="https://www.amtso.org/check-desktop-security-software-with-the-amtso-security-features-check/" target="_blank" rel="noopener noreferrer" class="visit-btn">Visit →</a>
                 </div>
             </div>
         </div>
@@ -210,7 +211,7 @@
                     <div class="threat-name">Emerging Threats Test <span class="threat-tag t-high">THREAT INTEL</span></div>
                     <div class="threat-desc">A known test domain used by Proofpoint Emerging Threats ruleset — validates that Netskope's threat intelligence feed is matching IDS/IPS signatures.</div>
                     <div class="threat-meta">testmyids.com · Threat intel test</div>
-                    <a href="http://testmyids.com" target="_blank" rel="noopener" class="visit-btn">Visit →</a>
+                    <a href="http://testmyids.com" target="_blank" rel="noopener noreferrer" class="visit-btn">Visit →</a>
                 </div>
             </div>
             <div class="threat-card">
@@ -219,7 +220,7 @@
                     <div class="threat-name">DNS Threat Category Test <span class="threat-tag t-medium">DNS</span></div>
                     <div class="threat-desc">Visit a domain categorised as malicious by Netskope's DNS threat feed to verify URL filtering is active at the DNS layer.</div>
                     <div class="threat-meta">Requires NS DNS policy active</div>
-                    <a href="http://www.internic.net/domain/named.root" target="_blank" rel="noopener" class="visit-btn">Test DNS →</a>
+                    <a href="http://www.internic.net/domain/named.root" target="_blank" rel="noopener noreferrer" class="visit-btn">Test DNS →</a>
                 </div>
             </div>
         </div>

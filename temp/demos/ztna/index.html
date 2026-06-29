@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Netskope ZTNA and NPA demo — demonstrate identity-aware, least-privilege private app access using Netskope Private Access. Replaces VPN with zero trust network access policy.">
     <title>ZTNA / NPA Demo | Jskope</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -211,10 +212,11 @@
                 <div class="test-scenario-title">Authorised User — Private App</div>
                 <div class="test-scenario-desc">With the Netskope client active and your identity matching the access policy, clicking this link routes your request through the Netskope cloud and NPA publisher to the private app — without any VPN.</div>
                 <div class="test-url">⚠ [YOUR-PRIVATE-APP-URL] — replace before demoing</div>
-                <a href="#" onclick="alert('Replace [YOUR-PRIVATE-APP-URL] in this page with your actual private application URL before demoing.'); return false;" class="test-btn">
+                <button class="test-btn" onclick="toggleZtnaMsg()" style="cursor:pointer;font-family:inherit;background:none;border:none;padding:0">
                     <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 2.5v7M3.5 7l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     Access Private App →
-                </a>
+                </button>
+                <div id="ztna-todo-msg" hidden style="margin-top:0.6rem;padding:0.65rem 0.9rem;border-radius:7px;background:rgba(255,131,0,0.15);border:1px solid rgba(255,131,0,0.35);font-size:0.78rem;color:#FF8300;line-height:1.5;">⚠ Replace <code style="font-family:'JetBrains Mono',monospace;font-size:0.8em;background:rgba(255,131,0,0.15);padding:0.1rem 0.3rem;border-radius:3px">[YOUR-PRIVATE-APP-URL]</code> with your actual NPA-brokered private app URL. See the Action Required banner at the top of this page.</div>
             </div>
             <div class="test-scenario denied">
                 <div class="test-scenario-label">✗ EXPECTED: ACCESS DENIED</div>
@@ -250,6 +252,10 @@
 
 <script>
 document.querySelector('.section-label[style]').style.opacity = '1';
+function toggleZtnaMsg() {
+    const el = document.getElementById('ztna-todo-msg');
+    el.hidden = !el.hidden;
+}
 </script>
 </body>
 </html>
