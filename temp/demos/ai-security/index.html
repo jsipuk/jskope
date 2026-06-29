@@ -646,18 +646,25 @@ Address: 742 Evergreen Terrace, Springfield, CA 94107`
             },
             {
                 title: 'Source Code & Credentials',
-                subtitle: 'Developer pastes API keys into Copilot to debug',
-                tags: ['Credentials', 'Source Code'],
-                tagColors: ['risk-high', 'risk-med'],
-                expected: 'Block — API key and token pattern match',
+                subtitle: 'Developer pastes internal source with hardcoded secrets into Copilot to debug',
+                tags: ['Source Code', 'Credentials'],
+                tagColors: ['risk-high', 'risk-high'],
+                expected: 'Block — source code with hardcoded credentials and internal hostname',
                 tool: 'https://copilot.microsoft.com',
                 toolName: 'Copilot',
-                text: `I'm getting an auth error. Here's the relevant config — can you help debug?
+                text: `I'm getting a 401 from our billing worker — can you spot why the auth is failing?
 
-AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
-AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-GITHUB_TOKEN=ghp_16C7e42F292c6912E7710c838347Ae5B21
-DATABASE_URL=postgresql://admin:SuperSecret123!@prod-db.corp.com:5432/customers`
+import requests
+
+AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
+AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+GITHUB_TOKEN = "ghp_16C7e42F292c6912E7710c838347Ae5B21"
+STRIPE_SECRET_KEY = "SK_SYNTHETIC_4eC39HqLyjWDarjtT1zdp7dc"
+DB_DSN = "postgresql://billing_svc:S3cr3t-Pa55!@pg-prod-01.internal.corp-example.com:5432/billing"
+
+def fetch_settlements(batch_id):
+    url = f"https://payments-api.internal.corp-example.com/v3/settlements/{batch_id}"
+    return requests.get(url, headers={"Authorization": f"Bearer {STRIPE_SECRET_KEY}"}).json()`
             },
             {
                 title: 'Financial Data Disclosure',
