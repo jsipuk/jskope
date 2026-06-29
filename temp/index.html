@@ -500,6 +500,113 @@
             gap: 0.4rem;
         }
 
+        /* ── INDUSTRY SPOTLIGHT ── */
+        .spotlight {
+            background: linear-gradient(135deg, rgba(0,43,73,0.03) 0%, rgba(0,167,206,0.05) 100%);
+            border: 1px solid rgba(0,167,206,0.18);
+            border-radius: 14px;
+            padding: 1.6rem 1.75rem;
+            margin-bottom: 3rem;
+            animation: fade-up 0.4s ease both;
+        }
+
+        .spotlight-head {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.55rem;
+        }
+
+        .spotlight-head h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .spotlight-head .sl-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.62rem;
+            color: var(--orange);
+            background: rgba(255,131,0,0.08);
+            border: 1px solid rgba(255,131,0,0.2);
+            padding: 0.18rem 0.6rem;
+            border-radius: 50px;
+            margin-left: auto;
+        }
+
+        .spotlight-context {
+            font-size: 0.875rem;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+            max-width: 760px;
+        }
+
+        .spotlight-recs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.85rem;
+            margin-bottom: 1.25rem;
+        }
+
+        @media (max-width: 860px) { .spotlight-recs { grid-template-columns: 1fr; } }
+
+        .rec-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            padding: 1.1rem 1.2rem;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        }
+
+        .rec-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0,43,73,0.08);
+            border-color: rgba(0,167,206,0.25);
+        }
+
+        .rec-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.06em;
+            color: var(--turquoise);
+        }
+
+        .rec-title { font-size: 0.92rem; font-weight: 600; color: var(--text); }
+
+        .rec-reason {
+            font-size: 0.78rem;
+            color: var(--muted);
+            line-height: 1.55;
+            flex: 1;
+        }
+
+        .rec-go { font-size: 0.75rem; font-weight: 500; color: var(--turquoise); margin-top: 0.2rem; }
+
+        .spotlight-regs {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .regs-label { font-size: 0.72rem; color: var(--muted); margin-right: 0.3rem; }
+
+        .reg-chip {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.62rem;
+            color: var(--navy);
+            background: rgba(0,43,73,0.05);
+            border: 1px solid rgba(0,43,73,0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 50px;
+        }
+
         @keyframes fade-up {
             from { opacity: 0; transform: translateY(14px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -568,6 +675,9 @@
             Your selection is saved for this session. Demo pages will show industry-specific sample data and AI prompt scenarios.
         </div>
     </div>
+
+    <!-- Industry Spotlight (rendered when an industry is selected) -->
+    <div class="spotlight" id="spotlight" hidden></div>
 
     <!-- Demo Categories -->
     <div class="section-label">
@@ -866,17 +976,53 @@ const INDUSTRIES = {
     }
 };
 
+function escHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function updateBadge(key) {
+    const badge = document.getElementById('picker-active-badge');
+    if (key === 'general' || !INDUSTRIES[key]) {
+        badge.style.display = 'none';
+    } else {
+        badge.textContent = ('TAILORED: ' + INDUSTRIES[key].label).toUpperCase();
+        badge.style.display = 'inline-block';
+    }
+}
+
+function renderSpotlight(key) {
+    const sl = document.getElementById('spotlight');
+    const ind = INDUSTRIES[key];
+    if (!ind || key === 'general' || !ind.recs.length) {
+        sl.hidden = true;
+        sl.innerHTML = '';
+        return;
+    }
+    const recs = ind.recs.map(r => `
+        <a href="${r.href}" class="rec-card">
+            <span class="rec-label">${escHtml(r.label)}</span>
+            <span class="rec-title">${escHtml(r.title)}</span>
+            <span class="rec-reason">${escHtml(r.reason)}</span>
+            <span class="rec-go">Open demo →</span>
+        </a>`).join('');
+    const regs = ind.regs.map(r => `<span class="reg-chip">${escHtml(r)}</span>`).join('');
+    sl.innerHTML = `
+        <div class="spotlight-head">
+            <h3>Recommended for ${escHtml(ind.label)}</h3>
+            <span class="sl-tag">TAILORED</span>
+        </div>
+        <p class="spotlight-context">${escHtml(ind.context)}</p>
+        <div class="spotlight-recs">${recs}</div>
+        <div class="spotlight-regs"><span class="regs-label">Relevant frameworks:</span>${regs}</div>`;
+    sl.hidden = false;
+}
+
 function setIndustry(key, btn) {
     localStorage.setItem('jskope-industry', key);
     document.querySelectorAll('.picker-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    const badge = document.getElementById('picker-active-badge');
-    if (key === 'general') {
-        badge.style.display = 'none';
-    } else {
-        badge.textContent = ('TAILORED: ' + INDUSTRY_LABELS[key]).toUpperCase();
-        badge.style.display = 'inline-block';
-    }
+    updateBadge(key);
+    renderSpotlight(key);
 }
 
 function initPicker() {
@@ -886,11 +1032,8 @@ function initPicker() {
         document.querySelectorAll('.picker-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
     }
-    const badge = document.getElementById('picker-active-badge');
-    if (saved !== 'general') {
-        badge.textContent = ('TAILORED: ' + INDUSTRY_LABELS[saved]).toUpperCase();
-        badge.style.display = 'inline-block';
-    }
+    updateBadge(saved);
+    renderSpotlight(saved);
 }
 
 initPicker();
