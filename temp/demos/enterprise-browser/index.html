@@ -208,6 +208,20 @@
             </div>
             <a href="https://www.wicar.org/test-malware.html" target="_blank" rel="noopener noreferrer" class="sc-link">Test with Wicar (if RBI active) →</a>
         </div>
+        <div class="scenario-card">
+            <div class="scenario-head">
+                <h3>Webmail Blocked in the Enterprise Browser</h3>
+                <span class="sc-tag sc-block">BLOCKED</span>
+            </div>
+            <p>Personal webmail is a classic exfiltration path. Your <code>Block Webmail on EB</code> policy blocks the entire Webmail category inside the Enterprise Browser — so data can't be emailed out via a personal Gmail or Outlook.com tab, even though a standard browser might allow it.</p>
+            <div class="scenario-steps">
+                <div class="scenario-step">User opens personal webmail in the Netskope Enterprise Browser</div>
+                <div class="scenario-step">EB policy matches the Webmail category for the session</div>
+                <div class="scenario-step">Access is blocked — the webmail app will not load in EB</div>
+                <div class="scenario-step">The same site on an unmanaged browser is where the control gap normally sits</div>
+            </div>
+            <a href="https://mail.google.com" target="_blank" rel="noopener noreferrer" class="sc-link">Open Webmail (blocked inside EB) →</a>
+        </div>
     </div>
 
     <!-- RBI explainer -->

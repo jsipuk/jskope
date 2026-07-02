@@ -260,6 +260,8 @@
 
     <div class="info-box">
         <strong>Why DNS Security matters beyond the browser:</strong> Traditional SWG only intercepts browser traffic. DNS Security catches threats from any application — a malware binary phoning home via HTTP, a rogue CLI tool, or an app using non-standard ports. It also catches threats on devices where the SWG proxy isn't configured (e.g. IoT, legacy apps, network printers). Together, DNS Security + SWG + CASB create layered defence at multiple protocol levels.
+        <br><br>
+        <strong>In your imported policy:</strong> the <code>DNS Security Policy</code> (Default DNS Profile) and <code>DNSaaS</code> filter every lookup; <code>[DOH] Block</code> / <code>[DOH] Block App</code> silently block DNS-over-HTTPS so devices can't bypass filtering with a rogue resolver; and <code>[Demo] Block All Connections To Sinkhole IP</code> drops any connection to a sinkholed C2 address.
     </div>
 </main>
 <footer><p>© 2026 Netskope, Inc. — Demo Environment — jskope.com/temp</p></footer>

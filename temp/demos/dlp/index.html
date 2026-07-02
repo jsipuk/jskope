@@ -463,13 +463,17 @@
         <div class="download-grid" id="industry-files-grid"></div>
     </div>
 
+    <div style="background:rgba(0,167,206,0.05);border:1px solid rgba(0,167,206,0.18);border-radius:10px;padding:0.9rem 1.2rem;margin-bottom:2rem;font-size:0.83rem;color:var(--muted);line-height:1.6;">
+        <strong style="color:var(--text)">How your policy responds depends on the destination:</strong> uploading PII/PCI to a <strong>non-sanctioned</strong> app (personal OneDrive, Cloud Storage, Social, web forms) → <strong>Block</strong> (<code>PCI Upload Block</code>, <code>Block Sensitive data into non sanctioned OneDrive</code>); the same data to a <strong>sanctioned</strong> app (corporate OneDrive, Slack, Teams) → <strong>Coach</strong> (<code>User Alert: Coach DLP Violation</code>); downloading card data from a DLP-test site → <strong>Block</strong> (<code>PCI Download</code>); any password-protected file → <strong>Block</strong>.
+    </div>
+
     <!-- Download triggers -->
     <div class="demo-section">
         <div class="section-label">
             <h2>Download Triggers</h2>
         </div>
         <p class="section-desc">
-            Download these files while the Netskope client is active. Each file is crafted to match common DLP fingerprints — SSNs, credit card PANs, API credentials. Netskope's inline inspection should intercept the download and trigger your DLP policy.
+            Download these files while the Netskope client is active. Each file is crafted to match common DLP fingerprints — SSNs, credit card PANs, and source code with hardcoded secrets. Netskope's inline inspection should intercept the download and trigger your DLP policy.
         </p>
         <div class="download-grid">
 

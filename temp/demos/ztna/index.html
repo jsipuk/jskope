@@ -210,7 +210,7 @@
             <div class="test-scenario granted">
                 <div class="test-scenario-label">✓ EXPECTED: ACCESS GRANTED</div>
                 <div class="test-scenario-title">Authorised User — Private App</div>
-                <div class="test-scenario-desc">With the Netskope client active and your identity matching the access policy, clicking this link routes your request through the Netskope cloud and NPA publisher to the private app — without any VPN.</div>
+                <div class="test-scenario-desc">With the Netskope client active and your identity matching the access policy, clicking this link routes your request through the Netskope cloud and NPA publisher to the private app — without any VPN. Your imported policy publishes real private apps (RDP, SSH, and the <code>[Portal_JSkope]</code> browser portal) and grants access <strong>per identity</strong> — authorised users/groups <code>Allow</code>, while specific users are denied by <code>[ZTNA] RDP … Block</code> (Block NPA Access). Same app, different identity, different outcome.</div>
                 <div class="test-url">⚠ [YOUR-PRIVATE-APP-URL] — replace before demoing</div>
                 <button class="test-btn" onclick="toggleZtnaMsg()" style="cursor:pointer;font-family:inherit;background:none;border:none;padding:0">
                     <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 2.5v7M3.5 7l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
