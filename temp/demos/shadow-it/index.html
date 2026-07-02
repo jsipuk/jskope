@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Netskope Shadow IT and CASB demo — access unsanctioned cloud apps and observe real-time discovery, Cloud Confidence Index scoring, and policy controls across WeTransfer, MEGA, Dropbox personal and more.">
     <title>Shadow IT Demo | Jskope</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -112,7 +113,7 @@
             <h3>Netskope Cloud Confidence Index™ (CCI)</h3>
             <span class="cci-badge">NETSKOPE PROPRIETARY</span>
         </div>
-        <p>Every app below displays its Netskope Cloud Confidence Index score — a 0–100 risk rating calculated across 50+ criteria including security certifications, data ownership, auditability, and encryption standards. Admins use CCI to set automatic policies: block all apps below CCI 60, coach between 60–75, and allow above 75.</p>
+        <p>Every app below displays its Netskope Cloud Confidence Index score — a 0–100 risk rating calculated across 50+ criteria including security certifications, data ownership, auditability, and encryption standards. Your imported policy drives action from the Cloud Confidence Level (CCL): <strong>Poor &amp; Low CCI are blocked on browse and upload</strong> (Unsafe Cloud Storage rules), <strong>Medium CCI is blocked on upload</strong> (browse allowed), and <strong>High/Excellent is allowed</strong>. Dropbox is additionally blocked outright by a User Confidence Index rule (UCI &lt; 651) and a non-corporate-instance block.</p>
         <div class="cci-bands">
             <span class="cci-band band-high">● 76–100: Trusted</span>
             <span class="cci-band band-med">● 51–75: General Confidence</span>
@@ -136,7 +137,7 @@
                 <div class="app-name">WeTransfer <span class="risk-label rl-low">LOW CONFIDENCE</span></div>
                 <div class="app-category">File Storage & Sharing · CCI: 42/100</div>
                 <div class="app-risks"><span class="risk-chip">No enterprise audit</span><span class="risk-chip">Data retention unclear</span><span class="risk-chip">No MFA</span></div>
-                <div class="app-cta"><a href="https://www.wetransfer.com" target="_blank" rel="noopener" class="app-visit">Access App →</a></div>
+                <div class="app-cta"><a href="https://www.wetransfer.com" target="_blank" rel="noopener noreferrer" class="app-visit">Access App →</a></div>
             </div>
         </div>
 
@@ -152,7 +153,7 @@
                 <div class="app-name">MEGA <span class="risk-label rl-poor">POOR</span></div>
                 <div class="app-category">Cloud Storage · CCI: 22/100</div>
                 <div class="app-risks"><span class="risk-chip">No SOC2</span><span class="risk-chip">Jurisdiction risk</span><span class="risk-chip">No audit logs</span></div>
-                <div class="app-cta"><a href="https://mega.nz" target="_blank" rel="noopener" class="app-visit">Access App →</a></div>
+                <div class="app-cta"><a href="https://mega.nz" target="_blank" rel="noopener noreferrer" class="app-visit">Access App →</a></div>
             </div>
         </div>
 
@@ -168,7 +169,7 @@
                 <div class="app-name">Filebin <span class="risk-label rl-low">LOW CONFIDENCE</span></div>
                 <div class="app-category">Temporary File Storage · CCI: 33/100</div>
                 <div class="app-risks"><span class="risk-chip">No auth required</span><span class="risk-chip">Public by default</span><span class="risk-chip">No DLP</span></div>
-                <div class="app-cta"><a href="https://filebin.net" target="_blank" rel="noopener" class="app-visit">Access App →</a></div>
+                <div class="app-cta"><a href="https://filebin.net" target="_blank" rel="noopener noreferrer" class="app-visit">Access App →</a></div>
             </div>
         </div>
 
@@ -184,7 +185,7 @@
                 <div class="app-name">Pastebin <span class="risk-label rl-low">LOW CONFIDENCE</span></div>
                 <div class="app-category">Text Storage / Exfil Risk · CCI: 38/100</div>
                 <div class="app-risks"><span class="risk-chip">Public pastes</span><span class="risk-chip">API exfil risk</span><span class="risk-chip">No DLP</span></div>
-                <div class="app-cta"><a href="https://pastebin.com" target="_blank" rel="noopener" class="app-visit">Access App →</a></div>
+                <div class="app-cta"><a href="https://pastebin.com" target="_blank" rel="noopener noreferrer" class="app-visit">Access App →</a></div>
             </div>
         </div>
     </div>
@@ -204,7 +205,7 @@
                 <div class="app-name">Dropbox (Personal) <span class="risk-label rl-med">GENERAL CONFIDENCE</span></div>
                 <div class="app-category">Cloud Storage · Consumer · CCI: 69/100</div>
                 <div class="app-risks"><span class="risk-chip">SOC2 Type II</span><span class="risk-chip">No enterprise controls</span><span class="risk-chip">Data export risk</span></div>
-                <div class="app-cta"><a href="https://www.dropbox.com" target="_blank" rel="noopener" class="app-visit">Access App →</a></div>
+                <div class="app-cta"><a href="https://www.dropbox.com" target="_blank" rel="noopener noreferrer" class="app-visit">Access App →</a></div>
             </div>
         </div>
 
@@ -220,7 +221,7 @@
                 <div class="app-name">OneDrive Personal <span class="risk-label rl-med">GENERAL CONFIDENCE</span></div>
                 <div class="app-category">Cloud Storage · Consumer · CCI: 65/100</div>
                 <div class="app-risks"><span class="risk-chip">No tenant separation</span><span class="risk-chip">Personal vs corp data</span></div>
-                <div class="app-cta"><a href="https://onedrive.live.com" target="_blank" rel="noopener" class="app-visit">Access App →</a></div>
+                <div class="app-cta"><a href="https://onedrive.live.com" target="_blank" rel="noopener noreferrer" class="app-visit">Access App →</a></div>
             </div>
         </div>
 
@@ -236,7 +237,7 @@
                 <div class="app-name">AnonFiles (defunct) <span class="risk-label rl-poor">POOR</span></div>
                 <div class="app-category">Anonymous File Hosting · CCI: 18/100</div>
                 <div class="app-risks"><span class="risk-chip">Anonymous uploads</span><span class="risk-chip">No auth</span><span class="risk-chip">Abuse vector</span></div>
-                <div class="app-cta"><a href="https://gofile.io" target="_blank" rel="noopener" class="app-visit">GoFile (similar) →</a></div>
+                <div class="app-cta"><a href="https://gofile.io" target="_blank" rel="noopener noreferrer" class="app-visit">GoFile (similar) →</a></div>
             </div>
         </div>
 
@@ -252,7 +253,7 @@
                 <div class="app-name">SharePoint / OneDrive Corp <span class="risk-label rl-high">TRUSTED</span></div>
                 <div class="app-category">Enterprise Cloud Storage · CCI: 89/100</div>
                 <div class="app-risks"><span class="risk-chip">Enterprise DLP</span><span class="risk-chip">Full audit</span><span class="risk-chip">ISO27001</span></div>
-                <div class="app-cta"><a href="https://office.com" target="_blank" rel="noopener" class="app-visit">✓ Sanctioned App →</a></div>
+                <div class="app-cta"><a href="https://office.com" target="_blank" rel="noopener noreferrer" class="app-visit">✓ Sanctioned App →</a></div>
             </div>
         </div>
     </div>
@@ -265,13 +266,13 @@
                 <div class="step-num-label">STEP 01</div>
                 <div class="step-title">Access the App</div>
                 <div class="step-desc">Visit WeTransfer or MEGA above. Netskope logs the access and flags it as an unsanctioned app in the tenant's App Discovery dashboard.</div>
-                <a href="https://www.wetransfer.com" target="_blank" rel="noopener" class="step-btn">Open WeTransfer →</a>
+                <a href="https://www.wetransfer.com" target="_blank" rel="noopener noreferrer" class="step-btn">Open WeTransfer →</a>
             </div>
             <div class="upload-step">
                 <div class="step-num-label">STEP 02</div>
                 <div class="step-title">Attempt File Upload</div>
                 <div class="step-desc">Try to upload the synthetic PII file from the DLP demo. Netskope's CASB inline inspection scans the upload payload and matches DLP policy before it leaves the device.</div>
-                <a href="/temp/demos/dlp/" target="_blank" rel="noopener" class="step-btn">Get DLP test file →</a>
+                <a href="/temp/demos/dlp/" target="_blank" rel="noopener noreferrer" class="step-btn">Get DLP test file →</a>
             </div>
             <div class="upload-step">
                 <div class="step-num-label">STEP 03</div>

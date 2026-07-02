@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Netskope Shadow AI demo — the token exhaustion scenario. Employees switch from corporate AI tools to personal Claude, ChatGPT, or Gemini accounts and paste in company data. See Netskope catch it.">
     <title>Shadow AI & Token Exhaustion | Jskope Demo Portal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -90,6 +91,8 @@
         .prompt-block { background: var(--navy); border-radius: 8px; padding: 1rem 1.1rem; margin-bottom: 0.9rem; position: relative; }
         .prompt-label { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
         .prompt-text { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: rgba(255,255,255,0.85); line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+        .prompt-text[contenteditable="true"] { outline: none; cursor: text; caret-color: #fff; border-radius: 4px; }
+        .prompt-text[contenteditable="true"]:focus { background: rgba(255,255,255,0.04); border-radius: 4px; }
         .prompt-copy { position: absolute; top: 0.65rem; right: 0.8rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); font-size: 0.7rem; font-family: inherit; padding: 0.22rem 0.6rem; border-radius: 5px; cursor: pointer; transition: all 0.18s; }
         .prompt-copy:hover { background: rgba(255,255,255,0.18); color: #fff; }
         .prompt-copy.copied { background: rgba(16,185,129,0.25); border-color: rgba(16,185,129,0.4); color: #10B981; }
@@ -203,7 +206,7 @@
     <!-- Shadow AI apps -->
     <div class="section-title">Shadow AI Applications — Unsanctioned Personal Instances</div>
     <div class="ai-apps-grid">
-        <a href="https://claude.ai" target="_blank" rel="noopener" class="ai-app-card">
+        <a href="https://claude.ai" target="_blank" rel="noopener noreferrer" class="ai-app-card">
             <div class="ai-app-head">
                 <div class="ai-app-name">Claude (Personal)</div>
                 <span class="ai-app-tag tag-shadow">SHADOW AI</span>
@@ -211,7 +214,7 @@
             <div class="ai-app-url">claude.ai</div>
             <div class="ai-app-desc">Personal Anthropic account. Netskope distinguishes between claude.ai personal and Claude for Work (enterprise SSO). Data pasted into personal accounts leaves corporate control.</div>
         </a>
-        <a href="https://chat.openai.com" target="_blank" rel="noopener" class="ai-app-card">
+        <a href="https://chat.openai.com" target="_blank" rel="noopener noreferrer" class="ai-app-card">
             <div class="ai-app-head">
                 <div class="ai-app-name">ChatGPT (Personal)</div>
                 <span class="ai-app-tag tag-shadow">SHADOW AI</span>
@@ -219,7 +222,7 @@
             <div class="ai-app-url">chat.openai.com</div>
             <div class="ai-app-desc">Personal OpenAI account. Distinct from ChatGPT Team/Enterprise with organisational controls. Same domain — Netskope identifies by authentication tenant context.</div>
         </a>
-        <a href="https://gemini.google.com" target="_blank" rel="noopener" class="ai-app-card">
+        <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="ai-app-card">
             <div class="ai-app-head">
                 <div class="ai-app-name">Gemini (Personal)</div>
                 <span class="ai-app-tag tag-shadow">SHADOW AI</span>
@@ -227,7 +230,7 @@
             <div class="ai-app-url">gemini.google.com</div>
             <div class="ai-app-desc">Personal Google account. Distinguishable from Gemini for Google Workspace. Personal prompts are used to train Google's models unless opted out.</div>
         </a>
-        <a href="https://copilot.microsoft.com" target="_blank" rel="noopener" class="ai-app-card">
+        <a href="https://copilot.microsoft.com" target="_blank" rel="noopener noreferrer" class="ai-app-card">
             <div class="ai-app-head">
                 <div class="ai-app-name">Copilot (Personal)</div>
                 <span class="ai-app-tag tag-shadow">SHADOW AI</span>
@@ -235,7 +238,7 @@
             <div class="ai-app-url">copilot.microsoft.com</div>
             <div class="ai-app-desc">Microsoft Copilot via personal MSA account. Different from Microsoft 365 Copilot with enterprise data protection. Prompts not covered by enterprise data boundary.</div>
         </a>
-        <a href="https://www.perplexity.ai" target="_blank" rel="noopener" class="ai-app-card">
+        <a href="https://www.perplexity.ai" target="_blank" rel="noopener noreferrer" class="ai-app-card">
             <div class="ai-app-head">
                 <div class="ai-app-name">Perplexity AI</div>
                 <span class="ai-app-tag tag-unknown">UNMANAGED</span>
@@ -243,7 +246,7 @@
             <div class="ai-app-url">perplexity.ai</div>
             <div class="ai-app-desc">AI-powered search tool with conversational interface. Not typically in corporate AI catalogue. Users often paste work context to get research answers — data is sent to Perplexity's servers.</div>
         </a>
-        <a href="https://poe.com" target="_blank" rel="noopener" class="ai-app-card">
+        <a href="https://poe.com" target="_blank" rel="noopener noreferrer" class="ai-app-card">
             <div class="ai-app-head">
                 <div class="ai-app-name">Poe (Quora)</div>
                 <span class="ai-app-tag tag-unknown">UNMANAGED</span>
@@ -266,8 +269,8 @@
             </div>
             <p class="prompt-scenario" id="s1-scenario">The user's Claude for Work usage limit resets monthly. Mid-month, they open a personal claude.ai account to continue a project — pasting in the same work context they were building up in the corporate version.</p>
             <div class="prompt-block">
-                <div class="prompt-label">Prompt to copy → paste into personal claude.ai</div>
-                <pre class="prompt-text" id="prompt-1">I've been working on a client account review. Here's the context from my earlier session:
+                <div class="prompt-label">Prompt — click to edit · copy → paste into personal claude.ai</div>
+                <pre class="prompt-text" id="prompt-1" contenteditable="true" spellcheck="false">I've been working on a client account review. Here's the context from my earlier session:
 
 Client: Michael O'Brien (DOB 15/03/1978), Account ref: CLI-001
 Portfolio value: £4,200,000 — Moderate Growth profile
@@ -279,9 +282,9 @@ Can you draft a Q2 portfolio review letter for this client highlighting performa
                 <button class="prompt-copy" onclick="copyPrompt('prompt-1', this)">Copy</button>
             </div>
             <div class="prompt-actions">
-                <a href="https://claude.ai" target="_blank" rel="noopener" class="pa-link pa-primary">Open Claude (Personal) →</a>
-                <a href="https://chat.openai.com" target="_blank" rel="noopener" class="pa-link pa-outline">Try on ChatGPT →</a>
-                <a href="https://www.perplexity.ai" target="_blank" rel="noopener" class="pa-link pa-outline">Try on Perplexity →</a>
+                <a href="https://claude.ai" target="_blank" rel="noopener noreferrer" class="pa-link pa-primary">Open Claude (Personal) →</a>
+                <a href="https://chat.openai.com" target="_blank" rel="noopener noreferrer" class="pa-link pa-outline">Try on ChatGPT →</a>
+                <a href="https://www.perplexity.ai" target="_blank" rel="noopener noreferrer" class="pa-link pa-outline">Try on Perplexity →</a>
             </div>
             <div class="outcome-block">
                 <div class="outcome-label">Expected Netskope Response</div>
@@ -298,8 +301,8 @@ Can you draft a Q2 portfolio review letter for this client highlighting performa
             </div>
             <p class="prompt-scenario" id="s2-scenario">Microsoft 365 Copilot usage is capped for budget reasons. The employee switches to personal Gemini, pasting in a strategy document they were working on to continue the drafting task.</p>
             <div class="prompt-block">
-                <div class="prompt-label">Prompt to copy → paste into personal Gemini</div>
-                <pre class="prompt-text" id="prompt-2">Please continue helping me draft this board paper. Here's where I got to in Copilot:
+                <div class="prompt-label">Prompt — click to edit · copy → paste into personal Gemini</div>
+                <pre class="prompt-text" id="prompt-2" contenteditable="true" spellcheck="false">Please continue helping me draft this board paper. Here's where I got to in Copilot:
 
 CONFIDENTIAL — BOARD PAPER Q3 2026
 Project: Acquisition of Thornfield Financial Services Ltd
@@ -312,8 +315,8 @@ Draft the "Strategic Rationale" section (500 words) explaining why this acquisit
                 <button class="prompt-copy" onclick="copyPrompt('prompt-2', this)">Copy</button>
             </div>
             <div class="prompt-actions">
-                <a href="https://gemini.google.com" target="_blank" rel="noopener" class="pa-link pa-primary">Open Gemini (Personal) →</a>
-                <a href="https://poe.com" target="_blank" rel="noopener" class="pa-link pa-outline">Try on Poe →</a>
+                <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="pa-link pa-primary">Open Gemini (Personal) →</a>
+                <a href="https://poe.com" target="_blank" rel="noopener noreferrer" class="pa-link pa-outline">Try on Poe →</a>
             </div>
             <div class="outcome-block">
                 <div class="outcome-label">Expected Netskope Response</div>
@@ -330,8 +333,8 @@ Draft the "Strategic Rationale" section (500 words) explaining why this acquisit
             </div>
             <p class="prompt-scenario" id="s3-scenario">The employee uses Poe.com (not on the approved app list) to compare different AI models — and pastes in source code from an internal system that contains hardcoded credentials and internal hostnames.</p>
             <div class="prompt-block">
-                <div class="prompt-label">Prompt to copy → paste into Poe or Perplexity</div>
-                <pre class="prompt-text" id="prompt-3">I need to refactor this internal service, can you help?
+                <div class="prompt-label">Prompt — click to edit · copy → paste into Poe or Perplexity</div>
+                <pre class="prompt-text" id="prompt-3" contenteditable="true" spellcheck="false">I need to refactor this internal service, can you help?
 
 # Internal payment processing service
 API_KEY = "AKIAIOSFODNN7EXAMPLE"
@@ -351,9 +354,9 @@ Please add proper error handling and improve the structure.</pre>
                 <button class="prompt-copy" onclick="copyPrompt('prompt-3', this)">Copy</button>
             </div>
             <div class="prompt-actions">
-                <a href="https://poe.com" target="_blank" rel="noopener" class="pa-link pa-primary">Open Poe →</a>
-                <a href="https://www.perplexity.ai" target="_blank" rel="noopener" class="pa-link pa-outline">Try on Perplexity →</a>
-                <a href="https://chat.openai.com" target="_blank" rel="noopener" class="pa-link pa-outline">Try on ChatGPT Personal →</a>
+                <a href="https://poe.com" target="_blank" rel="noopener noreferrer" class="pa-link pa-primary">Open Poe →</a>
+                <a href="https://www.perplexity.ai" target="_blank" rel="noopener noreferrer" class="pa-link pa-outline">Try on Perplexity →</a>
+                <a href="https://chat.openai.com" target="_blank" rel="noopener noreferrer" class="pa-link pa-outline">Try on ChatGPT Personal →</a>
             </div>
             <div class="outcome-block">
                 <div class="outcome-label">Expected Netskope Response</div>

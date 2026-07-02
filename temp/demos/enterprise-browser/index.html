@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Netskope Enterprise Browser demo — clipboard controls, download blocking, screen watermarking, and Remote Browser Isolation for any device including unmanaged BYOD endpoints.">
     <title>Enterprise Browser | Jskope Demo Portal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -162,7 +163,8 @@
                 <div class="scenario-step">Copy action on protected content is blocked or watermarked</div>
                 <div class="scenario-step">Paste to external destinations returns empty or redacted content</div>
             </div>
-            <a href="https://[YOUR-SHAREPOINT].sharepoint.com" class="sc-link" onclick="alert('Replace [YOUR-SHAREPOINT] with your tenant before using this link.'); return false;">Open SharePoint Demo →</a>
+            <button class="sc-link" onclick="toggleEbMsg()" style="cursor:pointer;font-family:inherit">Open SharePoint Demo →</button>
+            <div id="eb-todo-msg" hidden style="margin-top:0.5rem;padding:0.6rem 0.85rem;border-radius:7px;background:rgba(255,131,0,0.12);border:1px solid rgba(255,131,0,0.3);font-size:0.78rem;color:#FF8300;line-height:1.5;">⚠ Replace <code style="font-family:'JetBrains Mono',monospace;font-size:0.8em;background:rgba(255,131,0,0.12);padding:0.1rem 0.3rem;border-radius:3px">[YOUR-SHAREPOINT]</code> with your SharePoint tenant subdomain before this link becomes active.</div>
         </div>
         <div class="scenario-card">
             <div class="scenario-head">
@@ -204,7 +206,7 @@
                 <div class="scenario-step">Page renders as a pixel stream in the user's browser — safe view</div>
                 <div class="scenario-step">All JavaScript, plugins, and active content execute in the cloud container only</div>
             </div>
-            <a href="https://www.wicar.org/test-malware.html" target="_blank" rel="noopener" class="sc-link">Test with Wicar (if RBI active) →</a>
+            <a href="https://www.wicar.org/test-malware.html" target="_blank" rel="noopener noreferrer" class="sc-link">Test with Wicar (if RBI active) →</a>
         </div>
     </div>
 
@@ -233,5 +235,11 @@
     </div>
 </main>
 <footer><p>© 2026 Netskope, Inc. — Demo Environment — jskope.com/temp</p></footer>
+<script>
+function toggleEbMsg() {
+    const el = document.getElementById('eb-todo-msg');
+    el.hidden = !el.hidden;
+}
+</script>
 </body>
 </html>

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Netskope interactive demo portal — trigger real security controls for DLP, CASB, AI guardrails, threat protection, ZTNA, DNS security, cloud firewall, and enterprise browser. Industry-tailored for law firm, finance, healthcare, insurance, and defence.">
     <title>Demo Portal | Jskope</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -196,14 +197,15 @@
         /* ── DEMO GRID ── */
         .demo-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 1.1rem;
             margin-bottom: 4rem;
             animation: fade-up 0.6s 0.2s ease both;
         }
 
-        @media (max-width: 860px) { .demo-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 540px) { .demo-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 1040px) { .demo-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 700px)  { .demo-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 460px)  { .demo-grid { grid-template-columns: 1fr; } }
 
         .card {
             background: #fff;
@@ -237,12 +239,6 @@
         }
 
         .card:hover::after { transform: scaleX(1); }
-
-        .card.soon {
-            opacity: 0.55;
-            pointer-events: none;
-            cursor: default;
-        }
 
         .card-head {
             display: flex;
@@ -399,6 +395,16 @@
             gap: 0.35rem;
         }
 
+        .series-meta { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: -0.2rem; }
+        .series-chip {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.59rem;
+            color: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.12rem 0.5rem;
+            border-radius: 50px;
+        }
+
         /* ── FOOTER ── */
         footer {
             position: relative;
@@ -495,118 +501,110 @@
         }
 
         /* ── INDUSTRY SPOTLIGHT ── */
-        .industry-spotlight {
+        .spotlight {
             background: linear-gradient(135deg, rgba(0,43,73,0.03) 0%, rgba(0,167,206,0.05) 100%);
-            border: 1px solid rgba(0,167,206,0.2);
+            border: 1px solid rgba(0,167,206,0.18);
             border-radius: 14px;
-            padding: 1.5rem 1.75rem;
+            padding: 1.6rem 1.75rem;
             margin-bottom: 3rem;
-            transition: all 0.3s ease;
-        }
-
-        .industry-spotlight.hidden {
-            display: none;
+            animation: fade-up 0.4s ease both;
         }
 
         .spotlight-head {
             display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            margin-bottom: 1.25rem;
-        }
-
-        .spotlight-icon {
-            width: 40px;
-            height: 40px;
-            min-width: 40px;
-            border-radius: 10px;
-            background: var(--navy);
-            display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 0.6rem;
+            margin-bottom: 0.55rem;
         }
 
-        .spotlight-title {
+        .spotlight-head h3 {
             font-size: 1rem;
-            font-weight: 700;
+            font-weight: 600;
             color: var(--navy);
-            margin-bottom: 0.3rem;
+        }
+
+        .spotlight-head .sl-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.62rem;
+            color: var(--orange);
+            background: rgba(255,131,0,0.08);
+            border: 1px solid rgba(255,131,0,0.2);
+            padding: 0.18rem 0.6rem;
+            border-radius: 50px;
+            margin-left: auto;
         }
 
         .spotlight-context {
             font-size: 0.875rem;
             color: var(--muted);
             line-height: 1.6;
+            margin-bottom: 1.25rem;
+            max-width: 760px;
         }
 
         .spotlight-recs {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 0.8rem;
-            margin-bottom: 1.1rem;
+            gap: 0.85rem;
+            margin-bottom: 1.25rem;
         }
 
-        @media (max-width: 680px) { .spotlight-recs { grid-template-columns: 1fr; } }
+        @media (max-width: 860px) { .spotlight-recs { grid-template-columns: 1fr; } }
 
-        .spotlight-rec {
+        .rec-card {
             background: #fff;
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 0.9rem 1rem;
+            border-radius: 11px;
+            padding: 1.1rem 1.2rem;
             text-decoration: none;
             color: inherit;
             display: flex;
             flex-direction: column;
-            gap: 0.35rem;
-            transition: border-color 0.18s, box-shadow 0.18s;
+            gap: 0.4rem;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
         }
 
-        .spotlight-rec:hover {
-            border-color: rgba(0,167,206,0.3);
-            box-shadow: 0 3px 12px rgba(0,167,206,0.07);
+        .rec-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0,43,73,0.08);
+            border-color: rgba(0,167,206,0.25);
         }
 
         .rec-label {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.62rem;
+            font-size: 0.6rem;
+            letter-spacing: 0.06em;
             color: var(--turquoise);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
         }
 
-        .rec-title {
-            font-size: 0.88rem;
-            font-weight: 600;
-            color: var(--navy);
-        }
+        .rec-title { font-size: 0.92rem; font-weight: 600; color: var(--text); }
 
         .rec-reason {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             color: var(--muted);
-            line-height: 1.5;
+            line-height: 1.55;
+            flex: 1;
         }
 
-        .spotlight-tags {
+        .rec-go { font-size: 0.75rem; font-weight: 500; color: var(--turquoise); margin-top: 0.2rem; }
+
+        .spotlight-regs {
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.45rem;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 0.4rem;
         }
 
-        .spotlight-tags-label {
-            font-size: 0.75rem;
-            color: var(--muted);
-            margin-right: 0.2rem;
-        }
+        .regs-label { font-size: 0.72rem; color: var(--muted); margin-right: 0.3rem; }
 
-        .reg-tag {
+        .reg-chip {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.65rem;
-            background: rgba(0,43,73,0.06);
+            font-size: 0.62rem;
             color: var(--navy);
-            border: 1px solid rgba(0,43,73,0.12);
-            padding: 0.18rem 0.55rem;
-            border-radius: 4px;
+            background: rgba(0,43,73,0.05);
+            border: 1px solid rgba(0,43,73,0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 50px;
         }
 
         @keyframes fade-up {
@@ -651,7 +649,7 @@
         </svg>
         <p>
             <strong>Prerequisite:</strong> These demos require the <strong>Netskope Client</strong> to be active on your device, or your traffic to be steered through a Netskope tenant. Without this, links open normally without security controls firing.
-            &nbsp;<a href="https://docs.netskope.com" target="_blank" rel="noopener">Client setup guide →</a>
+            &nbsp;<a href="https://docs.netskope.com" target="_blank" rel="noopener noreferrer">Client setup guide →</a>
         </p>
     </div>
 
@@ -678,23 +676,8 @@
         </div>
     </div>
 
-    <!-- Industry Spotlight (shown when non-general industry selected) -->
-    <div class="industry-spotlight hidden" id="industry-spotlight">
-        <div class="spotlight-head">
-            <div class="spotlight-icon" id="spotlight-icon">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="#00A7CE" stroke-width="1.4"/><path d="M7 10l2 2 4-4" stroke="#00A7CE" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div>
-                <div class="spotlight-title" id="spotlight-title"></div>
-                <div class="spotlight-context" id="spotlight-context"></div>
-            </div>
-        </div>
-        <div class="spotlight-recs" id="spotlight-recs"></div>
-        <div class="spotlight-tags">
-            <span class="spotlight-tags-label">Relevant compliance:</span>
-            <span id="spotlight-tags-inner"></span>
-        </div>
-    </div>
+    <!-- Industry Spotlight (rendered when an industry is selected) -->
+    <div class="spotlight" id="spotlight" hidden></div>
 
     <!-- Demo Categories -->
     <div class="section-label">
@@ -877,110 +860,6 @@
             <div class="card-cta" style="color:#7C3AED">Launch Demo <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5h8M8 4l2.5 2.5L8 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         </a>
 
-        <!-- DNS Security -->
-        <a href="/temp/demos/dns-security/" class="card" style="--c-accent:#7C3AED; --c-icon-bg:rgba(124,58,237,0.08);">
-            <div class="card-head">
-                <div class="card-icon">
-                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none">
-                        <circle cx="10.5" cy="10.5" r="7.5" stroke="#7C3AED" stroke-width="1.4"/>
-                        <path d="M2 10.5h17M10.5 2a12 12 0 0 1 0 17M10.5 2a12 12 0 0 0 0 17" stroke="#7C3AED" stroke-width="1.1" opacity="0.6"/>
-                        <path d="M10.5 5.5v-2.5" stroke="#7C3AED" stroke-width="1.1" stroke-linecap="round"/>
-                        <circle cx="10.5" cy="4" r="1.2" fill="#7C3AED" opacity="0.7"/>
-                    </svg>
-                </div>
-                <div class="badges">
-                    <span class="badge" style="background:rgba(124,58,237,0.12);color:#7C3AED;border:1px solid rgba(124,58,237,0.25)">DNS</span>
-                </div>
-            </div>
-            <div class="card-title">DNS Security</div>
-            <div class="card-desc">Block malicious domains at the DNS layer — before a TCP connection is made. Works across all apps and protocols, not just browsers.</div>
-            <div class="card-tags">
-                <span class="tag">DNS Blocking</span>
-                <span class="tag">Threat Intel</span>
-                <span class="tag">C2 Prevention</span>
-            </div>
-            <div class="card-cta" style="color:#7C3AED">Launch Demo <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5h8M8 4l2.5 2.5L8 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </a>
-
-        <!-- Cloud Firewall -->
-        <a href="/temp/demos/cloud-firewall/" class="card" style="--c-accent:#DC2626; --c-icon-bg:rgba(220,38,38,0.08);">
-            <div class="card-head">
-                <div class="card-icon">
-                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none">
-                        <path d="M10.5 2L18 5.5V10C18 14.2 14.8 18 10.5 19 6.2 18 3 14.2 3 10V5.5Z" stroke="#DC2626" stroke-width="1.4"/>
-                        <line x1="7" y1="7" x2="14" y2="14" stroke="#DC2626" stroke-width="1.4" stroke-linecap="round"/>
-                        <line x1="14" y1="7" x2="7" y2="14" stroke="#DC2626" stroke-width="1.4" stroke-linecap="round"/>
-                    </svg>
-                </div>
-                <div class="badges">
-                    <span class="badge" style="background:rgba(220,38,38,0.1);color:#DC2626;border:1px solid rgba(220,38,38,0.25)">FWaaS</span>
-                </div>
-            </div>
-            <div class="card-title">Cloud Firewall</div>
-            <div class="card-desc">L4/L7 network controls in the cloud. Block non-web protocols, prevent C2 callbacks, and replace on-premise firewall perimeters.</div>
-            <div class="card-tags">
-                <span class="tag">Port Blocking</span>
-                <span class="tag">Protocol Control</span>
-                <span class="tag">C2 Prevention</span>
-            </div>
-            <div class="card-cta" style="color:#DC2626">Launch Demo <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5h8M8 4l2.5 2.5L8 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </a>
-
-        <!-- Enterprise Browser -->
-        <a href="/temp/demos/enterprise-browser/" class="card" style="--c-accent:#0EA5E9; --c-icon-bg:rgba(14,165,233,0.08);">
-            <div class="card-head">
-                <div class="card-icon">
-                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none">
-                        <rect x="2.5" y="4" width="16" height="13" rx="2" stroke="#0EA5E9" stroke-width="1.4"/>
-                        <path d="M2.5 7.5h16" stroke="#0EA5E9" stroke-width="1.2"/>
-                        <circle cx="5.5" cy="5.75" r="0.9" fill="#0EA5E9" opacity="0.6"/>
-                        <circle cx="8"   cy="5.75" r="0.9" fill="#0EA5E9" opacity="0.6"/>
-                        <path d="M6 11.5h9M6 14h6" stroke="#0EA5E9" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
-                    </svg>
-                </div>
-                <div class="badges">
-                    <span class="badge badge-new">NEW</span>
-                    <span class="badge" style="background:rgba(14,165,233,0.1);color:#0EA5E9;border:1px solid rgba(14,165,233,0.25)">BROWSER</span>
-                </div>
-            </div>
-            <div class="card-title">Enterprise Browser</div>
-            <div class="card-desc">Secure any browser on any device — including unmanaged BYOD. Clipboard controls, download blocking, watermarking, and Remote Browser Isolation.</div>
-            <div class="card-tags">
-                <span class="tag">BYOD</span>
-                <span class="tag">Clipboard Control</span>
-                <span class="tag">RBI</span>
-            </div>
-            <div class="card-cta" style="color:#0EA5E9">Launch Demo <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5h8M8 4l2.5 2.5L8 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </a>
-
-        <!-- Shadow AI -->
-        <a href="/temp/demos/ai-shadow-it/" class="card" style="--c-accent:#8B5CF6; --c-icon-bg:rgba(139,92,246,0.08);">
-            <div class="card-head">
-                <div class="card-icon">
-                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none">
-                        <rect x="2.5" y="2.5" width="16" height="16" rx="3" stroke="#8B5CF6" stroke-width="1.4"/>
-                        <line x1="5.5" y1="10.5" x2="15.5" y2="10.5" stroke="#8B5CF6" stroke-width="1.3" stroke-linecap="round"/>
-                        <line x1="5.5" y1="7.5"  x2="10"  y2="7.5"  stroke="#8B5CF6" stroke-width="1.3" stroke-linecap="round"/>
-                        <line x1="5.5" y1="13.5" x2="8.5" y2="13.5" stroke="#8B5CF6" stroke-width="1.3" stroke-linecap="round"/>
-                        <circle cx="15.5" cy="5.5" r="3.5" fill="#FF8300" opacity="0.9"/>
-                        <line x1="14.2" y1="5.5" x2="16.8" y2="5.5" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/>
-                    </svg>
-                </div>
-                <div class="badges">
-                    <span class="badge badge-new">NEW</span>
-                    <span class="badge" style="background:rgba(139,92,246,0.12);color:#8B5CF6;border:1px solid rgba(139,92,246,0.25)">SHADOW AI</span>
-                </div>
-            </div>
-            <div class="card-title">Shadow AI</div>
-            <div class="card-desc">What happens when corporate AI tokens run out? Employees switch to personal Claude, ChatGPT, or Gemini — and paste in company data. See Netskope catch it.</div>
-            <div class="card-tags">
-                <span class="tag">Token Exhaustion</span>
-                <span class="tag">Personal AI Accounts</span>
-                <span class="tag">CASB + Guardrails</span>
-            </div>
-            <div class="card-cta" style="color:#8B5CF6">Launch Demo <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5h8M8 4l2.5 2.5L8 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </a>
-
     </div>
 
     <!-- Demo Series -->
@@ -994,6 +873,7 @@
             <div class="series-num">SERIES 01</div>
             <div class="series-title">The Insider Threat</div>
             <div class="series-desc">Walk through how an employee might attempt to exfiltrate sensitive data — and how Netskope catches it at every step.</div>
+            <div class="series-meta"><span class="series-chip">4 steps</span><span class="series-chip">~10 min</span></div>
             <div class="series-steps">
                 <div class="series-step">Access a personal cloud storage site</div>
                 <div class="series-step">Upload a file with synthetic PII</div>
@@ -1007,6 +887,7 @@
             <div class="series-num">SERIES 02</div>
             <div class="series-title">AI Risk in the Enterprise</div>
             <div class="series-desc">Demonstrate the data risk posed by ungoverned AI tool usage, then show how Netskope's guardrails protect the organisation.</div>
+            <div class="series-meta"><span class="series-chip">3 steps</span><span class="series-chip">~8 min</span></div>
             <div class="series-steps">
                 <div class="series-step">Paste synthetic PII into a ChatGPT prompt</div>
                 <div class="series-step">Attempt to upload source code to Copilot</div>
@@ -1019,6 +900,7 @@
             <div class="series-num">SERIES 03</div>
             <div class="series-title">Shadow IT Audit</div>
             <div class="series-desc">Explore how employees use unsanctioned applications and observe CASB discovery and DLP policy firing across cloud apps.</div>
+            <div class="series-meta"><span class="series-chip">3 steps</span><span class="series-chip">~8 min</span></div>
             <div class="series-steps">
                 <div class="series-step">Visit an unsanctioned file-sharing site</div>
                 <div class="series-step">Download a sensitive document</div>
@@ -1067,7 +949,7 @@ const INDUSTRIES = {
         context: 'Tailored for insurance: demo data covers policyholder PII, premium details, and claims information. AI prompts show underwriters seeking AI assistance with sensitive policy data in context.',
         recs: [
             { label: 'DLP', title: 'Policyholder Data Exposure', reason: 'Synthetic employee records stand in for policyholder exports — containing names, addresses, SSNs, and DOBs that trigger PII DLP profiles inline.', href: '/temp/demos/dlp/' },
-            { label: 'AI SECURITY', title: 'Underwriter Using Copilot', reason: 'Tailored prompt: an underwriter pastes policyholder names, premiums, and risk assessments into an AI tool to draft renewal notices.', href: '/temp/demos/ai-security/' },
+            { label: 'SHADOW AI', title: 'Underwriter Hits Token Limit', reason: 'An underwriter\'s corporate AI allocation runs out. They switch to a personal Claude or ChatGPT account and paste policyholder claim details — see Netskope identify the personal AI instance and block the sensitive prompt.', href: '/temp/demos/ai-shadow-it/' },
             { label: 'SERIES 03', title: 'Shadow IT Audit', reason: 'Underwriters commonly use personal Dropbox to access policy files remotely. Walk the full CASB discovery and DLP block journey.', href: '/temp/demos/series/shadow-it-audit/' }
         ],
         regs: ['FCA ICOBs', 'Solvency II', 'GDPR', 'PRA Supervisory']
@@ -1088,50 +970,58 @@ const INDUSTRIES = {
         recs: [
             { label: 'ZTNA / NPA', title: 'Private App Access', reason: 'ZTNA is particularly relevant here — show how zero-trust least-privilege access replaces VPN for contractors accessing internal systems from remote or deployed locations.', href: '/temp/demos/ztna/' },
             { label: 'AI SECURITY', title: 'Contractor Using ChatGPT', reason: 'Tailored prompt: a contractor pastes sensitive project personnel details and clearance levels into ChatGPT to draft a briefing document.', href: '/temp/demos/ai-security/' },
-            { label: 'DLP', title: 'Credential Exfiltration', reason: 'The API credentials file simulates infrastructure access keys — relevant in a defence context where API keys and service account credentials are high-value targets.', href: '/temp/demos/dlp/' }
+            { label: 'DNS SECURITY', title: 'C2 Channel Blocking', reason: 'DNS-layer threat blocking is critical in defence and government environments — preventing malware C2 callbacks and blocking threat infrastructure before a TCP connection is ever made. Covers non-browser endpoints and IoT/OT devices on-base.', href: '/temp/demos/dns-security/' }
         ],
         regs: ['JSP 440', 'Cyber Essentials+', 'ISO 27001', 'NCSC CAF']
     }
 };
 
-function renderSpotlight(key) {
-    const ind = INDUSTRIES[key];
-    const spotlight = document.getElementById('industry-spotlight');
+function escHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
 
-    if (!ind || key === 'general') {
-        spotlight.classList.add('hidden');
+function updateBadge(key) {
+    const badge = document.getElementById('picker-active-badge');
+    if (key === 'general' || !INDUSTRIES[key]) {
+        badge.style.display = 'none';
+    } else {
+        badge.textContent = ('TAILORED: ' + INDUSTRIES[key].label).toUpperCase();
+        badge.style.display = 'inline-block';
+    }
+}
+
+function renderSpotlight(key) {
+    const sl = document.getElementById('spotlight');
+    const ind = INDUSTRIES[key];
+    if (!ind || key === 'general' || !ind.recs.length) {
+        sl.hidden = true;
+        sl.innerHTML = '';
         return;
     }
-
-    document.getElementById('spotlight-title').textContent = 'Recommended for ' + ind.label;
-    document.getElementById('spotlight-context').textContent = ind.context;
-
-    const recsEl = document.getElementById('spotlight-recs');
-    recsEl.innerHTML = ind.recs.map(r => `
-        <a href="${r.href}" class="spotlight-rec">
-            <div class="rec-label">${r.label}</div>
-            <div class="rec-title">${r.title}</div>
-            <div class="rec-reason">${r.reason}</div>
-        </a>
-    `).join('');
-
-    const tagsEl = document.getElementById('spotlight-tags-inner');
-    tagsEl.innerHTML = ind.regs.map(r => `<span class="reg-tag">${r}</span>`).join('');
-
-    spotlight.classList.remove('hidden');
+    const recs = ind.recs.map(r => `
+        <a href="${r.href}" class="rec-card">
+            <span class="rec-label">${escHtml(r.label)}</span>
+            <span class="rec-title">${escHtml(r.title)}</span>
+            <span class="rec-reason">${escHtml(r.reason)}</span>
+            <span class="rec-go">Open demo →</span>
+        </a>`).join('');
+    const regs = ind.regs.map(r => `<span class="reg-chip">${escHtml(r)}</span>`).join('');
+    sl.innerHTML = `
+        <div class="spotlight-head">
+            <h3>Recommended for ${escHtml(ind.label)}</h3>
+            <span class="sl-tag">TAILORED</span>
+        </div>
+        <p class="spotlight-context">${escHtml(ind.context)}</p>
+        <div class="spotlight-recs">${recs}</div>
+        <div class="spotlight-regs"><span class="regs-label">Relevant frameworks:</span>${regs}</div>`;
+    sl.hidden = false;
 }
 
 function setIndustry(key, btn) {
     localStorage.setItem('jskope-industry', key);
     document.querySelectorAll('.picker-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    const badge = document.getElementById('picker-active-badge');
-    if (key === 'general') {
-        badge.style.display = 'none';
-    } else {
-        badge.textContent = ('TAILORED: ' + INDUSTRIES[key].label).toUpperCase();
-        badge.style.display = 'inline-block';
-    }
+    updateBadge(key);
     renderSpotlight(key);
 }
 
@@ -1142,11 +1032,7 @@ function initPicker() {
         document.querySelectorAll('.picker-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
     }
-    const badge = document.getElementById('picker-active-badge');
-    if (saved !== 'general') {
-        badge.textContent = ('TAILORED: ' + INDUSTRIES[saved].label).toUpperCase();
-        badge.style.display = 'inline-block';
-    }
+    updateBadge(saved);
     renderSpotlight(saved);
 }
 

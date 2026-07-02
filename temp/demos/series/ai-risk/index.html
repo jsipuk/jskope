@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Netskope guided demo series — AI risk in the enterprise. Demonstrate data risk from ungoverned AI tool usage: PII into ChatGPT, credentials into Copilot, and Netskope guardrails blocking both. 3 steps.">
     <title>Series 02: AI Risk in the Enterprise | Jskope Demo Portal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -280,13 +281,13 @@ Draft a personalised message for each person referencing their account details.<
             </div>
 
             <div class="step-actions">
-                <a href="https://chat.openai.com" target="_blank" rel="noopener" class="action-link">
+                <a href="https://chat.openai.com" target="_blank" rel="noopener noreferrer" class="action-link">
                     Open ChatGPT →
                 </a>
-                <a href="https://gemini.google.com" target="_blank" rel="noopener" class="action-link secondary">
+                <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="action-link secondary">
                     Try on Gemini
                 </a>
-                <a href="https://claude.ai" target="_blank" rel="noopener" class="action-link secondary">
+                <a href="https://claude.ai" target="_blank" rel="noopener noreferrer" class="action-link secondary">
                     Try on Claude
                 </a>
                 <button class="mark-done-btn" onclick="markDone(1, this)">
@@ -334,10 +335,10 @@ Please clean up the function signatures and add type hints.</pre>
             </div>
 
             <div class="step-actions">
-                <a href="https://copilot.microsoft.com" target="_blank" rel="noopener" class="action-link">
+                <a href="https://copilot.microsoft.com" target="_blank" rel="noopener noreferrer" class="action-link">
                     Open Microsoft Copilot →
                 </a>
-                <a href="https://chat.openai.com" target="_blank" rel="noopener" class="action-link secondary">
+                <a href="https://chat.openai.com" target="_blank" rel="noopener noreferrer" class="action-link secondary">
                     Try on ChatGPT
                 </a>
                 <button class="mark-done-btn" onclick="markDone(2, this)">
@@ -366,7 +367,7 @@ Please clean up the function signatures and add type hints.</pre>
                 Both prompt attempts above are now logged in the Netskope console as AI-related DLP incidents. The console shows the blocked content, the matched policy, the AI tool involved, and the user's identity — giving security teams full visibility without blocking legitimate AI usage.
             </div>
             <div class="step-actions">
-                <a href="https://[YOUR-TENANT].goskope.com" target="_blank" rel="noopener" class="action-link secondary" onclick="alert('Replace [YOUR-TENANT] with your actual Netskope tenant hostname before using this link.'); return false;">
+                <a href="https://[YOUR-TENANT].goskope.com" target="_blank" rel="noopener noreferrer" class="action-link secondary" onclick="alert('Replace [YOUR-TENANT] with your actual Netskope tenant hostname before using this link.'); return false;">
                     Open Netskope Console
                 </a>
                 <a href="/temp/demos/ai-security/" class="action-link secondary">

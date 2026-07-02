@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Netskope Cloud Firewall as a Service demo — L4/L7 network controls in the cloud. Block non-web protocols, prevent C2 callbacks, and replace on-premise firewall perimeters.">
     <title>Cloud Firewall as a Service | Jskope Demo Portal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -157,25 +158,27 @@
     </div>
 
     <!-- Policy examples -->
-    <div class="section-title">Example Firewall Policies</div>
+    <div class="section-title">Firewall Policies (from imported ruleset)</div>
     <table class="policy-table">
         <thead>
             <tr>
                 <th>Traffic Type</th>
-                <th>Protocol / Port</th>
+                <th>Rule</th>
                 <th>Policy</th>
                 <th>Reason</th>
             </tr>
         </thead>
         <tbody>
-            <tr><td>Telnet</td><td>TCP 23</td><td><span class="tag tag-block">BLOCK</span></td><td>Unencrypted legacy protocol — credentials sent in cleartext</td></tr>
-            <tr><td>IRC / Chat C2</td><td>TCP 6667, 6697</td><td><span class="tag tag-block">BLOCK</span></td><td>Common malware C2 callback channel</td></tr>
-            <tr><td>Tor Entry Nodes</td><td>TCP 9001, 9030</td><td><span class="tag tag-block">BLOCK</span></td><td>Anonymisation network — policy bypass, data exfil risk</td></tr>
-            <tr><td>SSH (external)</td><td>TCP 22</td><td><span class="tag tag-block">BLOCK</span></td><td>Outbound SSH to internet destinations not business-justified</td></tr>
-            <tr><td>RDP (external)</td><td>TCP 3389</td><td><span class="tag tag-block">BLOCK</span></td><td>High-risk if exposed; lateral movement and ransomware risk</td></tr>
-            <tr><td>HTTPS (standard)</td><td>TCP 443</td><td><span class="tag tag-allow">ALLOW + INSPECT</span></td><td>Forwarded to Netskope SWG for content inspection</td></tr>
-            <tr><td>SMTP (external)</td><td>TCP 25</td><td><span class="tag tag-block">BLOCK</span></td><td>Direct SMTP bypasses email gateway — spam and data exfil risk</td></tr>
-            <tr><td>DNS (port 53)</td><td>UDP 53</td><td><span class="tag tag-log">LOG + REDIRECT</span></td><td>Redirected to Netskope DNS Security for threat intelligence check</td></tr>
+            <tr><td>QUIC</td><td>[CFW] Block QUIC</td><td><span class="tag tag-block">BLOCK</span></td><td>Forces browsers back to TCP 443 so SWG can inspect — QUIC/UDP 443 bypasses inspection</td></tr>
+            <tr><td>DNS-over-TLS</td><td>[CFW] Block DoT</td><td><span class="tag tag-block">BLOCK</span></td><td>Prevents DNS bypass via rogue encrypted resolvers</td></tr>
+            <tr><td>DNS-over-HTTPS</td><td>[DOH] Block App</td><td><span class="tag tag-block">BLOCK</span></td><td>Silent block — steers DNS back through Netskope DNS Security</td></tr>
+            <tr><td>TeamViewer (outbound)</td><td>[CFW] Block TeamViewer outbound</td><td><span class="tag tag-block">BLOCK</span></td><td>Unsanctioned remote-access / support-scam risk</td></tr>
+            <tr><td>FTP (generic)</td><td>[CFW] Block FTP By Signature</td><td><span class="tag tag-block">BLOCK</span></td><td>Cleartext file transfer blocked by protocol signature</td></tr>
+            <tr><td>FTP (approved server)</td><td>[CFW] Allow DLPTest FTP</td><td><span class="tag tag-allow">ALLOW</span></td><td>Named business FTP app explicitly permitted</td></tr>
+            <tr><td>SSH</td><td>[Demo] Allowed SSH</td><td><span class="tag tag-allow">ALLOW</span></td><td>Business-justified admin access permitted</td></tr>
+            <tr><td>Slack</td><td>[CFW] Allow</td><td><span class="tag tag-allow">ALLOW</span></td><td>Sanctioned collaboration app permitted at L4</td></tr>
+            <tr><td>Connections to sinkhole IP</td><td>[Demo] Block All Connections To Sinkhole IP</td><td><span class="tag tag-block">BLOCK</span></td><td>C2 destinations resolved to sinkhole are dropped at the firewall</td></tr>
+            <tr><td>Other non-web protocols</td><td>[Demo] Blocked Protocols</td><td><span class="tag tag-block">BLOCK</span></td><td>Default-deny for protocols with no business justification</td></tr>
         </tbody>
     </table>
 
