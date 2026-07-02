@@ -1,224 +1,174 @@
-# Jskope Demo Portal — Demo → Action → Policy Map
+# Jskope Demo Portal — Demo ↔ Policy Map (reconciled to imported policy)
 
-> Full inventory of every demo, what the user does, the use case, the outcome
-> currently built into the site, and the **Netskope policy** that would produce
-> that outcome. Built to support mapping/building real policy to match the portal.
+> **Source of truth:** the two imported Netskope inline-policy exports
+> (UKSE shared tenant + JSkope/JSIP tenant), **enabled rules only** (165 rules).
+> Where the two tenants conflict, the resolution is noted inline and the demo
+> uses the more demo-representative action.
 >
-> **Important:** the "Built-in expected outcome" column reflects what the site
-> currently *states*. Actual results depend on your tenant policy — these are
-> typical/representative, not guarantees (see "Tenant variance" at the end).
+> This replaces the earlier "recommended policy" draft — the actions below are
+> what your **actual** enabled policy does, and the demo pages have been updated
+> to match so each demo triggers a real rule.
 
-## Policy action legend
+## Action vocabulary (as it appears in your policy)
 
-| Action | Meaning |
+| Policy action string | Demo label |
 |---|---|
-| **Block** | Transaction denied, Netskope block page shown |
-| **Coach (User Alert)** | User warned, can proceed — optionally with justification capture |
-| **Justification** | User must enter a business reason before proceeding (logged) |
-| **Alert / Log** | Allowed, but an incident/log event is raised |
-| **Allow + Inspect** | Allowed but passed to a deeper engine (SWG/DLP) for inspection |
-| **Allow** | Permitted, normal logging |
-
-## Netskope engine ↔ demo mapping (platform stack)
-
-| Layer | Engine | Demos that exercise it |
-|---|---|---|
-| L3/L4 | Cloud Firewall (FWaaS) | Cloud Firewall |
-| L7 DNS | DNS Security | DNS Security, (Cloud Firewall redirect) |
-| L7 HTTP/S | SWG (Real-time Protection) | Web Blocking, User Coaching |
-| L7 Content | DLP (inline) | Data Protection, (Series 01/03), AI demos |
-| L7 App | CASB (inline + discovery) | Shadow IT, Shadow AI |
-| L7 AI | AI Guardrails | AI Security, Shadow AI |
-| Threat | Threat Protection | Threat Protection, DNS Security |
-| Access | NPA (ZTNA) | Zero Trust Access |
-| Browser | Enterprise Browser / RBI | Enterprise Browser |
+| `Block: …` / `High: Block: …` | **Block** |
+| `User Alert: …` | **Coach** |
+| `Isolate: … RBI Template` | **Isolate (RBI)** |
+| `Quarantine` | **Quarantine** |
+| `Alert` | **Alert / Log** |
+| `Allow` / `Default` | **Allow** |
 
 ---
 
-## 1. Web Blocking — `demos/web-blocking/` · SWG (Real-time Protection)
+## 1. Web Blocking — SWG category + CCI
 
-**User action:** clicks a real site link; SWG evaluates URL category inline.
-
-| Category (trigger) | Sites | Use case | Built-in expected | Recommended policy (engine · match · action) |
-|---|---|---|---|---|
-| Unsanctioned File Sharing | WeTransfer, Pastebin, SendGB, Filebin | Block exfil-prone file drops | **TYPICAL: BLOCK** | RTP · URL category = *File Storage/Sharing* (unsanctioned) · **Block** |
-| Personal Cloud Storage | Dropbox, OneDrive, iCloud, MEGA (personal) | Stop personal sync of corp data | **TYPICAL: COACHING** | RTP · category = *Cloud Storage (consumer)* · **Coach** |
-| Social Media | TikTok, Reddit, Discord, Twitch | Productivity / acceptable use | **TYPICAL: COACHING / BLOCK** | RTP · category = *Social Networking* · **Coach or Block (tenant choice)** |
-| Streaming & Entertainment | Netflix, Spotify, Disney+, Prime | Bandwidth / acceptable use | **TYPICAL: LOG / COACH** | RTP · category = *Streaming Media* · **Alert/Log or Coach** |
-
-> ⚠ **Reddit note:** Social Media is currently tagged "COACHING / BLOCK". For your
-> tenant Reddit is a **Coach** — this category is the main place to soften/parameterise.
-
-## 2. User Coaching — `demos/coaching/` · SWG with User Notification
-
-**User action:** clicks a personal-use site; coaching notification (and optional justification) fires instead of a hard block.
-
-| Category | Sites | Use case | Built-in expected | Recommended policy |
-|---|---|---|---|---|
-| Personal Cloud Storage | Dropbox, OneDrive, Google Drive, Box (personal) | Educate before data leaves | **COACHING + JUSTIFICATION** | RTP · category = consumer Cloud Storage · **User Alert + Justification** |
-| Personal Email | Gmail, Outlook.com, ProtonMail, Yahoo | Prevent webmail exfil | **COACHING** | RTP · category = *Webmail (consumer)* · **Coach** |
-| Social & Professional | LinkedIn, X, Facebook, Instagram | Acceptable-use nudge | **COACH / LOG** | RTP · category = *Social/Professional Networking* · **Coach or Log** |
-
-## 3. Data Protection (DLP) — `demos/dlp/` · DLP inline (Real-time Protection)
-
-**User action:** downloads a synthetic file, or copies a snippet and pastes/uploads into a target (Pastebin, Dropbox, Drive, GitHub, Outlook, WeTransfer).
-
-| Trigger | Data type | Use case | Built-in expected | Recommended policy |
-|---|---|---|---|---|
-| `employee-records-synthetic.txt` | SSN / PII / financial | PII exfil on download | Block (PII match) | RTP · DLP profile *PII* · activity Download/Upload · **Block** |
-| `payment-data-synthetic.csv` | PCI / card PANs | Cardholder data leak | Block (PCI match) | RTP · DLP profile *PCI-DSS* · **Block** |
-| `billing-service-synthetic.py` | Source code + hardcoded secrets + internal hostnames | Secrets in code leaving | Block (source/creds match) | RTP · DLP profile *Source Code + Credentials* · **Block** |
-| Paste: SSN / PII | PII | Inline paste into web form | Trigger inline | RTP · DLP *PII* · activity Upload/Post · **Block/Alert** |
-| Paste: PCI / CARD | Card PAN | Card data into cloud app | Trigger inline | RTP · DLP *PCI-DSS* · **Block/Alert** |
-| Paste: CREDENTIALS | API keys / tokens | Secrets into paste sites | Trigger inline | RTP · DLP *Credentials* · **Block** |
-| Paste: PHI / HIPAA | NHS/PHI | Health data exfil | Trigger inline | RTP · DLP *PHI/HIPAA* · **Block** |
-| Industry-specific files | Law/Finance/Insurance/Health/Defence variants | Vertical-tailored DLP | Block per profile | RTP · DLP industry profile · **Block** |
-
-## 4. AI Security — `demos/ai-security/` · AI Guardrails (inline prompt inspection)
-
-**Tools monitored:** ChatGPT (High), Copilot (High), Gemini (Med), Claude (Monitored).
-**User action:** copies a scenario prompt, pastes into the AI tool; guardrails inspect the prompt content.
-
-| Scenario (general) | Tool | Use case | Built-in expected | Recommended policy |
-|---|---|---|---|---|
-| PII Exfiltration via Prompt | ChatGPT | Staff records into AI | Block — SSN + PII | RTP/AI · GenAI app + DLP *PII* on prompt · **Block** |
-| Source Code & Credentials | Copilot | Code w/ secrets into AI to debug | Block — code + creds + internal hostname | RTP/AI · GenAI app + DLP *Source Code/Credentials* · **Block** |
-| Financial Data Disclosure | Gemini | Card data analysis in AI | Block — PCI PAN | RTP/AI · GenAI app + DLP *PCI* · **Block** |
-| *Industry variants* (e.g. lawfirm: privileged memo, KYC pack) | various | Vertical AI risk | Block / Coach | RTP/AI · GenAI app + industry DLP profile · **Block/Coach** |
-
-## 5. Shadow AI / AI Shadow IT — `demos/ai-shadow-it/` · CASB instance + AI Guardrails
-
-**User action:** simulates running out of corporate AI tokens and switching to a **personal** AI account, pasting sensitive context.
-
-| Scenario | Switch | Use case | Built-in expected | Recommended policy |
-|---|---|---|---|---|
-| Corporate Claude → personal claude.ai | token limit | Personal AI exfil | Block — PII/financial; personal instance flagged | CASB *app instance* (personal vs corp) + DLP on prompt · **Block** |
-| Copilot → personal Gemini | budget cap | M&A confidential into AI | Block — multi-profile DLP | CASB instance + DLP *Confidential/Financial* · **Block (high sev)** |
-| Unsanctioned Poe.com | no approved tool | Source code w/ creds into unapproved AI | Intercept — source/creds DLP | CASB *unsanctioned app* + DLP *Source/Credentials* · **Block/Alert** |
-
-## 6. Threat Protection — `demos/threat/` · Threat Protection (inline AV/sandbox + URL)
-
-**User action:** downloads industry-standard test artefacts / visits safe test URLs.
-
-| Trigger | Type | Use case | Built-in expected | Recommended policy |
-|---|---|---|---|---|
-| EICAR (txt / zip / double-zip) | Benign AV test string | Malware download block | Block (signature) | Threat Protection · malware scan · **Block** |
-| Phishing & Malicious URL (AMTSO, Wicar) | Safe test pages | Phishing/exploit block | Block | Threat Protection / SWG · threat category · **Block** |
-| C2 / Botnet (testmyids) | Threat-intel test | C2 callback detection | Block | Threat Protection · threat intel · **Block** |
-
-## 7. Shadow IT Discovery — `demos/shadow-it/` · CASB (discovery + CCI)
-
-**User action:** visits unsanctioned apps; CASB classifies + risk-scores via Cloud Confidence Index.
-**CCI bands:** 76–100 Trusted · 51–75 General · 26–50 Low · 0–25 Poor. (Typical auto-policy: block <60, coach 60–75, allow >75.)
-
-| App | CCI | Category | Recommended policy |
+| Category (kept) | Real rule(s) | Action | Note |
 |---|---|---|---|
-| WeTransfer | 42 | File sharing | CASB · CCI<60 · **Block** |
-| MEGA | 22 | Cloud storage | CASB · CCI<25 (Poor) · **Block** |
-| Filebin | 33 | Temp file storage | CASB · CCI<60 · **Block** |
-| Pastebin | 38 | Text/exfil | CASB · CCI<60 · **Block** |
-| AnonFiles | 18 | Anonymous hosting | CASB · CCI<25 · **Block** |
-| Dropbox (personal) | 69 | Cloud storage | CASB · CCI 60–75 · **Coach** |
-| OneDrive personal | 65 | Cloud storage | CASB · CCI 60–75 · **Coach** |
-| SharePoint/OneDrive Corp | 89 | Enterprise storage | CASB · CCI>75 · **Allow** |
+| Unsanctioned File Sharing (WeTransfer, Pastebin, SendGB, Filebin) | `[Access Control] Unsafe Cloud Storage Browse` (CCL Low/Poor/Unknown) | **Block** | Low/Poor CCI cloud storage |
+| Personal Cloud Storage (Dropbox, OneDrive, iCloud, MEGA) | `UCI Score High Risk Block` (Dropbox UCI<651), `[TimmS] NonCorp Dropbox Blocked`, `Unsafe Cloud Storage` (Upload, CCL Low/Poor/Medium/Unknown), `[AC] Personal OneDrive Block` | **Block** | *Changed from Coach.* Personal instances blocked |
+| Social Media (TikTok, Reddit, Discord, Twitch) | `WEB - Time Wasting` (User Alert); no category block exists | **Coach / Allow** | *Changed from Block.* **Confirms Reddit = coach** |
+| Streaming & Entertainment (Netflix, Spotify, Disney+, Prime) | no block rule; `WEB - Time Wasting` may coach | **Allow / Coach** | *Changed from Log/Block* |
 
-## 8. Zero Trust Access — `demos/ztna/` · NPA (ZTNA)
+## 2. User Coaching — where `User Alert` actually fires
 
-**User action:** attempts to reach a private app (`[YOUR-PRIVATE-APP-URL]`) — unreachable until an NPA policy grants identity-aware access.
-
-| Trigger | Use case | Built-in expected | Recommended policy |
-|---|---|---|---|
-| Live access test | VPN-less least-privilege access | Unreachable by design until policy grants | NPA · private app def + access policy (user/group, device posture) · **Allow to authorised identities only** |
-
-> ⚠ Needs `[YOUR-PRIVATE-APP-URL]` + tenant config before this is live.
-
-## 9. DNS Security — `demos/dns-security/` · DNS Security
-
-**User action:** resolves/visits malicious test domains; blocked at DNS layer before TCP.
-
-| Trigger | Use case | Built-in expected | Recommended policy |
-|---|---|---|---|
-| AMTSO malware, testmyids, Wicar | Pre-connection threat block | Block (sinkhole) | DNS Security · malicious/C2 categories · **Block/Sinkhole** |
-| AMTSO phishing | Layered DNS+SWG | DNS blocks lookup; SWG backs up | DNS Security · phishing category · **Block** |
-
-## 10. Cloud Firewall — `demos/cloud-firewall/` · FWaaS (L3/L4)
-
-**User action:** (network-level) non-web protocols evaluated by FWaaS rules.
-
-| Service | Port | Built-in action | Recommended policy |
-|---|---|---|---|
-| Telnet | TCP 23 | BLOCK | FW · port/proto · **Block** (cleartext legacy) |
-| IRC / Chat C2 | TCP 6667/6697 | BLOCK | FW · **Block** (C2 channel) |
-| Tor entry nodes | TCP 9001/9030 | BLOCK | FW · **Block** (anonymiser/exfil) |
-| SSH (external) | TCP 22 | BLOCK | FW · **Block** (unless justified) |
-| RDP (external) | TCP 3389 | BLOCK | FW · **Block** (lateral movement) |
-| HTTPS | TCP 443 | ALLOW + INSPECT | FW · **Allow → SWG inspection** |
-| SMTP (external) | TCP 25 | BLOCK | FW · **Block** (bypasses email GW) |
-| DNS | UDP 53 | LOG + REDIRECT | FW · **Redirect → DNS Security** |
-
-## 11. Enterprise Browser — `demos/enterprise-browser/` · Enterprise Browser / RBI
-
-**User action:** demonstrates browser-level controls (needs `[YOUR-SHAREPOINT]`).
-
-| Control | Use case | Recommended policy |
+| Scenario | Real rule | Action |
 |---|---|---|
-| Contractor clipboard restriction | Block copy/paste out of app | EB · clipboard policy · **Block copy/paste** |
-| Sensitive file download block | Prevent local download | EB · download policy · **Block download** |
-| Screen watermarking | Deter screenshots/leaks | EB · watermark policy · **On** |
-| Remote Browser Isolation (RBI) | Render risky sites remotely | RBI policy · risky categories · **Isolate** |
+| Browsing any GenAI tool | `[Demo] Coach GenAI Access` (Generative AI · Browse) | **Coach** |
+| Sensitive upload to sanctioned OneDrive | `[Demo] User Alert upload sensitive data into sanctioned OneDrive` (PII/PCI) | **Coach** |
+| Sensitive upload/post to Slack / Teams | `Sensitive File Upload to Slack`, `Microsoft Teams Post` (PCI) | **Coach** |
+| WhatsApp file transfer | `[DLP] WhatsApp` (Download/Upload) | **Coach** |
+| Time-wasting / job-search sites | `WEB - Time Wasting`, `WEB - Job Sites Alert` | **Coach** |
 
-## 12. Demo Series (composite journeys)
+> Note: personal cloud storage / personal webmail now **Block** in this tenant
+> (see §1, §6), so the coaching demo leads with the GenAI + sanctioned-app cases.
 
-| Series | Steps → outcome | Policies exercised |
+## 3. Data Protection (DLP)
+
+| Trigger (app · activity) | Real rule · profile | Action |
 |---|---|---|
-| **01 Insider Threat** | Personal cloud (coach/block) → upload PII (DLP block) → email external (DLP block) → audit log | SWG category + DLP PII + audit |
-| **02 AI Risk** | PII into ChatGPT (block) → source code to Copilot (block) → console review | AI Guardrails + DLP PII/Source |
-| **03 Shadow IT Audit** | Visit unsanctioned (CASB) → download sensitive (DLP) → re-upload personal Dropbox (DLP block) | CASB CCI + DLP |
+| Download from a DLP-test site | `[Data Protection] PCI Download` (Sites for DLP test · Download · PCI) | **Block** |
+| Paste/upload PII/PCI via web form | `Block sensitive data upload via web form post` (Sites for DLP test · Upload/FormPost · PII+GSC) | **Block** |
+| Upload PCI/PII to **sanctioned** OneDrive | `[Demo] User Alert … sanctioned OneDrive` | **Coach** |
+| Upload PCI/PII to **non-sanctioned** OneDrive | `[Demo] Block Sensitive data into non sanctioned OneDrive` | **Block** |
+| Post PCI to Slack / Teams | `Sensitive File Upload to Slack`, `Teams Post` | **Coach** |
+| Upload any password-protected file | `[Data Protection] Password Protected Files` | **Block** |
+| Upload PCI/PII to Cloud Storage / Social / Collab | `[DLP] PCI Upload Block` | **Block** |
+| Source code + secrets to GenAI | `[Demo] Block Sensitive Data Upload to Gen AI` (DLP-SourceCode) | **Block** |
+| Confidential-labelled file, any app | `Test File Profile for Confidential Label` | **Block** |
+| Top-Secret-labelled download | `Block Download of TS labelled data` | **Block** |
+
+## 4. AI Security — Guardrails + DLP on GenAI
+
+| Scenario | Real rule | Action |
+|---|---|---|
+| Sanctioned AI (ChatGPT, Copilot, Gemini, Claude) general use | `[Demo] Sanctioned AI Allowed`, `Approved AI` | **Allow** |
+| First use / browse of GenAI | `[Demo] Coach GenAI Access`, `AI Guardrails default` (ChatGPT Post/Response) | **Coach** |
+| Upload PII / PCI / **source code** to Copilot/Gemini/ChatGPT | `[Demo] Block Sensitive Data Upload to Gen AI` (DLP-PCI, DLP-PII, DLP-SourceCode) | **Block** |
+| Jailbreak prompt | `AI Security Guardrails - Jail Break Attempt` | **Block** |
+| Competitor-watchlist content in response | `AI Security Guardrails - Predefined Triggers` | **Block (coach)** |
+| Unauthenticated / non-corp ChatGPT | `block chatgpt unauth`, `Block Access to non-approved ChatGPT` | **Block** |
+| Copilot sidebar post | `Block Copilot Sidebar` | **Block** |
+| Sensitive image / driver-licence to AI | `[ML DLP] Block sensitive image uploads to AI`, `AI Image Detection` | **Block / Coach** |
+| Unsanctioned AI (any other GenAI app) | `[Demo] Block Unsanctioned AI` | **Block** |
+
+> **Tool risk mapping for the demo:** ChatGPT / Copilot / Gemini / Claude =
+> *Sanctioned* (Allow + guardrails). Any other GenAI = *Unsanctioned* (Block).
+
+## 5. Shadow AI (personal-instance switch)
+
+| Scenario | Real rule | Action |
+|---|---|---|
+| Switch to personal/unsanctioned AI | `[Demo] Block Unsanctioned AI` (Generative AI · Any) | **Block** |
+| Sensitive prompt into any monitored AI | `[Demo] Block Sensitive Data Upload to Gen AI` | **Block** |
+| Corp vs personal ChatGPT instance | `Block Access to non-approved ChatGPT` (Non-Corp Instance) | **Block** |
+
+## 6. Email / Webmail DLP
+
+| Trigger | Real rule | Action |
+|---|---|---|
+| Send sensitive data via personal webmail | `[Demo] Block Sending sensitive data via Web Mail` (Outlook.com · PII/PCI) | **Block** |
+| Webmail send w/ keyword profile | `test p008`, `SaaS Webmail Internal DLP Alert` | **Block / Coach** |
+| Non-corp Gmail | `[Instance] Block non-corp GMail` | **Block** |
+| Outbound email PCI (Exchange/Gmail) | `[Email DLP] Outbound email PCI Policy` | **Add Headers** |
+
+## 7. Threat Protection
+
+| Trigger | Real rule | Action |
+|---|---|---|
+| Malware file (EICAR etc.) up/download | `[Threat] Malicious File Protection` (Default Malware Scan) | **Block (High)** |
+| First-seen / risky-category download | `Patient Zero Threat Protection` (NOD/NRD/Uncat/Parked) | **Block (High)** |
+| Potentially malicious site | `[Access Control] Potentially Malicious Sites` (UKSE) **vs** `[Threat] Potentially Malicious Sites` (JSIP) | **Block *or* Coach** ⚠ conflict |
+| Risky/uncategorised site render | `[Threat] RBI`, `[RBI] …` (Uncat/NRD/Parked/Web Proxies/No Content) | **Isolate (RBI)** |
+
+## 8. Shadow IT Discovery — CCI / UCI driven
+
+CCL → action (from `Unsafe Cloud Storage` rules + `UCI Score Block`):
+
+| CCI / CCL | Action | Example apps |
+|---|---|---|
+| Poor (0–25) | **Block** (browse + upload) | MEGA 22, AnonFiles 18 |
+| Low (26–50) | **Block** (browse + upload) | WeTransfer 42, Pastebin 38, Filebin 33 |
+| Medium (51–75) | **Block on upload** (browse allowed) | Dropbox 69*, OneDrive 65 |
+| High/Excellent (76–100) | **Allow** | SharePoint/OneDrive Corp 89 |
+
+*Dropbox is additionally blocked outright by `UCI Score High Risk Block` (UCI < 651) and `NonCorp Dropbox Blocked`.
+
+## 9. Zero Trust Access (NPA)
+
+| Trigger | Real rule | Action |
+|---|---|---|
+| Authorised user → private app (RDP/SSH/portal) | `[NPA] User Portal Access`, `[ZTNA] … Allow`, `NPA Applications Allow` | **Allow** |
+| Unauthorised user → same app | `[ZTNA] RDP … Block`, `[NPA] RDP … Block` (e.g. bob.jones) | **Block NPA Access** |
+| Access not via dedicated egress IP | `[DEIP] Block if access not via DEIP` (Genesys) | **Block** |
+
+## 10. Cloud Firewall (FWaaS) — corrected to real rules
+
+| Service | Real rule | Action | Note |
+|---|---|---|---|
+| SSH | `[Demo] Allowed SSH` | **Allow** | *Changed from Block* |
+| FTP (approved server) | `[CFW] Allow DLPTest FTP` | **Allow** | specific app allowed |
+| FTP (generic, by signature) | `[CFW] Block FTP By Signature` | **Block** | |
+| QUIC | `[CFW] Block QUIC` | **Block** | forces TLS inspection |
+| DNS-over-TLS | `[CFW] Block DoT` | **Block** | prevents DNS bypass |
+| DNS-over-HTTPS | `[DOH] Block` / `Block App` | **Block (mute)** | |
+| TeamViewer (outbound) | `[CFW] Block TeamViewer outbound` | **Block** | remote-access risk |
+| Slack | `[CFW] Allow` | **Allow** | |
+| Connections to sinkhole IP | `[Demo] Block All Connections To Sinkhole IP` | **Block (sinkhole)** | |
+| Other non-web protocols | `[Demo] Blocked Protocols` | **Block** | |
+
+## 11. DNS Security
+
+| Trigger | Real rule | Action |
+|---|---|---|
+| All DNS resolution | `DNS Security Policy` (Default DNS Profile), `DNSaaS` | **Default (threat filtering)** |
+| DNS-over-HTTPS / -TLS bypass | `[DOH] Block`, `[CFW] Block DoT` | **Block** |
+| Sinkhole callback | `Block All Connections To Sinkhole IP` | **Block** |
+
+## 12. Enterprise Browser / RBI
+
+| Control | Real rule | Action |
+|---|---|---|
+| Webmail via Enterprise Browser | `Block Webmail on EB` | **Block** |
+| Risky/uncategorised sites | `[Threat] RBI`, `[RBI] Targeted …` | **Isolate (RBI)** |
+| WhatsApp | `[RBI] Whatsapp Policy 2` | **Isolate** |
+| Reverse-proxy download of confidential from SP/OneDrive | `Block External Party via Reverse Proxy …` | **Block** |
 
 ---
 
-## Consolidated Policy Build Inventory
+## Conflicts resolved
 
-The unique set of policies that, if built, make the whole portal behave as documented:
+1. **Potentially Malicious Sites** — UKSE **Blocks**, JSIP **Coaches**. Demo shows *Block* with a note that it can be a coach page. ⚠
+2. **SSH** — Cloud Firewall demo said *Block*; real policy **Allows** SSH. Corrected to Allow; real FW blocks are QUIC/DoT/TeamViewer/FTP-sig.
+3. **Social / Streaming** — demo implied *Block*; no such rule exists → **Coach/Allow** (Time Wasting). Fixes the Reddit case.
+4. **Personal cloud storage** — demo said *Coach*; real policy **Blocks** (UCI + non-corp + unsafe CCI).
+5. **GenAI** — sanctioned tools are *Allowed + coached*, not blocked; only **sensitive-data uploads and unsanctioned tools Block**.
 
-**Real-time Protection (inline SWG/DLP/AI):**
-1. Web — Unsanctioned File Sharing category → **Block**
-2. Web — Personal Cloud Storage (consumer) → **Coach + Justification**
-3. Web — Social / Streaming → **Coach / Log** *(tenant-specific; Reddit = Coach for you)*
-4. Webmail (consumer) → **Coach**
-5. DLP — PII/SSN profile → **Block**
-6. DLP — PCI-DSS profile → **Block**
-7. DLP — PHI/HIPAA profile → **Block**
-8. DLP — Source Code + Credentials profile → **Block**
-9. GenAI apps + DLP on prompt content → **Block/Coach** (AI Guardrails)
+## Gaps — policy exists but no demo (candidate new demos)
 
-**CASB:**
-10. CCI auto-policy: block <60 · coach 60–75 · allow >75
-11. App instance: personal vs corporate AI/cloud instance → **Block sensitive on personal**
-12. Unsanctioned app access → **Alert/Block**
-
-**Threat Protection:** 13. Malware (AV/sandbox) → **Block** · 14. C2/threat-intel → **Block**
-
-**DNS Security:** 15. Malicious/phishing/C2 domains → **Block/Sinkhole**
-
-**Cloud Firewall:** 16. Protocol ruleset (Telnet/IRC/Tor/SSH/RDP/SMTP **Block**; 443 **Allow+Inspect**; 53 **Redirect**)
-
-**NPA (ZTNA):** 17. Private app + identity-aware access policy
-
-**Enterprise Browser:** 18. Clipboard / download / watermark / RBI controls
-
----
-
-## Tenant variance (why outcomes shouldn't be hard-asserted)
-
-The same trigger can legitimately resolve to Block, Coach, or Log depending on a
-tenant's risk appetite, user group, device posture, and data sensitivity. Examples:
-- **Reddit** — Block for one org, **Coach** for you, Allow for another.
-- **Personal Dropbox** — Coach (CCI 69) by default, but Block if a stricter
-  data-classification policy applies.
-- **GenAI** — Block on sensitive prompts, but Allow+Log for sanctioned corporate instances.
-
-**Recommendation:** treat the "Built-in expected outcome" as *representative*, and
-either (a) soften the on-page language to "typical", or (b) make outcomes
-configurable per tenant (see `NEXT-STEPS.md` item 2). This map is structured so a
-real policy set can be built 1:1 against the "Recommended policy" column.
+- **MCP Server** DLP/guardrails (`Stan - MCP DLP Block`, `DLP control for MCP`, `Allow MCP Server Access`) — no demo today.
+- **AI image / driver-licence DLP** (`AI Image Detection`, `[ML DLP] … image uploads to AI`).
+- **Phishing via web forms** (`[Data Protection] Phishing via MS Forms / GForms Clone`).
+- **Sensitivity-label / AIP enforcement** (`Alert on lack of classification`, `Block Download of TS labelled data`, Confidential-label block).
+- **Add-header email DLP** (`[Email DLP] Outbound email PCI Policy` — SMTP header injection).
