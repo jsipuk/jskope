@@ -99,7 +99,7 @@
 |---|---|---|
 | Malware file (EICAR etc.) up/download | `[Threat] Malicious File Protection` (Default Malware Scan) | **Block (High)** |
 | First-seen / risky-category download | `Patient Zero Threat Protection` (NOD/NRD/Uncat/Parked) | **Block (High)** |
-| Potentially malicious site | `[Access Control] Potentially Malicious Sites` (UKSE) **vs** `[Threat] Potentially Malicious Sites` (JSIP) | **Block *or* Coach** ⚠ conflict |
+| Potentially malicious site | `[Access Control] Potentially Malicious Sites` | **Block** (decided) |
 | Risky/uncategorised site render | `[Threat] RBI`, `[RBI] …` (Uncat/NRD/Parked/Web Proxies/No Content) | **Isolate (RBI)** |
 
 ## 8. Shadow IT Discovery — CCI / UCI driven
@@ -159,7 +159,7 @@ CCL → action (from `Unsafe Cloud Storage` rules + `UCI Score Block`):
 
 ## Conflicts resolved
 
-1. **Potentially Malicious Sites** — UKSE **Blocks**, JSIP **Coaches**. Demo shows *Block* with a note that it can be a coach page. ⚠
+1. **Potentially Malicious Sites** — UKSE **Blocks**, JSIP **Coaches**. **Decision: Block** — demo and threat page now show Block.
 2. **SSH** — Cloud Firewall demo said *Block*; real policy **Allows** SSH. Corrected to Allow; real FW blocks are QUIC/DoT/TeamViewer/FTP-sig.
 3. **Social / Streaming** — demo implied *Block*; no such rule exists → **Coach/Allow** (Time Wasting). Fixes the Reddit case.
 4. **Personal cloud storage** — demo said *Coach*; real policy **Blocks** (UCI + non-corp + unsafe CCI).

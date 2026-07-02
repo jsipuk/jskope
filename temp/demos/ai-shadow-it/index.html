@@ -387,6 +387,10 @@ Please add proper error handling and improve the structure.</pre>
         </div>
     </div>
 
+    <div style="background:rgba(0,167,206,0.05);border:1px solid rgba(0,167,206,0.18);border-radius:10px;padding:0.9rem 1.2rem;margin-top:1.5rem;font-size:0.83rem;color:var(--muted);line-height:1.6;">
+        <strong style="color:var(--text)">The rules behind these scenarios in your policy:</strong> switching to a personal/unsanctioned AI is stopped by <code>[Demo] Block Unsanctioned AI</code> → <strong>Block</strong>; a sensitive prompt into any monitored AI hits <code>[Demo] Block Sensitive Data Upload to Gen AI</code> (DLP-PII/PCI/SourceCode) → <strong>Block</strong>; and using a non-corporate ChatGPT instance is caught by <code>Block Access to non-approved ChatGPT</code> (Non-Corp Instance) → <strong>Block</strong>. Sanctioned corporate AI stays allowed and coached.
+    </div>
+
 </main>
 <footer><p>© 2026 Netskope, Inc. — Demo Environment — jskope.com/temp</p></footer>
 
